@@ -1,9 +1,9 @@
 {
-  "name": "managed-integration-example",
+  "name": "jupiter-integration-jira",
   "version": "1.0.0",
-  "description": "An example JupiterOne managed integration.",
+  "description": "A JupiterOne managed integration for https://www.atlassian.com/software/jira",
   "main": "index.js",
-  "repository": "https://github.com/jupiterone-io/managed-integration-example",
+  "repository": "https://github.com/jupiterone-io/jupiter-integration-jira",
   "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "start": "ts-node tools/execute.ts | bunyan",

@@ -1,6 +1,6 @@
-# JupiterOne Managed Integration Example
+# JupiterOne Managed Integration for Jira
 
-[![Build Status](https://travis-ci.org/JupiterOne/managed-integration-example.svg?branch=master)](https://travis-ci.org/JupterOne/managed-integration-example)
+[![Build Status](https://travis-ci.org/JupiterOne/jupiter-integration-jira.svg?branch=master)](https://travis-ci.org/JupterOne/jupiter-integration-jira)
 
 A JupiterOne integration ingests information such as configurations and other
 metadata about digital and physical assets belonging to an organization. The
@@ -39,13 +39,12 @@ provider. Developing an integration involves:
 1.  Delivering create/update/delete operations to the persister to update the
     graph
 
-This example integration hand waves 1 and 2a 🤪. The rest of it is serious
-business. Run the integration to see what happens:
+Run the integration to see what happens:
 
 1.  Install Docker
-1.  `yarn install`
-1.  `yarn start:graph`
-1.  `yarn start`
+2.  `yarn install`
+3.  `yarn start:graph`
+4.  `yarn start`
 
 Activity is logged to the console indicating the operations produced and
 processed. View raw data in the graph database using
