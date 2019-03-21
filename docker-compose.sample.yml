@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  integration:
+    image: jupiter-integration-jira-app
+    build: .
+    container_name: jupiter-integration-jira-app
+    volumes:
+      - .:/app:cached
+      - ~/.ssh:/root/.ssh
+      - ~/.bash_history:/root/.bash_history
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      GRAPH_DB_ENDPOINT: graph
+      JIRA_LOGIN: 'YOUR ONELOGIN CLIENT ID HERE'
+      JIRA_PASSWORD: 'YOUR ONELOGIN CLIENT SECRET HERE'
+      JIRA_HOST: ''
+    depends_on:
+      - graph
+  graph:
+    image: tinkerpop/gremlin-server:3.3
+    restart: unless-stopped
+    ports:
+      - "8182:8182"

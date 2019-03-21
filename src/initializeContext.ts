@@ -2,15 +2,21 @@ import {
   IntegrationExecutionContext,
   IntegrationInvocationEvent,
 } from "@jupiterone/jupiter-managed-integration-sdk";
-import ProviderClient from "./ProviderClient";
-import { ExampleExecutionContext } from "./types";
 
-export default function initializeContext(
+import { createJiraClient } from "./jira";
+
+export default async function initializeContext(
   context: IntegrationExecutionContext<IntegrationInvocationEvent>,
-): ExampleExecutionContext {
+) {
+  const provider = createJiraClient(context);
+  await provider.authenticate();
+
+  const { persister, graph } = context.clients.getClients();
+
   return {
-    ...context,
-    ...context.clients.getClients(),
-    provider: new ProviderClient(),
+    graph,
+    persister,
+    provider,
+    projects: context.instance.config.projects,
   };
 }
