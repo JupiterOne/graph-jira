@@ -1,7 +1,7 @@
 import { EntityFromIntegration } from "@jupiterone/jupiter-managed-integration-sdk";
 
 export const ISSUE_ENTITY_TYPE = "jira_issue";
-export const ISSUE_ENTITY_CLASS = "Issue";
+export const ISSUE_ENTITY_CLASS = "Record";
 
 export interface IssueEntity extends EntityFromIntegration {
   id: string;
@@ -11,6 +11,6 @@ export interface IssueEntity extends EntityFromIntegration {
   webLink: string;
   status: string;
   reporter: string;
-  assignee: string;
+  assignee?: string;
   creator: string;
 }

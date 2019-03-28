@@ -14,8 +14,8 @@ services:
     environment:
       NODE_ENV: development
       GRAPH_DB_ENDPOINT: graph
-      JIRA_LOGIN: 'YOUR ONELOGIN CLIENT ID HERE'
-      JIRA_PASSWORD: 'YOUR ONELOGIN CLIENT SECRET HERE'
+      JIRA_LOGIN: 'YOUR JIRA LOGIN HERE'
+      JIRA_PASSWORD: 'YOUR JIRA PASSWORD HERE'
       JIRA_HOST: ''
     depends_on:
       - graph

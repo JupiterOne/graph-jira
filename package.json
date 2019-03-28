@@ -22,15 +22,15 @@
     "test": "jest"
   },
   "dependencies": {
-    "@types/jira-client": "^6.4.2",
-    "@types/nock": "^9.3.1",
-    "jira-client": "^6.7.1",
-    "nock": "^10.0.6"
+    "jira-client": "^6.7.1"
   },
   "peerDependencies": {
     "@jupiterone/jupiter-managed-integration-sdk": "^20.0.0"
   },
   "devDependencies": {
+    "nock": "^10.0.6",
+    "@types/jira-client": "^6.4.2",
+    "@types/nock": "^9.3.1",
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.3.4",
