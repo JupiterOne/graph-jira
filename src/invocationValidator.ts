@@ -32,7 +32,7 @@ export default async function invocationValidator(
 
   const provider = createJiraClient(executionContext);
   try {
-    await provider.authenticate();
+    await provider.fetchProjects();
   } catch (err) {
     throw new IntegrationInstanceAuthenticationError(err);
   }

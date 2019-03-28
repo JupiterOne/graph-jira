@@ -8,27 +8,50 @@ interface JiraParams {
   username: string;
 }
 
+type IssueTypeName =
+  | "Epic"
+  | "Improvement"
+  | "Task"
+  | "Sub-task"
+  | "New Feature";
+
 export default class JiraClient {
   private client: JiraApi;
-  private host: string;
-  private username: string;
-  private password: string;
 
   constructor(params: JiraParams) {
-    this.host = params.host;
-    this.username = params.username;
-    this.password = params.password;
-  }
-
-  public async authenticate() {
+    const { host, username, password } = params;
     this.client = new JiraApi({
       protocol: "https",
-      host: this.host,
-      username: this.username,
-      password: this.password,
+      host,
+      username,
+      password,
       apiVersion: "3",
       strictSSL: true,
     });
+  }
+
+  public async addNewIssue(
+    summary: string,
+    projectId: string,
+    issueTypeName: IssueTypeName,
+  ): Promise<Issue> {
+    const issue: Issue = (await this.client.addNewIssue({
+      fields: {
+        summary,
+        project: {
+          id: projectId,
+        },
+        issuetype: {
+          name: issueTypeName,
+        },
+      },
+    })) as Issue;
+    return issue;
+  }
+
+  public async findIssue(issueIdOrKey: string): Promise<Issue> {
+    const issue: Issue = (await this.client.findIssue(issueIdOrKey)) as Issue;
+    return issue;
   }
 
   public async fetchProjects(): Promise<Project[]> {

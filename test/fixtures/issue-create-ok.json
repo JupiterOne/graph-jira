@@ -1,0 +1,58 @@
+[
+  {
+    "scope": "https://dualboot-test.atlassian.net:443",
+    "method": "POST",
+    "path": "/rest/api/3/issue",
+    "body": {
+      "fields": {
+        "summary": "Test Issue",
+        "project": {
+          "id": "10000"
+        },
+        "issuetype": {
+          "name": "Task"
+        }
+      }
+    },
+    "status": 201,
+    "response": {
+      "id": "10011",
+      "key": "FP-10",
+      "self": "https://dualboot-test.atlassian.net/rest/api/3/issue/10011"
+    },
+    "rawHeaders": [
+      "Server",
+      "Atlassian Proxy/1.13.6.2",
+      "Cache-Control",
+      "no-cache, no-store, no-transform",
+      "Content-Type",
+      "application/json;charset=UTF-8",
+      "Strict-Transport-Security",
+      "max-age=315360000; includeSubDomains; preload",
+      "Date",
+      "Thu, 28 Mar 2019 13:08:05 GMT",
+      "ATL-TraceId",
+      "8e7ac41d435161cc",
+      "X-AACCOUNTID",
+      "5c937560807a642e13136645",
+      "X-AREQUESTID",
+      "98eeaa5c-bf7a-4194-ad6d-155e3b1ee155",
+      "X-XSS-Protection",
+      "1; mode=block",
+      "Transfer-Encoding",
+      "chunked",
+      "Timing-Allow-Origin",
+      "*",
+      "X-AUSERNAME",
+      "admin",
+      "X-Content-Type-Options",
+      "nosniff",
+      "Connection",
+      "close",
+      "Set-Cookie",
+      "atlassian.xsrf.token=7c75c5a7-5045-4a1c-a650-e9b79b0e356f_d069d829f96a4812bce52e290a259e76d097db0d_lin; Path=/; Secure",
+      "X-Seraph-LoginReason",
+      "OK"
+    ]
+  }
+]

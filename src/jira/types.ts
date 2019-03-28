@@ -51,10 +51,7 @@ export interface Issue {
   self: string;
   key: string;
   fields: {
-    issuetype: {
-      name: string;
-      self: string;
-    };
+    issuetype: IssueType;
     project: Project;
     created: string;
     labels: string[];
@@ -83,4 +80,9 @@ export interface Issue {
     summary: string;
     subtasks: Issue[];
   };
+}
+
+interface IssueType {
+  name: string;
+  self: string;
 }

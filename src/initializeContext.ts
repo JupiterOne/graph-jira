@@ -9,7 +9,6 @@ export default async function initializeContext(
   context: IntegrationExecutionContext<IntegrationInvocationEvent>,
 ) {
   const provider = createJiraClient(context);
-  await provider.authenticate();
 
   const { persister, graph } = context.clients.getClients();
 

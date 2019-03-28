@@ -10,12 +10,11 @@ describe("JiraClient fetch ok data", () => {
 
   async function getAuthenticatedClient() {
     const client = new JiraClient({
-      host: "dualboot-test.atlassian.net",
-      username: "admin@test.dualboot.com",
-      password: "ckMqQhfGZXd9d3",
+      host: process.env.JIRA_HOST || "",
+      username: process.env.JIRA_LOGIN || "",
+      password: process.env.JIRA_PASSWORD || "",
     });
 
-    await client.authenticate();
     return client;
   }
 
@@ -66,7 +65,7 @@ describe("JiraClient fetch ok data", () => {
   });
 
   test("fetch issues with empty param project ok", async () => {
-    const { nockDone } = await nock.back("issues-empty-param.json");
+    const { nockDone } = await nock.back("issues-empty-param-ok.json");
     const client = await getAuthenticatedClient();
     const issues = await client.fetchIssues("");
     expect(issues).toEqual([]);
@@ -91,17 +90,63 @@ describe("JiraClient bad credentials", () => {
       password: "fakePassword",
     });
 
-    await client.authenticate();
     return client;
   }
 
   test("fetch server info with bad auth", async () => {
-    const { nockDone } = await nock.back("server-info-bad.json");
+    const { nockDone } = await nock.back("projects-bad.json");
 
     const client = await getAuthenticatedClient();
-    await expect(client.fetchServerInfo()).rejects.toThrow();
+    await expect(client.fetchProjects()).rejects.toThrow();
 
     nockDone();
+  });
+
+  afterAll(() => {
+    nock.restore();
+  });
+});
+
+describe("JiraClient creating data", () => {
+  beforeAll(() => {
+    nock.back.fixtures = `${__dirname}/../../test/fixtures/`;
+    nock.back.setMode("record");
+  });
+
+  async function getAuthenticatedClient() {
+    const client = new JiraClient({
+      host: "dualboot-test.atlassian.net",
+      username: "admin@test.dualboot.com",
+      password: "ckMqQhfGZXd9d3",
+    });
+
+    return client;
+  }
+
+  test("create issue with existing project ok", async () => {
+    const client = await getAuthenticatedClient();
+    const { nockDone: creatingDone } = await nock.back("issue-create-ok.json");
+    const createdIssue = await client.addNewIssue(
+      "Test Issue",
+      "10000",
+      "Task",
+    );
+    creatingDone();
+
+    expect(createdIssue).toContainKeys(["id", "key", "self"]);
+    expect(createdIssue).not.toContainKeys([
+      "parent",
+      "project",
+      "creator",
+      "reporter",
+      "fields",
+    ]);
+
+    const { nockDone: findingDone } = await nock.back("issue-found-ok.json");
+    const foundIssue = await client.findIssue(createdIssue.id);
+    findingDone();
+
+    expect(foundIssue).toContainKeys(["id", "key", "self", "fields"]);
   });
 
   afterAll(() => {

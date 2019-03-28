@@ -1,0 +1,215 @@
+[
+  {
+    "scope": "https://dualboot-test.atlassian.net:443",
+    "method": "GET",
+    "path": "/rest/api/3/issue/10011?expand=&fields=*all&properties=*all&fieldsByKeys=false",
+    "body": "",
+    "status": 200,
+    "response": {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10011",
+      "self": "https://dualboot-test.atlassian.net/rest/api/3/issue/10011",
+      "key": "FP-10",
+      "properties": {},
+      "fields": {
+        "issuetype": {
+          "self": "https://dualboot-test.atlassian.net/rest/api/3/issuetype/10002",
+          "id": "10002",
+          "description": "A task that needs to be done.",
+          "iconUrl": "https://dualboot-test.atlassian.net/secure/viewavatar?size=xsmall&avatarId=10318&avatarType=issuetype",
+          "name": "Task",
+          "subtask": false,
+          "avatarId": 10318
+        },
+        "timespent": null,
+        "project": {
+          "self": "https://dualboot-test.atlassian.net/rest/api/3/project/10000",
+          "id": "10000",
+          "key": "FP",
+          "name": "First Project",
+          "projectTypeKey": "software",
+          "avatarUrls": {
+            "48x48": "https://dualboot-test.atlassian.net/secure/projectavatar?avatarId=10324",
+            "24x24": "https://dualboot-test.atlassian.net/secure/projectavatar?size=small&avatarId=10324",
+            "16x16": "https://dualboot-test.atlassian.net/secure/projectavatar?size=xsmall&avatarId=10324",
+            "32x32": "https://dualboot-test.atlassian.net/secure/projectavatar?size=medium&avatarId=10324"
+          }
+        },
+        "fixVersions": [],
+        "aggregatetimespent": null,
+        "resolution": null,
+        "customfield_10027": null,
+        "resolutiondate": null,
+        "workratio": -1,
+        "watches": {
+          "self": "https://dualboot-test.atlassian.net/rest/api/3/issue/FP-10/watchers",
+          "watchCount": 1,
+          "isWatching": true
+        },
+        "lastViewed": "2019-03-28T17:08:47.327+0400",
+        "created": "2019-03-28T17:08:05.628+0400",
+        "customfield_10020": null,
+        "customfield_10021": null,
+        "customfield_10022": "0|i0000v:",
+        "priority": {
+          "self": "https://dualboot-test.atlassian.net/rest/api/3/priority/3",
+          "iconUrl": "https://dualboot-test.atlassian.net/images/icons/priorities/medium.svg",
+          "name": "Medium",
+          "id": "3"
+        },
+        "labels": [],
+        "customfield_10026": null,
+        "customfield_10016": null,
+        "customfield_10017": null,
+        "customfield_10018": {
+          "hasEpicLinkFieldDependency": false,
+          "showField": false,
+          "nonEditableReason": {
+            "reason": "PLUGIN_LICENSE_ERROR",
+            "message": "Portfolio for Jira must be licensed for the Parent Link to be available."
+          }
+        },
+        "customfield_10019": null,
+        "aggregatetimeoriginalestimate": null,
+        "timeestimate": null,
+        "versions": [],
+        "issuelinks": [],
+        "assignee": null,
+        "updated": "2019-03-28T17:08:05.628+0400",
+        "status": {
+          "self": "https://dualboot-test.atlassian.net/rest/api/3/status/10001",
+          "description": "",
+          "iconUrl": "https://dualboot-test.atlassian.net/",
+          "name": "To Do",
+          "id": "10001",
+          "statusCategory": {
+            "self": "https://dualboot-test.atlassian.net/rest/api/3/statuscategory/2",
+            "id": 2,
+            "key": "new",
+            "colorName": "blue-gray",
+            "name": "To Do"
+          }
+        },
+        "components": [],
+        "timeoriginalestimate": null,
+        "description": null,
+        "customfield_10010": null,
+        "customfield_10014": null,
+        "timetracking": {},
+        "customfield_10015": null,
+        "customfield_10005": null,
+        "customfield_10006": null,
+        "security": null,
+        "customfield_10007": null,
+        "customfield_10008": null,
+        "attachment": [],
+        "customfield_10009": null,
+        "aggregatetimeestimate": null,
+        "summary": "Test Issue",
+        "creator": {
+          "self": "https://dualboot-test.atlassian.net/rest/api/3/user?accountId=5c937560807a642e13136645",
+          "name": "admin",
+          "key": "admin",
+          "accountId": "5c937560807a642e13136645",
+          "emailAddress": "admin@test.dualboot.com",
+          "avatarUrls": {
+            "48x48": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=48&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D48%26noRedirect%3Dtrue",
+            "24x24": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=24&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D24%26noRedirect%3Dtrue",
+            "16x16": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=16&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D16%26noRedirect%3Dtrue",
+            "32x32": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=32&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D32%26noRedirect%3Dtrue"
+          },
+          "displayName": "Admin Admin",
+          "active": true,
+          "timeZone": "Europe/Samara",
+          "accountType": "atlassian"
+        },
+        "subtasks": [],
+        "reporter": {
+          "self": "https://dualboot-test.atlassian.net/rest/api/3/user?accountId=5c937560807a642e13136645",
+          "name": "admin",
+          "key": "admin",
+          "accountId": "5c937560807a642e13136645",
+          "emailAddress": "admin@test.dualboot.com",
+          "avatarUrls": {
+            "48x48": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=48&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D48%26noRedirect%3Dtrue",
+            "24x24": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=24&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D24%26noRedirect%3Dtrue",
+            "16x16": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=16&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D16%26noRedirect%3Dtrue",
+            "32x32": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=32&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D32%26noRedirect%3Dtrue"
+          },
+          "displayName": "Admin Admin",
+          "active": true,
+          "timeZone": "Europe/Samara",
+          "accountType": "atlassian"
+        },
+        "aggregateprogress": {
+          "progress": 0,
+          "total": 0
+        },
+        "customfield_10000": "{}",
+        "customfield_10001": null,
+        "customfield_10002": null,
+        "customfield_10003": null,
+        "customfield_10004": null,
+        "environment": null,
+        "duedate": null,
+        "progress": {
+          "progress": 0,
+          "total": 0
+        },
+        "votes": {
+          "self": "https://dualboot-test.atlassian.net/rest/api/3/issue/FP-10/votes",
+          "votes": 0,
+          "hasVoted": false
+        },
+        "comment": {
+          "comments": [],
+          "maxResults": 0,
+          "total": 0,
+          "startAt": 0
+        },
+        "worklog": {
+          "startAt": 0,
+          "maxResults": 20,
+          "total": 0,
+          "worklogs": []
+        }
+      }
+    },
+    "rawHeaders": [
+      "Server",
+      "Atlassian Proxy/1.13.6.2",
+      "Vary",
+      "Accept-Encoding",
+      "Cache-Control",
+      "no-cache, no-store, no-transform",
+      "Content-Type",
+      "application/json;charset=UTF-8",
+      "Strict-Transport-Security",
+      "max-age=315360000; includeSubDomains; preload",
+      "Date",
+      "Thu, 28 Mar 2019 13:33:41 GMT",
+      "ATL-TraceId",
+      "56980c4a447e7702",
+      "X-AACCOUNTID",
+      "5c937560807a642e13136645",
+      "X-AREQUESTID",
+      "f5538109-1c7c-4dff-9180-ffc5b6a2a355",
+      "X-XSS-Protection",
+      "1; mode=block",
+      "Transfer-Encoding",
+      "chunked",
+      "Timing-Allow-Origin",
+      "*",
+      "X-AUSERNAME",
+      "admin",
+      "X-Content-Type-Options",
+      "nosniff",
+      "Connection",
+      "close",
+      "Set-Cookie",
+      "atlassian.xsrf.token=7c75c5a7-5045-4a1c-a650-e9b79b0e356f_bb83abf62f2def931282885b55a0e363f9b3f9f9_lin; Path=/; Secure",
+      "X-Seraph-LoginReason",
+      "OK"
+    ]
+  }
+]

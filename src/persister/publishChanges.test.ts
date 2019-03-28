@@ -45,9 +45,9 @@ describe("Convert data", () => {
     const context = {
       instance: {
         config: {
-          host: "dualboot-test.atlassian.net",
-          jiraLogin: "admin@test.dualboot.com",
-          jiraPassword: "ckMqQhfGZXd9d3",
+          host: process.env.JIRA_HOST,
+          jiraLogin: process.env.JIRA_LOGIN,
+          jiraPassword: process.env.JIRA_PASSWORD,
         },
       },
     };
@@ -274,7 +274,6 @@ describe("Convert data", () => {
 
     provider.fetchUsers = jest.fn().mockReturnValue([]);
     provider.fetchIssues = jest.fn().mockReturnValue([]);
-    // initedContext.provider.fetchProjects = jest.fn().mockReturnValue(projectsEntityMock);
 
     const newData = convert(await fetchJiraData(provider, projects));
     expect(newData.relationships.accountProjectRelationships).toEqual([
