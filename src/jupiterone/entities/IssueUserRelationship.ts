@@ -1,5 +1,4 @@
 import { RelationshipFromIntegration } from "@jupiterone/jupiter-managed-integration-sdk";
-import { User } from "../../jira";
 
 export interface IssueCreatedByUserRelationship
   extends RelationshipFromIntegration {
