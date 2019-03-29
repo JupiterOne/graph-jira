@@ -53,10 +53,12 @@ export async function handleEventAction(
   }
   // @ts-ignore
   switch (context.event.action.name) {
-    // @ts-ignore
     case IntegrationActionName.CREATE_ENTITY:
-      return await createJiraIssue(provider, context.event
-        .action as IntegrationCreateEntityAction);
+      return await createJiraIssue(
+        provider,
+        // @ts-ignore
+        context.event.action as IntegrationCreateEntityAction,
+      );
     case IntegrationActionName.SCAN:
     case IntegrationActionName.INGEST:
     default:
