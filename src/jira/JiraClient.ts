@@ -32,7 +32,7 @@ export default class JiraClient {
 
   public async addNewIssue(
     summary: string,
-    projectId: string,
+    projectId: number,
     issueTypeName: IssueTypeName,
   ): Promise<Issue> {
     const issue: Issue = (await this.client.addNewIssue({

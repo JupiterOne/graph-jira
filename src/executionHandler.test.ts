@@ -5,6 +5,7 @@ import {
 import executionHandler from "./executionHandler";
 import initializeContext from "./initializeContext";
 import { Project } from "./jira";
+import { IntegrationActionName } from "./tempEventTypes";
 
 jest.mock("./initializeContext");
 
@@ -123,6 +124,8 @@ describe("Config initialization with data", () => {
         fetchServerInfo: jest.fn().mockReturnValue([]),
         fetchIssues: jest.fn().mockReturnValue([]),
         fetchUsers: jest.fn().mockReturnValue([]),
+        addNewIssue: jest.fn().mockReturnValue({}),
+        findIssue: jest.fn().mockReturnValue([]),
       },
     };
   });
@@ -288,4 +291,158 @@ describe("Config initialization with data", () => {
       executionContext.persister.publishPersisterOperations,
     ).toHaveBeenCalledTimes(1);
   });
+
+  test("executionHandler with CREATE_ENTITY event and with project keys from config", async () => {
+    const invocationContext = ({
+      instance: {
+        config: {
+          projects:
+            "[" +
+            '{ "key": "" },' +
+            '{ "key": " " },' +
+            '{ "key": "Fake Project" }' +
+            "]",
+        },
+      },
+      event: {
+        action: {
+          name: IntegrationActionName.CREATE_ENTITY,
+          class: "Vulnerability",
+          properties: {
+            summary: "Test Summary",
+            description: "Test Description",
+            classification: "Test Classification",
+            project: "Test Project key/id",
+          },
+        },
+      },
+    } as unknown) as IntegrationExecutionContext<IntegrationInvocationEvent>;
+
+    executionContext.projects = invocationContext.instance.config.projects;
+
+    (initializeContext as jest.Mock).mockReturnValue(executionContext);
+
+    await executionHandler(invocationContext);
+
+    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
+    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(0);
+    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(0);
+    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(0);
+    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(0);
+    expect(executionContext.provider.addNewIssue).toHaveBeenCalledTimes(1);
+    expect(executionContext.provider.findIssue).toHaveBeenCalledTimes(1);
+    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
+    expect(
+      executionContext.persister.publishPersisterOperations,
+    ).toHaveBeenCalledTimes(1);
+  });
+
+  test("executionHandler with CREATE_ENTITY event and without project keys from config", async () => {
+    const invocationContext = ({
+      instance: {
+        config: {},
+      },
+      event: {
+        action: {
+          name: IntegrationActionName.CREATE_ENTITY,
+          class: "Vulnerability",
+          properties: {
+            summary: "Test Summary",
+            description: "Test Description",
+            classification: "Test Classification",
+            project: "Test Project key/id",
+          },
+        },
+      },
+    } as unknown) as IntegrationExecutionContext<IntegrationInvocationEvent>;
+
+    executionContext.projects = invocationContext.instance.config.projects;
+
+    (initializeContext as jest.Mock).mockReturnValue(executionContext);
+
+    await executionHandler(invocationContext);
+
+    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
+    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(0);
+    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(0);
+    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(0);
+    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(0);
+    expect(executionContext.provider.addNewIssue).toHaveBeenCalledTimes(1);
+    expect(executionContext.provider.findIssue).toHaveBeenCalledTimes(1);
+    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
+    expect(
+      executionContext.persister.publishPersisterOperations,
+    ).toHaveBeenCalledTimes(1);
+  });
+
+  test("executionHandler with INGEST event and without project keys from config", async () => {
+    const invocationContext = ({
+      instance: {
+        config: {},
+      },
+      event: {
+        action: {
+          name: IntegrationActionName.INGEST,
+        },
+      },
+    } as unknown) as IntegrationExecutionContext<IntegrationInvocationEvent>;
+
+    executionContext.projects = invocationContext.instance.config.projects;
+
+    (initializeContext as jest.Mock).mockReturnValue(executionContext);
+
+    await executionHandler(invocationContext);
+
+    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
+    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(1);
+    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(1);
+    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(1);
+    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(2);
+    expect(executionContext.provider.addNewIssue).toHaveBeenCalledTimes(0);
+    expect(executionContext.provider.findIssue).toHaveBeenCalledTimes(0);
+    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
+    expect(
+      executionContext.persister.publishPersisterOperations,
+    ).toHaveBeenCalledTimes(1);
+  });
+
+  test("executionHandler with SCAN event and without project keys from config", async () => {
+    const invocationContext = ({
+      instance: {
+        config: {},
+      },
+      event: {
+        action: {
+          name: IntegrationActionName.SCAN,
+        },
+      },
+    } as unknown) as IntegrationExecutionContext<IntegrationInvocationEvent>;
+
+    executionContext.projects = invocationContext.instance.config.projects;
+
+    (initializeContext as jest.Mock).mockReturnValue(executionContext);
+
+    await executionHandler(invocationContext);
+
+    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
+    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(1);
+    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(1);
+    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(1);
+    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(2);
+    expect(executionContext.provider.addNewIssue).toHaveBeenCalledTimes(0);
+    expect(executionContext.provider.findIssue).toHaveBeenCalledTimes(0);
+    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
+    expect(
+      executionContext.persister.publishPersisterOperations,
+    ).toHaveBeenCalledTimes(1);
+  });
+
+  // {
+  //   "name": "CREATE_ENTITY",
+  //   "class": "Vulnerability",
+  //   "properties": {
+  //     "summary": "...",
+  //     "description": "...",
+  //     "classification": "..."
+  // }
 });

@@ -1,10 +1,15 @@
 import { createTestIntegrationExecutionContext } from "@jupiterone/jupiter-managed-integration-sdk";
 import nock from "nock";
 import initializeContext from "../initializeContext";
+import createJiraIssue from "../jira/createJiraIssue";
 import fetchJiraData from "../jira/fetchJiraData";
+import {
+  IntegrationActionName,
+  IntegrationCreateEntityAction,
+} from "../tempEventTypes";
 import { convert } from "./publishChanges";
 
-describe("Convert data", () => {
+describe("Convert data after fetching", () => {
   const projectsEntityMock = [
     {
       _class: "Project",
@@ -111,10 +116,10 @@ describe("Convert data", () => {
     const newData = convert(await fetchJiraData(provider, projects));
     expect(newData.entities.issues).toEqual([
       {
-        _class: "Issue",
+        _class: "Record",
         _key: "jira_issue_10003",
         _type: "jira_issue",
-        assignee: "",
+        assignee: undefined,
         category: "issue",
         creator: "admin",
         id: "10003",
@@ -125,7 +130,7 @@ describe("Convert data", () => {
         webLink: "https://dualboot-test.atlassian.net/rest/api/3/issue/10003",
       },
       {
-        _class: "Issue",
+        _class: "Record",
         _key: "jira_issue_10000",
         _type: "jira_issue",
         assignee: "andrew.kulakov",
@@ -337,30 +342,30 @@ describe("Convert data", () => {
     expect(newData.relationships.issueCreatedByUserRelationships).toEqual([
       {
         _class: "CREATED_BY",
-        _fromEntityKey: "jira_issue_10003",
-        _key: "jira_issue_10003_createdBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
+        _fromEntityKey: "10003",
+        _key: "10003_createdBy_5c937560807a642e13136645",
+        _toEntityKey: "5c937560807a642e13136645",
         _type: "jira_issue_created_by_user",
       },
       {
         _class: "CREATED_BY",
-        _fromEntityKey: "jira_issue_10000",
-        _key: "jira_issue_10000_createdBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
+        _fromEntityKey: "10000",
+        _key: "10000_createdBy_5c937560807a642e13136645",
+        _toEntityKey: "5c937560807a642e13136645",
         _type: "jira_issue_created_by_user",
       },
       {
         _class: "CREATED_BY",
-        _fromEntityKey: "jira_issue_10002",
-        _key: "jira_issue_10002_createdBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
+        _fromEntityKey: "10002",
+        _key: "10002_createdBy_5c937560807a642e13136645",
+        _toEntityKey: "5c937560807a642e13136645",
         _type: "jira_issue_created_by_user",
       },
       {
         _class: "CREATED_BY",
-        _fromEntityKey: "jira_issue_10001",
-        _key: "jira_issue_10001_createdBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
+        _fromEntityKey: "10001",
+        _key: "10001_createdBy_5c937560807a642e13136645",
+        _toEntityKey: "5c937560807a642e13136645",
         _type: "jira_issue_created_by_user",
       },
     ]);
@@ -377,34 +382,98 @@ describe("Convert data", () => {
     expect(newData.relationships.issueReportedByUserRelationships).toEqual([
       {
         _class: "REPORTED_BY",
-        _fromEntityKey: "jira_issue_10003",
-        _key: "jira_issue_10003_reportedBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
+        _fromEntityKey: "10003",
+        _key: "10003_reportedBy_5c937560807a642e13136645",
+        _toEntityKey: "5c937560807a642e13136645",
         _type: "jira_issue_reported_by_user",
       },
       {
         _class: "REPORTED_BY",
-        _fromEntityKey: "jira_issue_10000",
-        _key: "jira_issue_10000_reportedBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
+        _fromEntityKey: "10000",
+        _key: "10000_reportedBy_5c937560807a642e13136645",
+        _toEntityKey: "5c937560807a642e13136645",
         _type: "jira_issue_reported_by_user",
       },
       {
         _class: "REPORTED_BY",
-        _fromEntityKey: "jira_issue_10002",
-        _key: "jira_issue_10002_reportedBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
+        _fromEntityKey: "10002",
+        _key: "10002_reportedBy_5c937560807a642e13136645",
+        _toEntityKey: "5c937560807a642e13136645",
         _type: "jira_issue_reported_by_user",
       },
       {
         _class: "REPORTED_BY",
-        _fromEntityKey: "jira_issue_10001",
-        _key: "jira_issue_10001_reportedBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
+        _fromEntityKey: "10001",
+        _key: "10001_reportedBy_5c937560807a642e13136645",
+        _toEntityKey: "5c937560807a642e13136645",
         _type: "jira_issue_reported_by_user",
       },
     ]);
     nockDone();
+  });
+
+  afterAll(() => {
+    nock.restore();
+  });
+});
+
+describe("Convert data after creating issue", () => {
+  beforeAll(() => {
+    nock.back.fixtures = `${__dirname}/../../test/fixtures/`;
+    nock.back.setMode("record");
+  });
+
+  async function initialize() {
+    const context = {
+      instance: {
+        config: {
+          host: process.env.JIRA_HOST,
+          jiraLogin: process.env.JIRA_LOGIN,
+          jiraPassword: process.env.JIRA_PASSWORD,
+        },
+      },
+    };
+
+    const executionContext = {
+      ...createTestIntegrationExecutionContext(context as any),
+    };
+
+    return await initializeContext(executionContext);
+  }
+
+  test("convert issue entity after creating", async () => {
+    const { nockDone } = await nock.back("issue-creating-ok.json");
+    const { provider } = await initialize();
+
+    const newData = convert(
+      await createJiraIssue(provider, {
+        name: IntegrationActionName.CREATE_ENTITY,
+        class: "Vulnerability",
+        properties: {
+          summary: "Test Summary",
+          description: "Test Description",
+          classification: "Task",
+          project: "10000",
+        },
+      } as IntegrationCreateEntityAction),
+    );
+    nockDone();
+    expect(newData.entities.issues).toEqual([
+      {
+        _class: "Record",
+        _key: "jira_issue_10015",
+        _type: "jira_issue",
+        assignee: undefined,
+        category: "issue",
+        creator: "admin",
+        id: "10015",
+        name: "FP-14",
+        reporter: "admin",
+        status: "To Do",
+        summary: "Test Summary",
+        webLink: "https://dualboot-test.atlassian.net/rest/api/3/issue/10015",
+      },
+    ]);
   });
 
   afterAll(() => {
