@@ -13,7 +13,9 @@ async function run(): Promise<void> {
     jiraLogin: process.env.JIRA_LOGIN,
     jiraPassword: process.env.JIRA_PASSWORD,
     host: process.env.JIRA_HOST,
-    projects: process.env.PROJECTS_KEY,
+    projects: process.env.PROJECTS_KEY
+      ? JSON.parse(process.env.PROJECTS_KEY)
+      : "",
   };
 
   const invocationArgs = {

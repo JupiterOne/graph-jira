@@ -8,7 +8,7 @@ import {
   PROJECT_ENTITY_TYPE,
 } from "../jupiterone";
 
-import generateKey from "../utils/generateKey";
+import generateEntityKey from "../utils/generateEntityKey";
 
 export function createAccountProjectRelationships(
   serverInfo: ServerInfo,
@@ -17,8 +17,11 @@ export function createAccountProjectRelationships(
   const defaultValue: AccountProjectRelationship[] = [];
 
   return projects.reduce((acc, group) => {
-    const parentKey = generateKey(ACCOUNT_ENTITY_TYPE, serverInfo.baseUrl);
-    const childKey = generateKey(PROJECT_ENTITY_TYPE, group.id);
+    const parentKey = generateEntityKey(
+      ACCOUNT_ENTITY_TYPE,
+      serverInfo.baseUrl,
+    );
+    const childKey = generateEntityKey(PROJECT_ENTITY_TYPE, group.id);
 
     const relationship: AccountProjectRelationship = {
       _class: ACCOUNT_PROJECT_RELATIONSHIP_CLASS,

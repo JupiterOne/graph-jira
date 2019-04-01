@@ -43,9 +43,9 @@ describe("Convert data after fetching", () => {
 
   beforeAll(() => {
     nock.back.fixtures = `${__dirname}/../../test/fixtures/`;
-    nock.back.setMode("record");
-
-    console.warn(process.env);
+    process.env.CI
+      ? nock.back.setMode("lockdown")
+      : nock.back.setMode("record");
   });
 
   async function initialize() {

@@ -126,11 +126,7 @@ describe("JiraClient creating data", () => {
   test("create issue with existing project ok", async () => {
     const client = await getAuthenticatedClient();
     const { nockDone: creatingDone } = await nock.back("issue-create-ok.json");
-    const createdIssue = await client.addNewIssue(
-      "Test Issue",
-      "10000",
-      "Task",
-    );
+    const createdIssue = await client.addNewIssue("Test Issue", 10000, "Task");
     creatingDone();
 
     expect(createdIssue).toContainKeys(["id", "key", "self"]);

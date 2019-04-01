@@ -5,12 +5,12 @@ import {
   AccountEntity,
 } from "../jupiterone";
 
-import generateKey from "../utils/generateKey";
+import generateEntityKey from "../utils/generateEntityKey";
 
 export function createAccountEntity(serverInfo: ServerInfo): AccountEntity {
   return {
     _class: ACCOUNT_ENTITY_CLASS,
-    _key: generateKey(ACCOUNT_ENTITY_TYPE, serverInfo.baseUrl),
+    _key: generateEntityKey(ACCOUNT_ENTITY_TYPE, serverInfo.baseUrl),
     _type: ACCOUNT_ENTITY_TYPE,
     displayName: serverInfo.serverTitle,
     baseUrl: serverInfo.baseUrl,

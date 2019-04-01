@@ -1,23 +1,26 @@
-import { Issue, User } from "../jira";
+import { Issue } from "../jira";
 
 import {
   ISSUE_CREATED_BY_USER_RELATIONSHIP_CLASS,
   ISSUE_CREATED_BY_USER_RELATIONSHIP_TYPE,
+  ISSUE_ENTITY_TYPE,
   ISSUE_REPORTED_BY_USER_RELATIONSHIP_CLASS,
   ISSUE_REPORTED_BY_USER_RELATIONSHIP_TYPE,
   IssueCreatedByUserRelationship,
   IssueReportedByUserRelationship,
+  USER_ENTITY_TYPE,
 } from "../jupiterone";
+import generateEntityKey from "../utils/generateEntityKey";
 
-export function createIssueCreatedByUserRelationships(
-  issues: Issue[],
-  users: User[],
-) {
+export function createIssueCreatedByUserRelationships(issues: Issue[]) {
   const defaultValue: IssueCreatedByUserRelationship[] = [];
 
   return issues.reduce((acc, issue) => {
-    const parentKey = issue.id;
-    const childKey = issue.fields.creator.accountId;
+    const parentKey = generateEntityKey(ISSUE_ENTITY_TYPE, issue.id);
+    const childKey = generateEntityKey(
+      USER_ENTITY_TYPE,
+      issue.fields.creator.accountId,
+    );
     const relationship: IssueCreatedByUserRelationship = {
       _class: ISSUE_CREATED_BY_USER_RELATIONSHIP_CLASS,
       _type: ISSUE_CREATED_BY_USER_RELATIONSHIP_TYPE,
@@ -30,20 +33,21 @@ export function createIssueCreatedByUserRelationships(
   }, defaultValue);
 }
 
-export function createIssueReportedByUserRelationships(
-  issues: Issue[],
-  users: User[],
-) {
+export function createIssueReportedByUserRelationships(issues: Issue[]) {
   const defaultValue: IssueReportedByUserRelationship[] = [];
 
   return issues.reduce((acc, issue) => {
-    const childKey = issue.fields.reporter.accountId;
+    const parentKey = generateEntityKey(ISSUE_ENTITY_TYPE, issue.id);
+    const childKey = generateEntityKey(
+      USER_ENTITY_TYPE,
+      issue.fields.reporter.accountId,
+    );
 
     const relationship: IssueReportedByUserRelationship = {
       _class: ISSUE_REPORTED_BY_USER_RELATIONSHIP_CLASS,
       _type: ISSUE_REPORTED_BY_USER_RELATIONSHIP_TYPE,
-      _fromEntityKey: issue.id,
-      _key: `${issue.id}_reportedBy_${childKey}`,
+      _fromEntityKey: parentKey,
+      _key: `${parentKey}_reportedBy_${childKey}`,
       _toEntityKey: childKey,
     };
 

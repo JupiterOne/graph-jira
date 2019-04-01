@@ -7,7 +7,7 @@ interface ProjectKey {
 
 export default async function fetchJiraData(
   client: JiraClient,
-  configProjects: string,
+  configProjects: ProjectKey[],
 ): Promise<JiraDataModel> {
   const [projects, serverInfo, users] = await Promise.all([
     client.fetchProjects(),
@@ -18,11 +18,9 @@ export default async function fetchJiraData(
   const fetchedProjectsKeys: ProjectKey[] =
     projects && projects.map(project => ({ key: project.name }));
 
-  const configProjectsKeys = configProjects && JSON.parse(configProjects);
-
   const projectsToIngest: ProjectKey[] =
-    configProjectsKeys && configProjectsKeys.length > 0
-      ? configProjectsKeys
+    configProjects && configProjects.length > 0
+      ? configProjects
       : fetchedProjectsKeys;
 
   const projectIssues = await Promise.all(

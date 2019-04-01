@@ -1,4 +1,4 @@
-import { Issue, Project } from "../jira";
+import { Issue } from "../jira";
 
 import {
   ISSUE_ENTITY_TYPE,
@@ -7,17 +7,17 @@ import {
   PROJECT_ISSUE_RELATIONSHIP_TYPE,
   ProjectIssueRelationship,
 } from "../jupiterone";
-import generateKey from "../utils/generateKey";
+import generateEntityKey from "../utils/generateEntityKey";
 
-export function createProjectIssueRelationships(
-  projects: Project[],
-  issues: Issue[],
-) {
+export function createProjectIssueRelationships(issues: Issue[]) {
   const defaultValue: ProjectIssueRelationship[] = [];
 
   return issues.reduce((acc, issue) => {
-    const parentKey = generateParentKeyForIssue(projects, issue);
-    const childKey = generateKey(ISSUE_ENTITY_TYPE, issue.id);
+    const parentKey = generateEntityKey(
+      PROJECT_ENTITY_TYPE,
+      issue.fields.project.id,
+    );
+    const childKey = generateEntityKey(ISSUE_ENTITY_TYPE, issue.id);
 
     const relationship: ProjectIssueRelationship = {
       _class: PROJECT_ISSUE_RELATIONSHIP_CLASS,
@@ -29,8 +29,4 @@ export function createProjectIssueRelationships(
 
     return [...acc, relationship];
   }, defaultValue);
-}
-
-function generateParentKeyForIssue(projects: Project[], issue: Issue): string {
-  return generateKey(PROJECT_ENTITY_TYPE, issue.fields.project.id);
 }

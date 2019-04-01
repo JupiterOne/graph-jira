@@ -5,12 +5,12 @@ import {
   ProjectEntity,
 } from "../jupiterone";
 
-import generateKey from "../utils/generateKey";
+import generateEntityKey from "../utils/generateEntityKey";
 
 export function createProjectEntities(data: Project[]): ProjectEntity[] {
   return data.map(project => {
     const projectEntity: ProjectEntity = {
-      _key: generateKey(PROJECT_ENTITY_TYPE, project.id),
+      _key: generateEntityKey(PROJECT_ENTITY_TYPE, project.id),
       _type: PROJECT_ENTITY_TYPE,
       _class: PROJECT_ENTITY_CLASS,
       id: project.id,

@@ -116,17 +116,12 @@ export function convertRelationships(
       jiraData.serverInfo,
       jiraData.projects,
     ),
-    projectIssueRelationships: createProjectIssueRelationships(
-      jiraData.projects,
-      jiraData.issues,
-    ),
+    projectIssueRelationships: createProjectIssueRelationships(jiraData.issues),
     issueCreatedByUserRelationships: createIssueCreatedByUserRelationships(
       jiraData.issues,
-      jiraData.users,
     ),
     issueReportedByUserRelationships: createIssueReportedByUserRelationships(
       jiraData.issues,
-      jiraData.users,
     ),
   };
 }

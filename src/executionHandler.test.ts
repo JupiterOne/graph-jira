@@ -182,7 +182,7 @@ describe("Config initialization with data", () => {
     const invocationContext = {
       instance: {
         config: {
-          projects: "[]",
+          projects: [],
         },
       },
     } as IntegrationExecutionContext<IntegrationInvocationEvent>;
@@ -208,7 +208,7 @@ describe("Config initialization with data", () => {
     const invocationContext = {
       instance: {
         config: {
-          projects: '[""]',
+          projects: [""],
         },
       },
     } as IntegrationExecutionContext<IntegrationInvocationEvent>;
@@ -234,12 +234,11 @@ describe("Config initialization with data", () => {
     const invocationContext = {
       instance: {
         config: {
-          projects:
-            "[" +
-            '{ "key": "First Project" },' +
-            '{ "key": "Second Project" },' +
-            '{ "key": "Third Project" }' +
-            "]",
+          projects: [
+            { key: "First Project" },
+            { key: "Second Project" },
+            { key: "Third Project" },
+          ],
         },
       },
     } as IntegrationExecutionContext<IntegrationInvocationEvent>;
@@ -265,12 +264,7 @@ describe("Config initialization with data", () => {
     const invocationContext = {
       instance: {
         config: {
-          projects:
-            "[" +
-            '{ "key": "" },' +
-            '{ "key": " " },' +
-            '{ "key": "Fake Project" }' +
-            "]",
+          projects: [{ key: "" }, { key: " " }, { key: "Fake Project" }],
         },
       },
     } as IntegrationExecutionContext<IntegrationInvocationEvent>;
@@ -296,12 +290,7 @@ describe("Config initialization with data", () => {
     const invocationContext = ({
       instance: {
         config: {
-          projects:
-            "[" +
-            '{ "key": "" },' +
-            '{ "key": " " },' +
-            '{ "key": "Fake Project" }' +
-            "]",
+          projects: [{ key: "" }, { key: " " }, { key: "Fake Project" }],
         },
       },
       event: {
@@ -436,13 +425,4 @@ describe("Config initialization with data", () => {
       executionContext.persister.publishPersisterOperations,
     ).toHaveBeenCalledTimes(1);
   });
-
-  // {
-  //   "name": "CREATE_ENTITY",
-  //   "class": "Vulnerability",
-  //   "properties": {
-  //     "summary": "...",
-  //     "description": "...",
-  //     "classification": "..."
-  // }
 });
