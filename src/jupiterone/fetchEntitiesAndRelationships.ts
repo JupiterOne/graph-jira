@@ -63,12 +63,16 @@ export async function fetchRelationships(
     issueCreatedByUserRelationships,
     issueReportedByUserRelationships,
   ] = await Promise.all([
-    graph.findRelationshipsByType(Entities.ACCOUNT_PROJECT_RELATIONSHIP_TYPE),
-    graph.findRelationshipsByType(Entities.PROJECT_ISSUE_RELATIONSHIP_TYPE),
-    graph.findRelationshipsByType(
+    graph.findRelationshipsByType<Entities.AccountProjectRelationship>(
+      Entities.ACCOUNT_PROJECT_RELATIONSHIP_TYPE,
+    ),
+    graph.findRelationshipsByType<Entities.ProjectIssueRelationship>(
+      Entities.PROJECT_ISSUE_RELATIONSHIP_TYPE,
+    ),
+    graph.findRelationshipsByType<Entities.IssueCreatedByUserRelationship>(
       Entities.ISSUE_CREATED_BY_USER_RELATIONSHIP_TYPE,
     ),
-    graph.findRelationshipsByType(
+    graph.findRelationshipsByType<Entities.IssueReportedByUserRelationship>(
       Entities.ISSUE_REPORTED_BY_USER_RELATIONSHIP_TYPE,
     ),
   ]);

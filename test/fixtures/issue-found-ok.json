@@ -2,14 +2,14 @@
   {
     "scope": "https://dualboot-test.atlassian.net:443",
     "method": "GET",
-    "path": "/rest/api/3/issue/10011?expand=&fields=*all&properties=*all&fieldsByKeys=false",
+    "path": "/rest/api/3/issue/10017?expand=&fields=*all&properties=*all&fieldsByKeys=false",
     "body": "",
     "status": 200,
     "response": {
       "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
-      "id": "10011",
-      "self": "https://dualboot-test.atlassian.net/rest/api/3/issue/10011",
-      "key": "FP-10",
+      "id": "10017",
+      "self": "https://dualboot-test.atlassian.net/rest/api/3/issue/10017",
+      "key": "FP-16",
       "properties": {},
       "fields": {
         "issuetype": {
@@ -41,16 +41,16 @@
         "customfield_10027": null,
         "resolutiondate": null,
         "workratio": -1,
+        "lastViewed": null,
         "watches": {
-          "self": "https://dualboot-test.atlassian.net/rest/api/3/issue/FP-10/watchers",
+          "self": "https://dualboot-test.atlassian.net/rest/api/3/issue/FP-16/watchers",
           "watchCount": 1,
           "isWatching": true
         },
-        "lastViewed": "2019-03-28T17:08:47.327+0400",
-        "created": "2019-03-28T17:08:05.628+0400",
+        "created": "2019-04-02T16:57:44.684+0400",
         "customfield_10020": null,
         "customfield_10021": null,
-        "customfield_10022": "0|i0000v:",
+        "customfield_10022": "0|i00013:",
         "priority": {
           "self": "https://dualboot-test.atlassian.net/rest/api/3/priority/3",
           "iconUrl": "https://dualboot-test.atlassian.net/images/icons/priorities/medium.svg",
@@ -70,12 +70,12 @@
           }
         },
         "customfield_10019": null,
-        "aggregatetimeoriginalestimate": null,
         "timeestimate": null,
+        "aggregatetimeoriginalestimate": null,
         "versions": [],
         "issuelinks": [],
         "assignee": null,
-        "updated": "2019-03-28T17:08:05.628+0400",
+        "updated": "2019-04-02T16:57:44.684+0400",
         "status": {
           "self": "https://dualboot-test.atlassian.net/rest/api/3/status/10001",
           "description": "",
@@ -95,16 +95,16 @@
         "description": null,
         "customfield_10010": null,
         "customfield_10014": null,
-        "timetracking": {},
         "customfield_10015": null,
+        "timetracking": {},
         "customfield_10005": null,
         "customfield_10006": null,
         "security": null,
         "customfield_10007": null,
         "customfield_10008": null,
-        "attachment": [],
         "customfield_10009": null,
         "aggregatetimeestimate": null,
+        "attachment": [],
         "summary": "Test Issue",
         "creator": {
           "self": "https://dualboot-test.atlassian.net/rest/api/3/user?accountId=5c937560807a642e13136645",
@@ -156,16 +156,16 @@
           "progress": 0,
           "total": 0
         },
-        "votes": {
-          "self": "https://dualboot-test.atlassian.net/rest/api/3/issue/FP-10/votes",
-          "votes": 0,
-          "hasVoted": false
-        },
         "comment": {
           "comments": [],
           "maxResults": 0,
           "total": 0,
           "startAt": 0
+        },
+        "votes": {
+          "self": "https://dualboot-test.atlassian.net/rest/api/3/issue/FP-16/votes",
+          "votes": 0,
+          "hasVoted": false
         },
         "worklog": {
           "startAt": 0,
@@ -187,13 +187,13 @@
       "Strict-Transport-Security",
       "max-age=315360000; includeSubDomains; preload",
       "Date",
-      "Thu, 28 Mar 2019 13:33:41 GMT",
+      "Tue, 02 Apr 2019 12:57:45 GMT",
       "ATL-TraceId",
-      "56980c4a447e7702",
+      "e54042201d5de431",
       "X-AACCOUNTID",
       "5c937560807a642e13136645",
       "X-AREQUESTID",
-      "f5538109-1c7c-4dff-9180-ffc5b6a2a355",
+      "b52e6ec0-e3c1-4282-9bb8-8f216f3327eb",
       "X-XSS-Protection",
       "1; mode=block",
       "Transfer-Encoding",
@@ -207,7 +207,7 @@
       "Connection",
       "close",
       "Set-Cookie",
-      "atlassian.xsrf.token=7c75c5a7-5045-4a1c-a650-e9b79b0e356f_bb83abf62f2def931282885b55a0e363f9b3f9f9_lin; Path=/; Secure",
+      "atlassian.xsrf.token=7c75c5a7-5045-4a1c-a650-e9b79b0e356f_f89c0a262efd621aaa3fa049a91ce7963565f8a6_lin; Path=/; Secure",
       "X-Seraph-LoginReason",
       "OK"
     ]

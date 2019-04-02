@@ -7,7 +7,7 @@
       "fields": {
         "summary": "Test Issue",
         "project": {
-          "id": "10000"
+          "id": 10000
         },
         "issuetype": {
           "name": "Task"
@@ -16,9 +16,9 @@
     },
     "status": 201,
     "response": {
-      "id": "10011",
-      "key": "FP-10",
-      "self": "https://dualboot-test.atlassian.net/rest/api/3/issue/10011"
+      "id": "10017",
+      "key": "FP-16",
+      "self": "https://dualboot-test.atlassian.net/rest/api/3/issue/10017"
     },
     "rawHeaders": [
       "Server",
@@ -30,13 +30,13 @@
       "Strict-Transport-Security",
       "max-age=315360000; includeSubDomains; preload",
       "Date",
-      "Thu, 28 Mar 2019 13:08:05 GMT",
+      "Tue, 02 Apr 2019 12:57:44 GMT",
       "ATL-TraceId",
-      "8e7ac41d435161cc",
+      "49e263b80706d5f5",
       "X-AACCOUNTID",
       "5c937560807a642e13136645",
       "X-AREQUESTID",
-      "98eeaa5c-bf7a-4194-ad6d-155e3b1ee155",
+      "ed8ebc7b-b1e1-4cff-9fe7-cdd9b88b4c4d",
       "X-XSS-Protection",
       "1; mode=block",
       "Transfer-Encoding",
@@ -50,7 +50,7 @@
       "Connection",
       "close",
       "Set-Cookie",
-      "atlassian.xsrf.token=7c75c5a7-5045-4a1c-a650-e9b79b0e356f_d069d829f96a4812bce52e290a259e76d097db0d_lin; Path=/; Secure",
+      "atlassian.xsrf.token=7c75c5a7-5045-4a1c-a650-e9b79b0e356f_3ef1b11b5f6a5163759a639a05f6d3343482849e_lin; Path=/; Secure",
       "X-Seraph-LoginReason",
       "OK"
     ]

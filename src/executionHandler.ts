@@ -47,18 +47,13 @@ export async function handleEventAction(
   provider: JiraClient,
   projects: any,
 ): Promise<JiraDataModel> {
-  // @ts-ignore
   if (!context.event || !context.event.action || !context.event.action.name) {
     return await fetchJiraData(provider, projects);
   }
-  // @ts-ignore
   switch (context.event.action.name) {
     case IntegrationActionName.CREATE_ENTITY:
-      return await createJiraIssue(
-        provider,
-        // @ts-ignore
-        context.event.action as IntegrationCreateEntityAction,
-      );
+      return await createJiraIssue(provider, context.event
+        .action as IntegrationCreateEntityAction);
     case IntegrationActionName.SCAN:
     case IntegrationActionName.INGEST:
     default:

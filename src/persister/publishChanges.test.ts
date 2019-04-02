@@ -9,6 +9,30 @@ import {
 } from "../tempEventTypes";
 import { convert } from "./publishChanges";
 
+const JIRA_HOST = process.env.JIRA_HOST || "example.atlassian.com";
+
+function prepareScope(def: nock.NockDefinition) {
+  def.scope = `https://${JIRA_HOST}:443`;
+}
+
+async function initialize() {
+  const context = {
+    instance: {
+      config: {
+        host: JIRA_HOST,
+        jiraLogin: process.env.JIRA_LOGIN,
+        jiraPassword: process.env.JIRA_PASSWORD,
+      },
+    },
+  };
+
+  const executionContext = {
+    ...createTestIntegrationExecutionContext(context as any),
+  };
+
+  return await initializeContext(executionContext);
+}
+
 describe("Convert data after fetching", () => {
   const projectsEntityMock = [
     {
@@ -48,26 +72,10 @@ describe("Convert data after fetching", () => {
       : nock.back.setMode("record");
   });
 
-  async function initialize() {
-    const context = {
-      instance: {
-        config: {
-          host: process.env.JIRA_HOST,
-          jiraLogin: process.env.JIRA_LOGIN,
-          jiraPassword: process.env.JIRA_PASSWORD,
-        },
-      },
-    };
-
-    const executionContext = {
-      ...createTestIntegrationExecutionContext(context),
-    };
-
-    return await initializeContext(executionContext);
-  }
-
   test("convert server info", async () => {
-    const { nockDone } = await nock.back("server-info-ok.json");
+    const { nockDone } = await nock.back("server-info-ok.json", {
+      before: prepareScope,
+    });
     const { provider, projects } = await initialize();
 
     provider.fetchUsers = jest.fn().mockReturnValue([]);
@@ -93,7 +101,9 @@ describe("Convert data after fetching", () => {
   });
 
   test("convert projects", async () => {
-    const { nockDone } = await nock.back("projects-ok.json");
+    const { nockDone } = await nock.back("projects-ok.json", {
+      before: prepareScope,
+    });
     const { provider, projects } = await initialize();
 
     provider.fetchUsers = jest.fn().mockReturnValue([]);
@@ -106,7 +116,9 @@ describe("Convert data after fetching", () => {
   });
 
   test("convert issues", async () => {
-    const { nockDone } = await nock.back("issues-ok.json");
+    const { nockDone } = await nock.back("issues-ok.json", {
+      before: prepareScope,
+    });
     const { provider, projects } = await initialize();
 
     provider.fetchUsers = jest.fn().mockReturnValue([]);
@@ -150,7 +162,9 @@ describe("Convert data after fetching", () => {
   });
 
   test("convert users", async () => {
-    const { nockDone } = await nock.back("users-ok.json");
+    const { nockDone } = await nock.back("users-ok.json", {
+      before: prepareScope,
+    });
     const { provider, projects } = await initialize();
 
     provider.fetchIssues = jest.fn().mockReturnValue([]);
@@ -276,7 +290,9 @@ describe("Convert data after fetching", () => {
   });
 
   test("convert account-project relations", async () => {
-    const { nockDone } = await nock.back("account-projects-ok.json");
+    const { nockDone } = await nock.back("account-projects-ok.json", {
+      before: prepareScope,
+    });
     const { provider, projects } = await initialize();
 
     provider.fetchUsers = jest.fn().mockReturnValue([]);
@@ -305,7 +321,9 @@ describe("Convert data after fetching", () => {
   });
 
   test("convert project-issue relations", async () => {
-    const { nockDone } = await nock.back("issue-ok.json");
+    const { nockDone } = await nock.back("issue-ok.json", {
+      before: prepareScope,
+    });
     const { provider, projects } = await initialize();
 
     provider.fetchUsers = jest.fn().mockReturnValue([]);
@@ -335,7 +353,9 @@ describe("Convert data after fetching", () => {
   });
 
   test("convert issue-createdBy-user relations", async () => {
-    const { nockDone } = await nock.back("issue-created-by-user-ok.json");
+    const { nockDone } = await nock.back("issue-created-by-user-ok.json", {
+      before: prepareScope,
+    });
     const { provider, projects } = await initialize();
 
     provider.fetchServerInfo = jest.fn().mockReturnValue([]);
@@ -344,30 +364,30 @@ describe("Convert data after fetching", () => {
     expect(newData.relationships.issueCreatedByUserRelationships).toEqual([
       {
         _class: "CREATED_BY",
-        _fromEntityKey: "10003",
-        _key: "10003_createdBy_5c937560807a642e13136645",
-        _toEntityKey: "5c937560807a642e13136645",
+        _fromEntityKey: "jira_issue_10003",
+        _key: "jira_issue_10003_createdBy_jira_user_5c937560807a642e13136645",
+        _toEntityKey: "jira_user_5c937560807a642e13136645",
         _type: "jira_issue_created_by_user",
       },
       {
         _class: "CREATED_BY",
-        _fromEntityKey: "10000",
-        _key: "10000_createdBy_5c937560807a642e13136645",
-        _toEntityKey: "5c937560807a642e13136645",
+        _fromEntityKey: "jira_issue_10000",
+        _key: "jira_issue_10000_createdBy_jira_user_5c937560807a642e13136645",
+        _toEntityKey: "jira_user_5c937560807a642e13136645",
         _type: "jira_issue_created_by_user",
       },
       {
         _class: "CREATED_BY",
-        _fromEntityKey: "10002",
-        _key: "10002_createdBy_5c937560807a642e13136645",
-        _toEntityKey: "5c937560807a642e13136645",
+        _fromEntityKey: "jira_issue_10002",
+        _key: "jira_issue_10002_createdBy_jira_user_5c937560807a642e13136645",
+        _toEntityKey: "jira_user_5c937560807a642e13136645",
         _type: "jira_issue_created_by_user",
       },
       {
         _class: "CREATED_BY",
-        _fromEntityKey: "10001",
-        _key: "10001_createdBy_5c937560807a642e13136645",
-        _toEntityKey: "5c937560807a642e13136645",
+        _fromEntityKey: "jira_issue_10001",
+        _key: "jira_issue_10001_createdBy_jira_user_5c937560807a642e13136645",
+        _toEntityKey: "jira_user_5c937560807a642e13136645",
         _type: "jira_issue_created_by_user",
       },
     ]);
@@ -375,7 +395,9 @@ describe("Convert data after fetching", () => {
   });
 
   test("convert issue-reportedBy-user relations", async () => {
-    const { nockDone } = await nock.back("issue-reported-by-user-ok.json");
+    const { nockDone } = await nock.back("issue-reported-by-user-ok.json", {
+      before: prepareScope,
+    });
     const { provider, projects } = await initialize();
 
     provider.fetchServerInfo = jest.fn().mockReturnValue([]);
@@ -384,30 +406,30 @@ describe("Convert data after fetching", () => {
     expect(newData.relationships.issueReportedByUserRelationships).toEqual([
       {
         _class: "REPORTED_BY",
-        _fromEntityKey: "10003",
-        _key: "10003_reportedBy_5c937560807a642e13136645",
-        _toEntityKey: "5c937560807a642e13136645",
+        _fromEntityKey: "jira_issue_10003",
+        _key: "jira_issue_10003_reportedBy_jira_user_5c937560807a642e13136645",
+        _toEntityKey: "jira_user_5c937560807a642e13136645",
         _type: "jira_issue_reported_by_user",
       },
       {
         _class: "REPORTED_BY",
-        _fromEntityKey: "10000",
-        _key: "10000_reportedBy_5c937560807a642e13136645",
-        _toEntityKey: "5c937560807a642e13136645",
+        _fromEntityKey: "jira_issue_10000",
+        _key: "jira_issue_10000_reportedBy_jira_user_5c937560807a642e13136645",
+        _toEntityKey: "jira_user_5c937560807a642e13136645",
         _type: "jira_issue_reported_by_user",
       },
       {
         _class: "REPORTED_BY",
-        _fromEntityKey: "10002",
-        _key: "10002_reportedBy_5c937560807a642e13136645",
-        _toEntityKey: "5c937560807a642e13136645",
+        _fromEntityKey: "jira_issue_10002",
+        _key: "jira_issue_10002_reportedBy_jira_user_5c937560807a642e13136645",
+        _toEntityKey: "jira_user_5c937560807a642e13136645",
         _type: "jira_issue_reported_by_user",
       },
       {
         _class: "REPORTED_BY",
-        _fromEntityKey: "10001",
-        _key: "10001_reportedBy_5c937560807a642e13136645",
-        _toEntityKey: "5c937560807a642e13136645",
+        _fromEntityKey: "jira_issue_10001",
+        _key: "jira_issue_10001_reportedBy_jira_user_5c937560807a642e13136645",
+        _toEntityKey: "jira_user_5c937560807a642e13136645",
         _type: "jira_issue_reported_by_user",
       },
     ]);
@@ -425,26 +447,10 @@ describe("Convert data after creating issue", () => {
     nock.back.setMode("record");
   });
 
-  async function initialize() {
-    const context = {
-      instance: {
-        config: {
-          host: process.env.JIRA_HOST,
-          jiraLogin: process.env.JIRA_LOGIN,
-          jiraPassword: process.env.JIRA_PASSWORD,
-        },
-      },
-    };
-
-    const executionContext = {
-      ...createTestIntegrationExecutionContext(context as any),
-    };
-
-    return await initializeContext(executionContext);
-  }
-
   test("convert issue entity after creating", async () => {
-    const { nockDone } = await nock.back("issue-creating-ok.json");
+    const { nockDone } = await nock.back("issue-creating-ok.json", {
+      before: prepareScope,
+    });
     const { provider } = await initialize();
 
     const newData = convert(
