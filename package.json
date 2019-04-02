@@ -21,18 +21,23 @@
     "format": "yarn prettier --write '**/*.{ts,js,json,md}'",
     "test": "jest"
   },
-  "dependencies": {},
+  "dependencies": {
+    "jira-client": "^6.7.1"
+  },
   "peerDependencies": {
-    "@jupiterone/jupiter-managed-integration-sdk": "^20.0.0"
+    "@jupiterone/jupiter-managed-integration-sdk": "^21.0.0"
   },
   "devDependencies": {
+    "nock": "^10.0.6",
+    "@types/jira-client": "^6.4.2",
+    "@types/nock": "^9.3.1",
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.3.4",
     "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.1.0",
-    "@jupiterone/jupiter-managed-integration-sdk": "^20.0.0",
+    "@jupiterone/jupiter-managed-integration-sdk": "^21.0.0",
     "@types/bunyan": "^1.8.5",
     "@types/fs-extra": "^5.0.5",
     "@types/jest": "^24.0.0",
@@ -44,6 +49,7 @@
     "jest": "^24.0.0",
     "jest-haste-map": "^24.0.0",
     "jest-resolve": "^24.1.0",
+    "jest-extended": "^0.11.1",
     "lint-staged": "^8.1.3",
     "prettier": "1.16.4",
     "remark-cli": "^6.0.1",

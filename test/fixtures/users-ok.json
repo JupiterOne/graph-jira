@@ -1,0 +1,183 @@
+[
+  {
+    "scope": "https://dualboot-test.atlassian.net:443",
+    "method": "GET",
+    "path": "/rest/api/3/user/search?username=&startAt=0&maxResults=1000&includeActive=true&includeInactive=true",
+    "body": "",
+    "status": 200,
+    "response": [
+      {
+        "self": "https://dualboot-test.atlassian.net/rest/api/3/user?accountId=557058:950f9f5b-3d6d-4e1d-954a-21367ae9ac75",
+        "key": "addon_com.atlassian.servicedesk.embedded",
+        "accountId": "557058:950f9f5b-3d6d-4e1d-954a-21367ae9ac75",
+        "name": "addon_com.atlassian.servicedesk.embedded",
+        "emailAddress": "com.atlassian.servicedesk.embedded@connect.atlassian.com",
+        "avatarUrls": {
+          "16x16": "https://avatar-cdn.atlassian.com/726e9dfb98dfab7231aca0392486818d?s=16&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F726e9dfb98dfab7231aca0392486818d%3Fd%3Dmm%26s%3D16%26noRedirect%3Dtrue",
+          "24x24": "https://avatar-cdn.atlassian.com/726e9dfb98dfab7231aca0392486818d?s=24&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F726e9dfb98dfab7231aca0392486818d%3Fd%3Dmm%26s%3D24%26noRedirect%3Dtrue",
+          "32x32": "https://avatar-cdn.atlassian.com/726e9dfb98dfab7231aca0392486818d?s=32&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F726e9dfb98dfab7231aca0392486818d%3Fd%3Dmm%26s%3D32%26noRedirect%3Dtrue",
+          "48x48": "https://avatar-cdn.atlassian.com/726e9dfb98dfab7231aca0392486818d?s=48&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F726e9dfb98dfab7231aca0392486818d%3Fd%3Dmm%26s%3D48%26noRedirect%3Dtrue"
+        },
+        "displayName": "Jira Service Desk Widget",
+        "active": true,
+        "timeZone": "Europe/Samara",
+        "locale": "en_US"
+      },
+      {
+        "self": "https://dualboot-test.atlassian.net/rest/api/3/user?accountId=557058:60a707fb-8250-4607-9e87-cbbae030f722",
+        "key": "addon_jira-sketch-integration",
+        "accountId": "557058:60a707fb-8250-4607-9e87-cbbae030f722",
+        "name": "addon_jira-sketch-integration",
+        "emailAddress": "jira-sketch-integration@connect.atlassian.com",
+        "avatarUrls": {
+          "16x16": "https://avatar-cdn.atlassian.com/bcb1cdfff4a63ce1a2085ff81d9240fc?s=16&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fbcb1cdfff4a63ce1a2085ff81d9240fc%3Fd%3Dmm%26s%3D16%26noRedirect%3Dtrue",
+          "24x24": "https://avatar-cdn.atlassian.com/bcb1cdfff4a63ce1a2085ff81d9240fc?s=24&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fbcb1cdfff4a63ce1a2085ff81d9240fc%3Fd%3Dmm%26s%3D24%26noRedirect%3Dtrue",
+          "32x32": "https://avatar-cdn.atlassian.com/bcb1cdfff4a63ce1a2085ff81d9240fc?s=32&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fbcb1cdfff4a63ce1a2085ff81d9240fc%3Fd%3Dmm%26s%3D32%26noRedirect%3Dtrue",
+          "48x48": "https://avatar-cdn.atlassian.com/bcb1cdfff4a63ce1a2085ff81d9240fc?s=48&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fbcb1cdfff4a63ce1a2085ff81d9240fc%3Fd%3Dmm%26s%3D48%26noRedirect%3Dtrue"
+        },
+        "displayName": "Sketch",
+        "active": true,
+        "timeZone": "Europe/Samara",
+        "locale": "en_US"
+      },
+      {
+        "self": "https://dualboot-test.atlassian.net/rest/api/3/user?accountId=557058:0867a421-a9ee-4659-801a-bc0ee4a4487e",
+        "key": "addon_jira-slack-integration",
+        "accountId": "557058:0867a421-a9ee-4659-801a-bc0ee4a4487e",
+        "name": "addon_jira-slack-integration",
+        "emailAddress": "jira-slack-integration@connect.atlassian.com",
+        "avatarUrls": {
+          "16x16": "https://avatar-cdn.atlassian.com/ab3787cd0c16633ae050dff9d5ab15fc?s=16&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fab3787cd0c16633ae050dff9d5ab15fc%3Fd%3Dmm%26s%3D16%26noRedirect%3Dtrue",
+          "24x24": "https://avatar-cdn.atlassian.com/ab3787cd0c16633ae050dff9d5ab15fc?s=24&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fab3787cd0c16633ae050dff9d5ab15fc%3Fd%3Dmm%26s%3D24%26noRedirect%3Dtrue",
+          "32x32": "https://avatar-cdn.atlassian.com/ab3787cd0c16633ae050dff9d5ab15fc?s=32&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fab3787cd0c16633ae050dff9d5ab15fc%3Fd%3Dmm%26s%3D32%26noRedirect%3Dtrue",
+          "48x48": "https://avatar-cdn.atlassian.com/ab3787cd0c16633ae050dff9d5ab15fc?s=48&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fab3787cd0c16633ae050dff9d5ab15fc%3Fd%3Dmm%26s%3D48%26noRedirect%3Dtrue"
+        },
+        "displayName": "Slack",
+        "active": true,
+        "timeZone": "Europe/Samara",
+        "locale": "en_US"
+      },
+      {
+        "self": "https://dualboot-test.atlassian.net/rest/api/3/user?accountId=557058:214cdd6a-ff93-4d8b-838b-62dfcf1a2a71",
+        "key": "addon_jira-trello-integration",
+        "accountId": "557058:214cdd6a-ff93-4d8b-838b-62dfcf1a2a71",
+        "name": "addon_jira-trello-integration",
+        "emailAddress": "jira-trello-integration@connect.atlassian.com",
+        "avatarUrls": {
+          "16x16": "https://avatar-cdn.atlassian.com/5f14d72ea4c4ebb05e46175191444f71?s=16&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F5f14d72ea4c4ebb05e46175191444f71%3Fd%3Dmm%26s%3D16%26noRedirect%3Dtrue",
+          "24x24": "https://avatar-cdn.atlassian.com/5f14d72ea4c4ebb05e46175191444f71?s=24&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F5f14d72ea4c4ebb05e46175191444f71%3Fd%3Dmm%26s%3D24%26noRedirect%3Dtrue",
+          "32x32": "https://avatar-cdn.atlassian.com/5f14d72ea4c4ebb05e46175191444f71?s=32&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F5f14d72ea4c4ebb05e46175191444f71%3Fd%3Dmm%26s%3D32%26noRedirect%3Dtrue",
+          "48x48": "https://avatar-cdn.atlassian.com/5f14d72ea4c4ebb05e46175191444f71?s=48&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F5f14d72ea4c4ebb05e46175191444f71%3Fd%3Dmm%26s%3D48%26noRedirect%3Dtrue"
+        },
+        "displayName": "Trello",
+        "active": true,
+        "timeZone": "Europe/Samara",
+        "locale": "en_US"
+      },
+      {
+        "self": "https://dualboot-test.atlassian.net/rest/api/3/user?accountId=5ac5326a95d30150501e5ff4",
+        "key": "addon_jira-workplace-integration",
+        "accountId": "5ac5326a95d30150501e5ff4",
+        "name": "addon_jira-workplace-integration",
+        "emailAddress": "jira-workplace-integration@connect.atlassian.com",
+        "avatarUrls": {
+          "16x16": "https://avatar-cdn.atlassian.com/5e3e172bcea3a4596dfeb38649d70a0e?s=16&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F5e3e172bcea3a4596dfeb38649d70a0e%3Fd%3Dmm%26s%3D16%26noRedirect%3Dtrue",
+          "24x24": "https://avatar-cdn.atlassian.com/5e3e172bcea3a4596dfeb38649d70a0e?s=24&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F5e3e172bcea3a4596dfeb38649d70a0e%3Fd%3Dmm%26s%3D24%26noRedirect%3Dtrue",
+          "32x32": "https://avatar-cdn.atlassian.com/5e3e172bcea3a4596dfeb38649d70a0e?s=32&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F5e3e172bcea3a4596dfeb38649d70a0e%3Fd%3Dmm%26s%3D32%26noRedirect%3Dtrue",
+          "48x48": "https://avatar-cdn.atlassian.com/5e3e172bcea3a4596dfeb38649d70a0e?s=48&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F5e3e172bcea3a4596dfeb38649d70a0e%3Fd%3Dmm%26s%3D48%26noRedirect%3Dtrue"
+        },
+        "displayName": "Jira Cloud for Workplace",
+        "active": true,
+        "timeZone": "Europe/Samara",
+        "locale": "en_US"
+      },
+      {
+        "self": "https://dualboot-test.atlassian.net/rest/api/3/user?accountId=5b6c7b3afbc68529c6c47967",
+        "key": "addon_stspg-jira-ops",
+        "accountId": "5b6c7b3afbc68529c6c47967",
+        "name": "addon_stspg-jira-ops",
+        "emailAddress": "stspg-jira-ops@connect.atlassian.com",
+        "avatarUrls": {
+          "16x16": "https://avatar-cdn.atlassian.com/1ac15886f45477da1a8230e3c52df31e?s=16&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F1ac15886f45477da1a8230e3c52df31e%3Fd%3Dmm%26s%3D16%26noRedirect%3Dtrue",
+          "24x24": "https://avatar-cdn.atlassian.com/1ac15886f45477da1a8230e3c52df31e?s=24&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F1ac15886f45477da1a8230e3c52df31e%3Fd%3Dmm%26s%3D24%26noRedirect%3Dtrue",
+          "32x32": "https://avatar-cdn.atlassian.com/1ac15886f45477da1a8230e3c52df31e?s=32&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F1ac15886f45477da1a8230e3c52df31e%3Fd%3Dmm%26s%3D32%26noRedirect%3Dtrue",
+          "48x48": "https://avatar-cdn.atlassian.com/1ac15886f45477da1a8230e3c52df31e?s=48&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2F1ac15886f45477da1a8230e3c52df31e%3Fd%3Dmm%26s%3D48%26noRedirect%3Dtrue"
+        },
+        "displayName": "Statuspage for Jira",
+        "active": true,
+        "timeZone": "Europe/Samara",
+        "locale": "en_US"
+      },
+      {
+        "self": "https://dualboot-test.atlassian.net/rest/api/3/user?accountId=5c937560807a642e13136645",
+        "key": "admin",
+        "accountId": "5c937560807a642e13136645",
+        "name": "admin",
+        "emailAddress": "admin@test.dualboot.com",
+        "avatarUrls": {
+          "16x16": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=16&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D16%26noRedirect%3Dtrue",
+          "24x24": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=24&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D24%26noRedirect%3Dtrue",
+          "32x32": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=32&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D32%26noRedirect%3Dtrue",
+          "48x48": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=48&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D48%26noRedirect%3Dtrue"
+        },
+        "displayName": "Admin Admin",
+        "active": true,
+        "timeZone": "Europe/Samara",
+        "locale": "en_US"
+      },
+      {
+        "self": "https://dualboot-test.atlassian.net/rest/api/3/user?accountId=5c9373df0769b92d1851468c",
+        "key": "andrew.kulakov",
+        "accountId": "5c9373df0769b92d1851468c",
+        "name": "andrew.kulakov",
+        "emailAddress": "andrew.kulakov@test.dualboot.com",
+        "avatarUrls": {
+          "16x16": "https://avatar-cdn.atlassian.com/dc1dab3fb3e014e68b4aaf91939b35e7?s=16&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fdc1dab3fb3e014e68b4aaf91939b35e7%3Fd%3Dmm%26s%3D16%26noRedirect%3Dtrue",
+          "24x24": "https://avatar-cdn.atlassian.com/dc1dab3fb3e014e68b4aaf91939b35e7?s=24&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fdc1dab3fb3e014e68b4aaf91939b35e7%3Fd%3Dmm%26s%3D24%26noRedirect%3Dtrue",
+          "32x32": "https://avatar-cdn.atlassian.com/dc1dab3fb3e014e68b4aaf91939b35e7?s=32&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fdc1dab3fb3e014e68b4aaf91939b35e7%3Fd%3Dmm%26s%3D32%26noRedirect%3Dtrue",
+          "48x48": "https://avatar-cdn.atlassian.com/dc1dab3fb3e014e68b4aaf91939b35e7?s=48&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fdc1dab3fb3e014e68b4aaf91939b35e7%3Fd%3Dmm%26s%3D48%26noRedirect%3Dtrue"
+        },
+        "displayName": "Andrew Kulakov",
+        "active": true,
+        "timeZone": "Europe/Samara",
+        "locale": "en_US"
+      }
+    ],
+    "rawHeaders": [
+      "Server",
+      "Atlassian Proxy/1.13.6.2",
+      "Vary",
+      "Accept-Encoding",
+      "Cache-Control",
+      "no-cache, no-store, no-transform",
+      "Content-Type",
+      "application/json;charset=UTF-8",
+      "Strict-Transport-Security",
+      "max-age=315360000; includeSubDomains; preload",
+      "Date",
+      "Wed, 27 Mar 2019 18:44:38 GMT",
+      "ATL-TraceId",
+      "ddb6e6cb8d03a6ea",
+      "X-AACCOUNTID",
+      "5c937560807a642e13136645",
+      "X-AREQUESTID",
+      "39d86509-04de-4203-ad68-184347fc23de",
+      "X-XSS-Protection",
+      "1; mode=block",
+      "Transfer-Encoding",
+      "chunked",
+      "Timing-Allow-Origin",
+      "*",
+      "X-AUSERNAME",
+      "admin",
+      "X-Content-Type-Options",
+      "nosniff",
+      "Connection",
+      "close",
+      "Set-Cookie",
+      "atlassian.xsrf.token=7c75c5a7-5045-4a1c-a650-e9b79b0e356f_9832b9da5e0381dbdfb1632aaf01f89b6786e602_lin; Path=/; Secure",
+      "X-Seraph-LoginReason",
+      "OK"
+    ]
+  }
+]

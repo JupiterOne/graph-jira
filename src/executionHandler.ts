@@ -2,110 +2,61 @@ import {
   IntegrationExecutionContext,
   IntegrationExecutionResult,
   IntegrationInvocationEvent,
+  summarizePersisterOperationsResults,
 } from "@jupiterone/jupiter-managed-integration-sdk";
-import {
-  createAccountEntity,
-  createAccountRelationships,
-  createDeviceEntities,
-  createUserDeviceRelationships,
-  createUserEntities,
-} from "./converters";
+
 import initializeContext from "./initializeContext";
-import ProviderClient from "./ProviderClient";
+import { JiraDataModel } from "./jira";
+import createJiraIssue from "./jira/createJiraIssue";
+import fetchJiraData from "./jira/fetchJiraData";
+import JiraClient from "./jira/JiraClient";
+import fetchEntitiesAndRelationships, {
+  JupiterOneDataModel,
+} from "./jupiterone/fetchEntitiesAndRelationships";
+import publishChanges from "./persister/publishChanges";
 import {
-  ACCOUNT_DEVICE_RELATIONSHIP_TYPE,
-  ACCOUNT_ENTITY_TYPE,
-  ACCOUNT_USER_RELATIONSHIP_TYPE,
-  AccountEntity,
-  DEVICE_ENTITY_TYPE,
-  DeviceEntity,
-  USER_DEVICE_RELATIONSHIP_TYPE,
-  USER_ENTITY_TYPE,
-  UserEntity,
-} from "./types";
+  IntegrationActionName,
+  IntegrationCreateEntityAction,
+} from "./tempEventTypes";
 
 export default async function executionHandler(
   context: IntegrationExecutionContext<IntegrationInvocationEvent>,
 ): Promise<IntegrationExecutionResult> {
-  const { graph, persister, provider } = initializeContext(context);
+  const { graph, persister, provider, projects } = await initializeContext(
+    context,
+  );
 
-  const [
-    oldAccountEntities,
-    oldUserEntities,
-    oldDeviceEntities,
-    oldAccountRelationships,
-    oldUserDeviceRelationships,
-    newAccountEntities,
-    newUserEntities,
-    newDeviceEntities,
-  ] = await Promise.all([
-    graph.findEntitiesByType<AccountEntity>(ACCOUNT_ENTITY_TYPE),
-    graph.findEntitiesByType<UserEntity>(USER_ENTITY_TYPE),
-    graph.findEntitiesByType<DeviceEntity>(DEVICE_ENTITY_TYPE),
-    graph.findRelationshipsByType([
-      ACCOUNT_USER_RELATIONSHIP_TYPE,
-      ACCOUNT_DEVICE_RELATIONSHIP_TYPE,
-    ]),
-    graph.findRelationshipsByType(USER_DEVICE_RELATIONSHIP_TYPE),
-    fetchAccountEntitiesFromProvider(provider),
-    fetchUserEntitiesFromProvider(provider),
-    fetchDeviceEntitiesFromProvider(provider),
-  ]);
-
-  const [accountEntity] = newAccountEntities;
-  const newAccountRelationships = [
-    ...createAccountRelationships(
-      accountEntity,
-      newUserEntities,
-      ACCOUNT_USER_RELATIONSHIP_TYPE,
-    ),
-    ...createAccountRelationships(
-      accountEntity,
-      newDeviceEntities,
-      ACCOUNT_DEVICE_RELATIONSHIP_TYPE,
-    ),
-  ];
-
-  const newUserDeviceRelationships = createUserDeviceRelationships(
-    newUserEntities,
-    newDeviceEntities,
+  const oldData: JupiterOneDataModel = await fetchEntitiesAndRelationships(
+    graph,
+  );
+  const jiraData: JiraDataModel = await handleEventAction(
+    context,
+    provider,
+    projects,
   );
 
   return {
-    operations: await persister.publishPersisterOperations([
-      [
-        ...persister.processEntities(oldAccountEntities, newAccountEntities),
-        ...persister.processEntities(oldUserEntities, newUserEntities),
-        ...persister.processEntities(oldDeviceEntities, newDeviceEntities),
-      ],
-      [
-        ...persister.processRelationships(
-          oldUserDeviceRelationships,
-          newUserDeviceRelationships,
-        ),
-        ...persister.processRelationships(
-          oldAccountRelationships,
-          newAccountRelationships,
-        ),
-      ],
-    ]),
+    operations: summarizePersisterOperationsResults(
+      await publishChanges(persister, oldData, jiraData),
+    ),
   };
 }
 
-async function fetchAccountEntitiesFromProvider(
-  provider: ProviderClient,
-): Promise<AccountEntity[]> {
-  return [createAccountEntity(await provider.fetchAccountDetails())];
-}
-
-async function fetchUserEntitiesFromProvider(
-  provider: ProviderClient,
-): Promise<UserEntity[]> {
-  return createUserEntities(await provider.fetchUsers());
-}
-
-async function fetchDeviceEntitiesFromProvider(
-  provider: ProviderClient,
-): Promise<DeviceEntity[]> {
-  return createDeviceEntities(await provider.fetchDevices());
+export async function handleEventAction(
+  context: IntegrationExecutionContext<IntegrationInvocationEvent>,
+  provider: JiraClient,
+  projects: any,
+): Promise<JiraDataModel> {
+  if (!context.event || !context.event.action || !context.event.action.name) {
+    return await fetchJiraData(provider, projects);
+  }
+  switch (context.event.action.name) {
+    case IntegrationActionName.CREATE_ENTITY:
+      return await createJiraIssue(provider, context.event
+        .action as IntegrationCreateEntityAction);
+    case IntegrationActionName.SCAN:
+    case IntegrationActionName.INGEST:
+    default:
+      return await fetchJiraData(provider, projects);
+  }
 }
