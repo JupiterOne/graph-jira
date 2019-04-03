@@ -723,10 +723,10 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@jupiterone/jupiter-managed-integration-sdk@^21.0.0":
-  version "21.0.0"
-  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-21.0.0.tgz#531d96fb460c65fe3cb8a1d0a8a40c39ee47c1b1"
-  integrity sha512-9l/R8OGlj6LjGLboEjeVvY1HsuXDoZpH9jMweiCbqZgWudaN8Uo0A9OblTC0U8zclxOjjkCVM/MDfTp/t8xEuQ==
+"@jupiterone/jupiter-managed-integration-sdk@^21.0.1":
+  version "21.0.1"
+  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-21.0.1.tgz#b47001ee7bd070d1b8b323d65fd9554c49b84dc7"
+  integrity sha512-cQXdJSh1SLCKPN2MzZjAmtgbmvikFcl81co9gCCMFrvuK0x1Qf4k6WWoX2JaiOsrMhOmD+lSubey86ynMC5G8Q==
 
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
