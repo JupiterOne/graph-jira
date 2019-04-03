@@ -18,20 +18,23 @@ Security for Other Integrations][1] documentation.
 
 The following entity resources are ingested when the integration runs:
 
-| Example Entity Resource | \_type : \_class of the Entity |
-| ----------------------- | ------------------------------ |
-| Account                 | `jira_account` : `Account`     |
-| Project                 | `jira_project` : `Project`     |
-| User                    | `jira_user` : `User`           |
-| Issue                   | `jira_issue` : `Record`        |
+| Jira Resource | \_type of the Entity | \_class of the Entity |
+| ------------- | -------------------- | --------------------- |
+| Account       | `jira_account`       | `Account`             |
+| Project       | `jira_project`       | `Project`             |
+| User          | `jira_user`          | `User`                |
+| Issue         | `jira_issue`         | `Record`              |
 
 ## Relationships
 
 The following relationships are created/mapped:
 
-| From           | Type         | To             |
-| -------------- | ------------ | -------------- |
-| `jira_account` | **HAS**      | `jira_project` |
-| `jira_user`    | **ASSIGNED** | `jira_project` |
+| From           | Type            | To             |
+| -------------- | --------------- | -------------- |
+| `jira_account` | **HAS**         | `jira_project` |
+| `jira_project` | **HAS**         | `jira_issue`   |
+| `jira_issue`   | **CREATED_BY**  | `jira_user`    |
+| `jira_issue`   | **REPORTED_BY** | `jira_user`    |
 
-[1]: https://developer.atlassian.com/cloud/jira/platform/security-for-other-integrations/
+[1]:
+  https://developer.atlassian.com/cloud/jira/platform/security-for-other-integrations/
