@@ -10,11 +10,11 @@ async function run(): Promise<void> {
   const logger = createLogger({ name: "local", level: TRACE });
 
   const integrationConfig = {
-    jiraLogin: process.env.JIRA_LOGIN,
-    jiraPassword: process.env.JIRA_PASSWORD,
-    host: process.env.JIRA_HOST,
-    projects: process.env.PROJECTS_KEY
-      ? JSON.parse(process.env.PROJECTS_KEY)
+    jiraUsername: process.env.JIRA_LOCAL_EXECUTION_USERNAME,
+    jiraPassword: process.env.JIRA_LOCAL_EXECUTION_PASSWORD,
+    jiraHost: process.env.JIRA_LOCAL_EXECUTION_HOST,
+    projects: process.env.JIRA_LOCAL_EXECUTION_PROJECTS
+      ? JSON.parse(process.env.JIRA_LOCAL_EXECUTION_PROJECTS)
       : [],
   };
 

@@ -2,10 +2,10 @@ import "jest-extended";
 import nock from "nock";
 import JiraClient from "./JiraClient";
 
-const JIRA_HOST = process.env.JIRA_HOST || "example.atlassian.com";
+const JIRA_LOCAL_EXECUTION_HOST = process.env.JIRA_LOCAL_EXECUTION_HOST || "example.atlassian.com";
 
 function prepareScope(def: nock.NockDefinition) {
-  def.scope = `https://${JIRA_HOST}:443`;
+  def.scope = `https://${JIRA_LOCAL_EXECUTION_HOST}:443`;
 }
 
 describe("JiraClient fetch ok data", () => {
@@ -18,9 +18,9 @@ describe("JiraClient fetch ok data", () => {
 
   async function getAuthenticatedClient() {
     const client = new JiraClient({
-      host: JIRA_HOST,
-      username: process.env.JIRA_LOGIN || "",
-      password: process.env.JIRA_PASSWORD || "",
+      host: JIRA_LOCAL_EXECUTION_HOST,
+      username: process.env.JIRA_LOCAL_EXECUTION_USERNAME || "",
+      password: process.env.JIRA_LOCAL_EXECUTION_PASSWORD || "",
     });
 
     return client;
@@ -105,7 +105,7 @@ describe("JiraClient bad credentials", () => {
 
   async function getAuthenticatedClient() {
     const client = new JiraClient({
-      host: JIRA_HOST,
+      host: JIRA_LOCAL_EXECUTION_HOST,
       username: "fakeUser",
       password: "fakePassword",
     });
@@ -137,9 +137,9 @@ describe("JiraClient creating data", () => {
 
   async function getAuthenticatedClient() {
     const client = new JiraClient({
-      host: JIRA_HOST,
-      username: process.env.JIRA_LOGIN || "",
-      password: process.env.JIRA_PASSWORD || "",
+      host: JIRA_LOCAL_EXECUTION_HOST,
+      username: process.env.JIRA_LOCAL_EXECUTION_USERNAME || "",
+      password: process.env.JIRA_LOCAL_EXECUTION_PASSWORD || "",
     });
 
     return client;

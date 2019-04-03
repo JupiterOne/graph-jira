@@ -24,9 +24,9 @@ export default async function invocationValidator(
     instance: { config },
   } = executionContext;
 
-  if (!config.host || !config.jiraPassword || !config.jiraLogin) {
+  if (!config.jiraHost || !config.jiraPassword || !config.jiraUsername) {
     throw new IntegrationInstanceConfigError(
-      "config.host and config.jiraPassword and config.jiraLogin must be provided by the user",
+      "config.jiraHost and config.jiraPassword and config.jiraUsername must be provided by the user",
     );
   }
 

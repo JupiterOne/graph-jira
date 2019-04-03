@@ -9,8 +9,8 @@ describe("invocationValidator errors", () => {
     const context = {
       instance: {
         config: {
-          host: "testHost",
-          jiraLogin: "testLogin",
+          jiraHost: "testHost",
+          jiraUsername: "testLogin",
         },
       },
     };
@@ -22,11 +22,11 @@ describe("invocationValidator errors", () => {
     }
   });
 
-  test("should throw exception if jiraLogin is missed", async () => {
+  test("should throw exception if jiraUsername is missed", async () => {
     const context = {
       instance: {
         config: {
-          host: "testHost",
+          jiraHost: "testHost",
           jiraPassword: "testPassword",
         },
       },
@@ -43,8 +43,8 @@ describe("invocationValidator errors", () => {
     const executionContext = {
       instance: {
         config: {
-          host: "fakeHost",
-          jiraLogin: "fakeLogin",
+          jiraHost: "fakeHost",
+          jiraUsername: "fakeLogin",
           jiraPassword: "fakePassword",
         },
       },
