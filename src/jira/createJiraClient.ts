@@ -12,8 +12,8 @@ export default function createJiraClient(
   } = context;
 
   return new JiraClient({
-    host: config.host,
-    username: config.jiraLogin,
+    host: config.jiraHost,
+    username: config.jiraUsername,
     password: config.jiraPassword,
   });
 }

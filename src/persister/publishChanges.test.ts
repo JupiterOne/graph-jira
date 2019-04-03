@@ -9,19 +9,19 @@ import {
 } from "../tempEventTypes";
 import { convert } from "./publishChanges";
 
-const JIRA_HOST = process.env.JIRA_HOST || "example.atlassian.com";
+const JIRA_LOCAL_EXECUTION_HOST = process.env.JIRA_LOCAL_EXECUTION_HOST || "example.atlassian.com";
 
 function prepareScope(def: nock.NockDefinition) {
-  def.scope = `https://${JIRA_HOST}:443`;
+  def.scope = `https://${JIRA_LOCAL_EXECUTION_HOST}:443`;
 }
 
 async function initialize() {
   const context = {
     instance: {
       config: {
-        host: JIRA_HOST,
-        jiraLogin: process.env.JIRA_LOGIN,
-        jiraPassword: process.env.JIRA_PASSWORD,
+        jiraHost: JIRA_LOCAL_EXECUTION_HOST,
+        jiraUsername: process.env.JIRA_LOCAL_EXECUTION_USERNAME,
+        jiraPassword: process.env.JIRA_LOCAL_EXECUTION_PASSWORD,
       },
     },
   };
