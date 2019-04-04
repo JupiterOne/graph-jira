@@ -73,11 +73,20 @@ export default class JiraClient {
   }
 
   public async fetchUsers(): Promise<User[]> {
-    const users: User[] = (await this.client.searchUsers({
-      username: "",
-      includeInactive: true,
-      maxResults: 1000,
-    })) as User[];
+    let users: User[] = [];
+    let resultLength = 0;
+
+    do {
+      const paginatedUsers: User[] = (await this.client.searchUsers({
+        startAt: users.length,
+        username: "",
+        includeInactive: true,
+      })) as User[];
+
+      users = users.concat(paginatedUsers);
+      resultLength = paginatedUsers.length;
+    } while (resultLength > 0);
+
     return users;
   }
 }
