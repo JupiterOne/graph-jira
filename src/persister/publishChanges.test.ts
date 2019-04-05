@@ -155,7 +155,7 @@ describe("Convert data after fetching", () => {
         creator: "admin",
         id: "10000",
         name: "FP-1",
-        reporter: "admin",
+        reporter: null,
         status: "In Review",
         summary: "First Issue",
         webLink: "https://dualboot-test.atlassian.net/rest/api/3/issue/10000",
