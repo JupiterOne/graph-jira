@@ -164,6 +164,8 @@ describe("CREATE_ENTITY", () => {
     expect(jiraClient.fetchServerInfo).toHaveBeenCalledTimes(0);
     expect(jiraClient.fetchUsers).toHaveBeenCalledTimes(0);
     expect(jiraClient.fetchIssues).toHaveBeenCalledTimes(0);
+    expect(jiraClient.addNewIssue).toHaveBeenCalledTimes(1);
+    expect(jiraClient.findIssue).toHaveBeenCalledTimes(1);
     expect(clients.persister.processEntities).toHaveBeenCalledTimes(1);
     expect(clients.persister.publishEntityOperations).toHaveBeenCalledTimes(1);
     expect(
