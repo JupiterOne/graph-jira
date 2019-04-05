@@ -28,7 +28,7 @@ function capitalize(word: string): string {
   return `${word.slice(0, 1).toUpperCase()}${word.slice(1).toLowerCase()}`;
 }
 
-function entityConstatFromType(entityType: string) {
+function entityConstantFromType(entityType: string) {
   return [entityType.toUpperCase(), "ENTITY_TYPE"].join("_");
 }
 
@@ -38,15 +38,15 @@ function generateEntityRow(typeKey: string, classKey: string): string[] {
     .slice(0, -2)
     .map(capitalize)
     .join(" ");
-  const type: string = Entities[typeKey];
-  const klass: string = Entities[classKey];
+  const type: string = (Entities as any)[typeKey];
+  const klass: string = (Entities as any)[classKey];
 
   return [providerName, codeBlock(type), codeBlock(klass)];
 }
 
 function generateRelationshipRow(typeKey: string, classKey: string): string[] {
-  const type: string = Entities[typeKey];
-  const klass: string = Entities[classKey];
+  const type: string = (Entities as any)[typeKey];
+  const klass: string = (Entities as any)[classKey];
 
   const components = type.split("_");
   const entities = components
@@ -60,8 +60,12 @@ function generateRelationshipRow(typeKey: string, classKey: string): string[] {
         .join(""),
     );
 
-  const parentEntityType: string = Entities[entityConstatFromType(entities[0])];
-  const childEntityType: string = Entities[entityConstatFromType(entities[1])];
+  const parentEntityType: string = (Entities as any)[
+    entityConstantFromType(entities[0])
+  ];
+  const childEntityType: string = (Entities as any)[
+    entityConstantFromType(entities[1])
+  ];
 
   return [
     codeBlock(parentEntityType),
