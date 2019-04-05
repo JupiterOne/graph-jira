@@ -1,15 +1,18 @@
-import { createTestIntegrationExecutionContext } from "@jupiterone/jupiter-managed-integration-sdk";
 import nock from "nock";
+
+import {
+  createTestIntegrationExecutionContext,
+  IntegrationActionName,
+  IntegrationCreateEntityAction,
+} from "@jupiterone/jupiter-managed-integration-sdk";
+
 import initializeContext from "../initializeContext";
 import createJiraIssue from "../jira/createJiraIssue";
 import fetchJiraData from "../jira/fetchJiraData";
-import {
-  IntegrationActionName,
-  IntegrationCreateEntityAction,
-} from "../tempEventTypes";
 import { convert } from "./publishChanges";
 
-const JIRA_LOCAL_EXECUTION_HOST = process.env.JIRA_LOCAL_EXECUTION_HOST || "example.atlassian.com";
+const JIRA_LOCAL_EXECUTION_HOST =
+  process.env.JIRA_LOCAL_EXECUTION_HOST || "example.atlassian.com";
 
 function prepareScope(def: nock.NockDefinition) {
   def.scope = `https://${JIRA_LOCAL_EXECUTION_HOST}:443`;
@@ -76,13 +79,13 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("server-info-ok.json", {
       before: prepareScope,
     });
-    const { provider, projects } = await initialize();
+    const { jira, projects } = await initialize();
 
-    provider.fetchUsers = jest.fn().mockReturnValue([]);
-    provider.fetchProjects = jest.fn().mockReturnValue([]);
-    provider.fetchIssues = jest.fn().mockReturnValue([]);
+    jira.fetchUsers = jest.fn().mockReturnValue([]);
+    jira.fetchProjects = jest.fn().mockReturnValue([]);
+    jira.fetchIssues = jest.fn().mockReturnValue([]);
 
-    const newData = convert(await fetchJiraData(provider, projects));
+    const newData = convert(await fetchJiraData(jira, projects));
     expect(newData.entities.accounts).toEqual([
       {
         _class: "Account",
@@ -104,13 +107,13 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("projects-ok.json", {
       before: prepareScope,
     });
-    const { provider, projects } = await initialize();
+    const { jira, projects } = await initialize();
 
-    provider.fetchUsers = jest.fn().mockReturnValue([]);
-    provider.fetchServerInfo = jest.fn().mockReturnValue([]);
-    provider.fetchIssues = jest.fn().mockReturnValue([]);
+    jira.fetchUsers = jest.fn().mockReturnValue([]);
+    jira.fetchServerInfo = jest.fn().mockReturnValue([]);
+    jira.fetchIssues = jest.fn().mockReturnValue([]);
 
-    const newData = convert(await fetchJiraData(provider, projects));
+    const newData = convert(await fetchJiraData(jira, projects));
     expect(newData.entities.projects).toEqual(projectsEntityMock);
     nockDone();
   });
@@ -119,15 +122,15 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("issues-ok.json", {
       before: prepareScope,
     });
-    const { provider, projects } = await initialize();
+    const { jira, projects } = await initialize();
 
-    provider.fetchUsers = jest.fn().mockReturnValue([]);
-    provider.fetchServerInfo = jest.fn().mockReturnValue([]);
-    provider.fetchProjects = jest
+    jira.fetchUsers = jest.fn().mockReturnValue([]);
+    jira.fetchServerInfo = jest.fn().mockReturnValue([]);
+    jira.fetchProjects = jest
       .fn()
       .mockReturnValue(projectsEntityMock.slice(0, 1));
 
-    const newData = convert(await fetchJiraData(provider, projects));
+    const newData = convert(await fetchJiraData(jira, projects));
     expect(newData.entities.issues).toEqual([
       {
         _class: "Record",
@@ -165,13 +168,13 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("users-ok.json", {
       before: prepareScope,
     });
-    const { provider, projects } = await initialize();
+    const { jira, projects } = await initialize();
 
-    provider.fetchIssues = jest.fn().mockReturnValue([]);
-    provider.fetchServerInfo = jest.fn().mockReturnValue([]);
-    provider.fetchProjects = jest.fn().mockReturnValue([]);
+    jira.fetchIssues = jest.fn().mockReturnValue([]);
+    jira.fetchServerInfo = jest.fn().mockReturnValue([]);
+    jira.fetchProjects = jest.fn().mockReturnValue([]);
 
-    const newData = convert(await fetchJiraData(provider, projects));
+    const newData = convert(await fetchJiraData(jira, projects));
     expect(newData.entities.users).toEqual([
       {
         _class: "User",
@@ -293,12 +296,12 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("account-projects-ok.json", {
       before: prepareScope,
     });
-    const { provider, projects } = await initialize();
+    const { jira, projects } = await initialize();
 
-    provider.fetchUsers = jest.fn().mockReturnValue([]);
-    provider.fetchIssues = jest.fn().mockReturnValue([]);
+    jira.fetchUsers = jest.fn().mockReturnValue([]);
+    jira.fetchIssues = jest.fn().mockReturnValue([]);
 
-    const newData = convert(await fetchJiraData(provider, projects));
+    const newData = convert(await fetchJiraData(jira, projects));
     expect(newData.relationships.accountProjectRelationships).toEqual([
       {
         _class: "HAS",
@@ -324,15 +327,15 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("issue-ok.json", {
       before: prepareScope,
     });
-    const { provider, projects } = await initialize();
+    const { jira, projects } = await initialize();
 
-    provider.fetchUsers = jest.fn().mockReturnValue([]);
-    provider.fetchServerInfo = jest.fn().mockReturnValue([]);
-    provider.fetchProjects = jest
+    jira.fetchUsers = jest.fn().mockReturnValue([]);
+    jira.fetchServerInfo = jest.fn().mockReturnValue([]);
+    jira.fetchProjects = jest
       .fn()
       .mockReturnValue(projectsEntityMock.slice(0, 1));
 
-    const newData = convert(await fetchJiraData(provider, projects));
+    const newData = convert(await fetchJiraData(jira, projects));
     expect(newData.relationships.projectIssueRelationships).toEqual([
       {
         _class: "HAS",
@@ -356,11 +359,11 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("issue-created-by-user-ok.json", {
       before: prepareScope,
     });
-    const { provider, projects } = await initialize();
+    const { jira, projects } = await initialize();
 
-    provider.fetchServerInfo = jest.fn().mockReturnValue([]);
+    jira.fetchServerInfo = jest.fn().mockReturnValue([]);
 
-    const newData = convert(await fetchJiraData(provider, projects));
+    const newData = convert(await fetchJiraData(jira, projects));
     expect(newData.relationships.issueCreatedByUserRelationships).toEqual([
       {
         _class: "CREATED_BY",
@@ -398,11 +401,11 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("issue-reported-by-user-ok.json", {
       before: prepareScope,
     });
-    const { provider, projects } = await initialize();
+    const { jira, projects } = await initialize();
 
-    provider.fetchServerInfo = jest.fn().mockReturnValue([]);
+    jira.fetchServerInfo = jest.fn().mockReturnValue([]);
 
-    const newData = convert(await fetchJiraData(provider, projects));
+    const newData = convert(await fetchJiraData(jira, projects));
     expect(newData.relationships.issueReportedByUserRelationships).toEqual([
       {
         _class: "REPORTED_BY",
@@ -451,10 +454,10 @@ describe("Convert data after creating issue", () => {
     const { nockDone } = await nock.back("issue-creating-ok.json", {
       before: prepareScope,
     });
-    const { provider } = await initialize();
+    const { jira } = await initialize();
 
     const newData = convert(
-      await createJiraIssue(provider, {
+      await createJiraIssue(jira, {
         name: IntegrationActionName.CREATE_ENTITY,
         class: "Vulnerability",
         properties: {

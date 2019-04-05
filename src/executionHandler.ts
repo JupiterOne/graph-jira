@@ -1,62 +1,82 @@
 import {
+  IntegrationActionName,
+  IntegrationCreateEntityAction,
   IntegrationExecutionContext,
   IntegrationExecutionResult,
   IntegrationInvocationEvent,
   summarizePersisterOperationsResults,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
+import { createIssueEntities } from "./converters";
 import initializeContext from "./initializeContext";
-import { JiraDataModel } from "./jira";
 import createJiraIssue from "./jira/createJiraIssue";
 import fetchJiraData from "./jira/fetchJiraData";
-import JiraClient from "./jira/JiraClient";
 import fetchEntitiesAndRelationships, {
   JupiterOneDataModel,
 } from "./jupiterone/fetchEntitiesAndRelationships";
 import publishChanges from "./persister/publishChanges";
-import {
-  IntegrationActionName,
-  IntegrationCreateEntityAction,
-} from "./tempEventTypes";
+import { JiraIntegrationContext } from "./types";
 
 export default async function executionHandler(
   context: IntegrationExecutionContext<IntegrationInvocationEvent>,
 ): Promise<IntegrationExecutionResult> {
-  const { graph, persister, provider, projects } = await initializeContext(
-    context,
-  );
+  const actionFunction = ACTIONS[context.event.action.name];
+  if (actionFunction) {
+    return await actionFunction(await initializeContext(context));
+  } else {
+    return {};
+  }
+}
 
-  const oldData: JupiterOneDataModel = await fetchEntitiesAndRelationships(
+async function synchronize(
+  context: JiraIntegrationContext,
+): Promise<IntegrationExecutionResult> {
+  const { jira, graph, persister, projects } = context;
+  const graphData: JupiterOneDataModel = await fetchEntitiesAndRelationships(
     graph,
   );
-  const jiraData: JiraDataModel = await handleEventAction(
-    context,
-    provider,
-    projects,
-  );
-
+  const jiraData = await fetchJiraData(jira, projects);
   return {
     operations: summarizePersisterOperationsResults(
-      await publishChanges(persister, oldData, jiraData),
+      await publishChanges(persister, graphData, jiraData),
     ),
   };
 }
 
-export async function handleEventAction(
-  context: IntegrationExecutionContext<IntegrationInvocationEvent>,
-  provider: JiraClient,
-  projects: any,
-): Promise<JiraDataModel> {
-  if (!context.event || !context.event.action || !context.event.action.name) {
-    return await fetchJiraData(provider, projects);
-  }
-  switch (context.event.action.name) {
-    case IntegrationActionName.CREATE_ENTITY:
-      return await createJiraIssue(provider, context.event
-        .action as IntegrationCreateEntityAction);
-    case IntegrationActionName.SCAN:
-    case IntegrationActionName.INGEST:
-    default:
-      return await fetchJiraData(provider, projects);
-  }
+async function createIssue(
+  context: JiraIntegrationContext,
+): Promise<IntegrationExecutionResult> {
+  const {
+    jira,
+    persister,
+    event: { action },
+  } = context;
+
+  const jiraData = await createJiraIssue(
+    jira,
+    action as IntegrationCreateEntityAction,
+  );
+
+  const entityOperations = persister.processEntities(
+    [],
+    createIssueEntities(jiraData.issues),
+  );
+
+  // TODO new relationship operations must also be published
+  return {
+    operations: await persister.publishEntityOperations(entityOperations),
+  };
 }
+
+type ActionFunction = (
+  context: JiraIntegrationContext,
+) => Promise<IntegrationExecutionResult>;
+
+interface ActionMap {
+  [actionName: string]: ActionFunction | undefined;
+}
+
+const ACTIONS: ActionMap = {
+  [IntegrationActionName.INGEST]: synchronize,
+  [IntegrationActionName.CREATE_ENTITY]: createIssue,
+};

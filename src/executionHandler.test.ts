@@ -1,13 +1,15 @@
 import {
+  IntegrationActionName,
   IntegrationExecutionContext,
   IntegrationInvocationEvent,
+  PersisterClient,
 } from "@jupiterone/jupiter-managed-integration-sdk";
-import executionHandler from "./executionHandler";
-import initializeContext from "./initializeContext";
-import { Project } from "./jira";
-import { IntegrationActionName } from "./tempEventTypes";
 
-jest.mock("./initializeContext");
+import executionHandler from "./executionHandler";
+import { createJiraClient, Project } from "./jira";
+import JiraClient from "./jira/JiraClient";
+
+jest.mock("./jira");
 
 const twoProjects: Project[] = [
   {
@@ -52,377 +54,142 @@ const twoProjects: Project[] = [
   },
 ];
 
-describe("Config initialization with empty data", () => {
-  test("executionHandler with empty all fetched data", async () => {
-    const executionContext = {
-      graph: {
-        findEntitiesByType: jest.fn().mockResolvedValue([]),
-        findRelationshipsByType: jest.fn().mockResolvedValue([]),
-      },
-      persister: {
-        processEntities: jest.fn().mockReturnValue([]),
-        processRelationships: jest.fn().mockReturnValue([]),
-        publishPersisterOperations: jest.fn().mockResolvedValue({}),
-      },
-      provider: {
-        authenticate: jest.fn().mockReturnValue({}),
-        fetchProjects: jest.fn().mockReturnValue([]),
-        fetchServerInfo: jest.fn().mockReturnValue([]),
-        fetchIssues: jest.fn().mockReturnValue([]),
-        fetchUsers: jest.fn().mockReturnValue([]),
-      },
-      projects: undefined,
-    };
+const clients = {
+  graph: {
+    findEntitiesByType: jest.fn().mockResolvedValue([]),
+    findRelationshipsByType: jest.fn().mockResolvedValue([]),
+  },
+  persister: {
+    processEntities: jest.fn().mockReturnValue([]),
+    processRelationships: jest.fn().mockReturnValue([]),
+    publishEntityOperations: jest.fn().mockResolvedValue({}),
+    publishRelationshipOperations: jest.fn().mockResolvedValue({}),
+    publishPersisterOperations: jest.fn().mockResolvedValue({}),
+  } as PersisterClient,
+};
 
-    (initializeContext as jest.Mock).mockReturnValue(executionContext);
+let jiraClient: JiraClient;
+let executionContext: IntegrationExecutionContext<IntegrationInvocationEvent>;
 
-    const invocationContext = {
-      instance: {
-        config: {},
+beforeEach(() => {
+  jiraClient = ({
+    fetchProjects: jest.fn().mockReturnValue(twoProjects),
+    fetchServerInfo: jest.fn().mockReturnValue([]),
+    fetchIssues: jest.fn().mockReturnValue([]),
+    fetchUsers: jest.fn().mockReturnValue([]),
+    addNewIssue: jest.fn().mockReturnValue({}),
+    findIssue: jest.fn().mockReturnValue([]),
+  } as unknown) as JiraClient;
+
+  (createJiraClient as jest.Mock).mockReturnValue(jiraClient);
+
+  executionContext = ({
+    event: {
+      action: {
+        name: IntegrationActionName.INGEST,
       },
-    } as IntegrationExecutionContext<IntegrationInvocationEvent>;
+    },
+    clients: {
+      getClients: () => clients,
+    },
+    instance: {
+      config: {},
+    },
+  } as unknown) as IntegrationExecutionContext<IntegrationInvocationEvent>;
+});
 
-    await executionHandler(invocationContext);
+describe("INGEST", () => {
+  test("no projects in Jira", async () => {
+    (jiraClient.fetchProjects as jest.Mock).mockResolvedValue([]);
 
-    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
-    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(0);
-    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
-    expect(
-      executionContext.persister.publishPersisterOperations,
-    ).toHaveBeenCalledTimes(1);
+    await executionHandler(executionContext);
+
+    expect(jiraClient.fetchProjects).toHaveBeenCalledTimes(1);
+    expect(jiraClient.fetchServerInfo).toHaveBeenCalledTimes(1);
+    expect(jiraClient.fetchUsers).toHaveBeenCalledTimes(1);
+    expect(jiraClient.fetchIssues).toHaveBeenCalledTimes(0);
+    expect(clients.persister.processEntities).toHaveBeenCalledTimes(4);
+    expect(clients.persister.publishPersisterOperations).toHaveBeenCalledTimes(
+      1,
+    );
+  });
+
+  test("all projects when no config.projects", async () => {
+    await executionHandler(executionContext);
+
+    expect(jiraClient.fetchProjects).toHaveBeenCalledTimes(1);
+    expect(jiraClient.fetchServerInfo).toHaveBeenCalledTimes(1);
+    expect(jiraClient.fetchUsers).toHaveBeenCalledTimes(1);
+    expect(jiraClient.fetchIssues).toHaveBeenCalledTimes(2);
+    expect(clients.persister.processEntities).toHaveBeenCalledTimes(4);
+    expect(clients.persister.publishPersisterOperations).toHaveBeenCalledTimes(
+      1,
+    );
+  });
+
+  test("projects specified by config.projects", async () => {
+    executionContext.instance.config.projects = ["FP", "SP", "UKP"];
+
+    await executionHandler(executionContext);
+
+    expect(jiraClient.fetchProjects).toHaveBeenCalledTimes(1);
+    expect(jiraClient.fetchServerInfo).toHaveBeenCalledTimes(1);
+    expect(jiraClient.fetchUsers).toHaveBeenCalledTimes(1);
+    expect(jiraClient.fetchIssues).toHaveBeenCalledTimes(3);
+    expect(clients.persister.processEntities).toHaveBeenCalledTimes(4);
+    expect(clients.persister.publishPersisterOperations).toHaveBeenCalledTimes(
+      1,
+    );
   });
 });
 
-describe("Config initialization with data", () => {
-  let executionContext: {
-    graph?: {
-      findEntitiesByType: jest.Mock<any, any>;
-      findRelationshipsByType: jest.Mock<any, any>;
-    };
-    persister: any;
-    provider: any;
-    projects?: string;
-  };
-
-  beforeAll(() => {
-    executionContext = {
-      graph: {
-        findEntitiesByType: jest.fn().mockResolvedValue([]),
-        findRelationshipsByType: jest.fn().mockResolvedValue([]),
-      },
-      persister: {
-        processEntities: jest.fn().mockReturnValue([]),
-        processRelationships: jest.fn().mockReturnValue([]),
-        publishPersisterOperations: jest.fn().mockResolvedValue({}),
-      },
-      provider: {
-        authenticate: jest.fn().mockReturnValue({}),
-        fetchProjects: jest.fn().mockReturnValue(twoProjects),
-        fetchServerInfo: jest.fn().mockReturnValue([]),
-        fetchIssues: jest.fn().mockReturnValue([]),
-        fetchUsers: jest.fn().mockReturnValue([]),
-        addNewIssue: jest.fn().mockReturnValue({}),
-        findIssue: jest.fn().mockReturnValue([]),
+describe("CREATE_ENTITY", () => {
+  test("creates issue", async () => {
+    (executionContext as any).event = {
+      action: {
+        name: IntegrationActionName.CREATE_ENTITY,
+        class: "Vulnerability",
+        properties: {
+          summary: "Test Summary",
+          description: "Test Description",
+          classification: "Test Classification",
+          project: "Test Project key/id",
+        },
       },
     };
-  });
 
-  test("executionHandler with two projects from fetched data and empty config", async () => {
-    const invocationContext = {
-      instance: {
-        config: {},
-      },
-    } as IntegrationExecutionContext<IntegrationInvocationEvent>;
+    await executionHandler(executionContext);
 
-    (initializeContext as jest.Mock).mockReturnValue(executionContext);
-
-    await executionHandler(invocationContext);
-
-    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
-    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(2);
-    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
+    expect(jiraClient.fetchProjects).toHaveBeenCalledTimes(0);
+    expect(jiraClient.fetchServerInfo).toHaveBeenCalledTimes(0);
+    expect(jiraClient.fetchUsers).toHaveBeenCalledTimes(0);
+    expect(jiraClient.fetchIssues).toHaveBeenCalledTimes(0);
+    expect(clients.persister.processEntities).toHaveBeenCalledTimes(1);
+    expect(clients.persister.publishEntityOperations).toHaveBeenCalledTimes(1);
     expect(
-      executionContext.persister.publishPersisterOperations,
-    ).toHaveBeenCalledTimes(1);
+      clients.persister.publishRelationshipOperations,
+    ).toHaveBeenCalledTimes(0);
+    expect(clients.persister.publishPersisterOperations).toHaveBeenCalledTimes(
+      0,
+    );
   });
+});
 
-  test("executionHandler with two projects from fetched data and projects string from config", async () => {
-    const invocationContext = {
-      instance: {
-        config: {
-          projects: "",
-        },
-      },
-    } as IntegrationExecutionContext<IntegrationInvocationEvent>;
+describe("unhandled action", () => {
+  test("ignored", async () => {
+    (executionContext.event as any).action = {
+      name: IntegrationActionName.SCAN,
+    };
 
-    executionContext.projects = invocationContext.instance.config.projects;
+    await executionHandler(executionContext);
 
-    (initializeContext as jest.Mock).mockReturnValue(executionContext);
-
-    await executionHandler(invocationContext);
-
-    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
-    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(2);
-    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
-    expect(
-      executionContext.persister.publishPersisterOperations,
-    ).toHaveBeenCalledTimes(1);
-  });
-
-  test("executionHandler with two projects from fetched data and empty projects array from config", async () => {
-    const invocationContext = {
-      instance: {
-        config: {
-          projects: [],
-        },
-      },
-    } as IntegrationExecutionContext<IntegrationInvocationEvent>;
-
-    executionContext.projects = invocationContext.instance.config.projects;
-
-    (initializeContext as jest.Mock).mockReturnValue(executionContext);
-
-    await executionHandler(invocationContext);
-
-    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
-    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(2);
-    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
-    expect(
-      executionContext.persister.publishPersisterOperations,
-    ).toHaveBeenCalledTimes(1);
-  });
-
-  test("executionHandler with two projects from fetched data and projects with empty item from config", async () => {
-    const invocationContext = {
-      instance: {
-        config: {
-          projects: [""],
-        },
-      },
-    } as IntegrationExecutionContext<IntegrationInvocationEvent>;
-
-    executionContext.projects = invocationContext.instance.config.projects;
-
-    (initializeContext as jest.Mock).mockReturnValue(executionContext);
-
-    await executionHandler(invocationContext);
-
-    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
-    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(1);
-    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
-    expect(
-      executionContext.persister.publishPersisterOperations,
-    ).toHaveBeenCalledTimes(1);
-  });
-
-  test("executionHandler with two projects from fetched data and projects with correct items from config", async () => {
-    const invocationContext = {
-      instance: {
-        config: {
-          projects: [
-            { key: "First Project" },
-            { key: "Second Project" },
-            { key: "Third Project" },
-          ],
-        },
-      },
-    } as IntegrationExecutionContext<IntegrationInvocationEvent>;
-
-    executionContext.projects = invocationContext.instance.config.projects;
-
-    (initializeContext as jest.Mock).mockReturnValue(executionContext);
-
-    await executionHandler(invocationContext);
-
-    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
-    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(3);
-    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
-    expect(
-      executionContext.persister.publishPersisterOperations,
-    ).toHaveBeenCalledTimes(1);
-  });
-
-  test("executionHandler with two projects from fetched data and projects with incorrect items from config", async () => {
-    const invocationContext = {
-      instance: {
-        config: {
-          projects: [{ key: "" }, { key: " " }, { key: "Fake Project" }],
-        },
-      },
-    } as IntegrationExecutionContext<IntegrationInvocationEvent>;
-
-    executionContext.projects = invocationContext.instance.config.projects;
-
-    (initializeContext as jest.Mock).mockReturnValue(executionContext);
-
-    await executionHandler(invocationContext);
-
-    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
-    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(3);
-    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
-    expect(
-      executionContext.persister.publishPersisterOperations,
-    ).toHaveBeenCalledTimes(1);
-  });
-
-  test("executionHandler with CREATE_ENTITY event and with project keys from config", async () => {
-    const invocationContext = ({
-      instance: {
-        config: {
-          projects: [{ key: "" }, { key: " " }, { key: "Fake Project" }],
-        },
-      },
-      event: {
-        action: {
-          name: IntegrationActionName.CREATE_ENTITY,
-          class: "Vulnerability",
-          properties: {
-            summary: "Test Summary",
-            description: "Test Description",
-            classification: "Test Classification",
-            project: "Test Project key/id",
-          },
-        },
-      },
-    } as unknown) as IntegrationExecutionContext<IntegrationInvocationEvent>;
-
-    executionContext.projects = invocationContext.instance.config.projects;
-
-    (initializeContext as jest.Mock).mockReturnValue(executionContext);
-
-    await executionHandler(invocationContext);
-
-    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
-    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(0);
-    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(0);
-    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(0);
-    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(0);
-    expect(executionContext.provider.addNewIssue).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.findIssue).toHaveBeenCalledTimes(1);
-    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
-    expect(
-      executionContext.persister.publishPersisterOperations,
-    ).toHaveBeenCalledTimes(1);
-  });
-
-  test("executionHandler with CREATE_ENTITY event and without project keys from config", async () => {
-    const invocationContext = ({
-      instance: {
-        config: {},
-      },
-      event: {
-        action: {
-          name: IntegrationActionName.CREATE_ENTITY,
-          class: "Vulnerability",
-          properties: {
-            summary: "Test Summary",
-            description: "Test Description",
-            classification: "Test Classification",
-            project: "Test Project key/id",
-          },
-        },
-      },
-    } as unknown) as IntegrationExecutionContext<IntegrationInvocationEvent>;
-
-    executionContext.projects = invocationContext.instance.config.projects;
-
-    (initializeContext as jest.Mock).mockReturnValue(executionContext);
-
-    await executionHandler(invocationContext);
-
-    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
-    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(0);
-    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(0);
-    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(0);
-    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(0);
-    expect(executionContext.provider.addNewIssue).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.findIssue).toHaveBeenCalledTimes(1);
-    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
-    expect(
-      executionContext.persister.publishPersisterOperations,
-    ).toHaveBeenCalledTimes(1);
-  });
-
-  test("executionHandler with INGEST event and without project keys from config", async () => {
-    const invocationContext = ({
-      instance: {
-        config: {},
-      },
-      event: {
-        action: {
-          name: IntegrationActionName.INGEST,
-        },
-      },
-    } as unknown) as IntegrationExecutionContext<IntegrationInvocationEvent>;
-
-    executionContext.projects = invocationContext.instance.config.projects;
-
-    (initializeContext as jest.Mock).mockReturnValue(executionContext);
-
-    await executionHandler(invocationContext);
-
-    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
-    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(2);
-    expect(executionContext.provider.addNewIssue).toHaveBeenCalledTimes(0);
-    expect(executionContext.provider.findIssue).toHaveBeenCalledTimes(0);
-    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
-    expect(
-      executionContext.persister.publishPersisterOperations,
-    ).toHaveBeenCalledTimes(1);
-  });
-
-  test("executionHandler with SCAN event and without project keys from config", async () => {
-    const invocationContext = ({
-      instance: {
-        config: {},
-      },
-      event: {
-        action: {
-          name: IntegrationActionName.SCAN,
-        },
-      },
-    } as unknown) as IntegrationExecutionContext<IntegrationInvocationEvent>;
-
-    executionContext.projects = invocationContext.instance.config.projects;
-
-    (initializeContext as jest.Mock).mockReturnValue(executionContext);
-
-    await executionHandler(invocationContext);
-
-    expect(initializeContext).toHaveBeenCalledWith(invocationContext);
-    expect(executionContext.provider.fetchProjects).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchServerInfo).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchUsers).toHaveBeenCalledTimes(1);
-    expect(executionContext.provider.fetchIssues).toHaveBeenCalledTimes(2);
-    expect(executionContext.provider.addNewIssue).toHaveBeenCalledTimes(0);
-    expect(executionContext.provider.findIssue).toHaveBeenCalledTimes(0);
-    expect(executionContext.persister.processEntities).toHaveBeenCalledTimes(4);
-    expect(
-      executionContext.persister.publishPersisterOperations,
-    ).toHaveBeenCalledTimes(1);
+    expect(jiraClient.fetchProjects).not.toHaveBeenCalled();
+    expect(jiraClient.fetchServerInfo).not.toHaveBeenCalled();
+    expect(jiraClient.fetchUsers).not.toHaveBeenCalled();
+    expect(jiraClient.fetchIssues).not.toHaveBeenCalled();
+    expect(jiraClient.addNewIssue).not.toHaveBeenCalled();
+    expect(jiraClient.findIssue).not.toHaveBeenCalled();
+    expect(clients.persister.processEntities).not.toHaveBeenCalled();
+    expect(clients.persister.publishPersisterOperations).not.toHaveBeenCalled();
   });
 });
