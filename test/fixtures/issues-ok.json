@@ -387,23 +387,7 @@
                 }
               }
             ],
-            "reporter": {
-              "self": "https://dualboot-test.atlassian.net/rest/api/3/user?accountId=5c937560807a642e13136645",
-              "name": "admin",
-              "key": "admin",
-              "accountId": "5c937560807a642e13136645",
-              "emailAddress": "admin@test.dualboot.com",
-              "avatarUrls": {
-                "48x48": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=48&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D48%26noRedirect%3Dtrue",
-                "24x24": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=24&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D24%26noRedirect%3Dtrue",
-                "16x16": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=16&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D16%26noRedirect%3Dtrue",
-                "32x32": "https://avatar-cdn.atlassian.com/e203430c43407548b2a5a80e8af1b541?s=32&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fe203430c43407548b2a5a80e8af1b541%3Fd%3Dmm%26s%3D32%26noRedirect%3Dtrue"
-              },
-              "displayName": "Admin Admin",
-              "active": true,
-              "timeZone": "Europe/Samara",
-              "accountType": "atlassian"
-            },
+            "reporter": null,
             "customfield_10000": "{}",
             "aggregateprogress": {
               "progress": 0,

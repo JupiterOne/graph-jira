@@ -37,20 +37,24 @@ export function createIssueReportedByUserRelationships(issues: Issue[]) {
   const defaultValue: IssueReportedByUserRelationship[] = [];
 
   return issues.reduce((acc, issue) => {
-    const parentKey = generateEntityKey(ISSUE_ENTITY_TYPE, issue.id);
-    const childKey = generateEntityKey(
-      USER_ENTITY_TYPE,
-      issue.fields.reporter.accountId,
-    );
+    if (!issue.fields.reporter) {
+      return acc;
+    } else {
+      const parentKey = generateEntityKey(ISSUE_ENTITY_TYPE, issue.id);
+      const childKey = generateEntityKey(
+        USER_ENTITY_TYPE,
+        issue.fields.reporter.accountId,
+      );
 
-    const relationship: IssueReportedByUserRelationship = {
-      _class: ISSUE_REPORTED_BY_USER_RELATIONSHIP_CLASS,
-      _type: ISSUE_REPORTED_BY_USER_RELATIONSHIP_TYPE,
-      _fromEntityKey: parentKey,
-      _key: `${parentKey}_reportedBy_${childKey}`,
-      _toEntityKey: childKey,
-    };
+      const relationship: IssueReportedByUserRelationship = {
+        _class: ISSUE_REPORTED_BY_USER_RELATIONSHIP_CLASS,
+        _type: ISSUE_REPORTED_BY_USER_RELATIONSHIP_TYPE,
+        _fromEntityKey: parentKey,
+        _key: `${parentKey}_reportedBy_${childKey}`,
+        _toEntityKey: childKey,
+      };
 
-    return [...acc, relationship];
+      return [...acc, relationship];
+    }
   }, defaultValue);
 }
