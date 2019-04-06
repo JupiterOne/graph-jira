@@ -141,10 +141,11 @@ describe("Convert data after fetching", () => {
         creator: "admin",
         id: "10003",
         name: "FP-2",
+        displayName: "FP-2",
         reporter: "admin",
         status: "To Do",
         summary: "subtask",
-        webLink: "https://dualboot-test.atlassian.net/rest/api/3/issue/10003",
+        webLink: "https://dualboot-test.atlassian.net/browse/FP-2",
       },
       {
         _class: "Record",
@@ -155,10 +156,11 @@ describe("Convert data after fetching", () => {
         creator: "admin",
         id: "10000",
         name: "FP-1",
+        displayName: "FP-1",
         reporter: null,
         status: "In Review",
         summary: "First Issue",
-        webLink: "https://dualboot-test.atlassian.net/rest/api/3/issue/10000",
+        webLink: "https://dualboot-test.atlassian.net/browse/FP-1",
       },
     ]);
     nockDone();
@@ -479,10 +481,11 @@ describe("Convert data after creating issue", () => {
         creator: "admin",
         id: "10015",
         name: "FP-14",
+        displayName: "FP-14",
         reporter: "admin",
         status: "To Do",
         summary: "Test Summary",
-        webLink: "https://dualboot-test.atlassian.net/rest/api/3/issue/10015",
+        webLink: "https://dualboot-test.atlassian.net/browse/FP-14",
       },
     ]);
   });
