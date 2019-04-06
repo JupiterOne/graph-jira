@@ -51,6 +51,7 @@ describe("Convert data after fetching", () => {
       self: "https://dualboot-test.atlassian.net/rest/api/3/project/10000",
       simplified: false,
       style: "classic",
+      webLink: "https://dualboot-test.atlassian.net/browse/FP",
     },
     {
       _class: "Project",
@@ -65,6 +66,7 @@ describe("Convert data after fetching", () => {
       self: "https://dualboot-test.atlassian.net/rest/api/3/project/10001",
       simplified: false,
       style: "classic",
+      webLink: "https://dualboot-test.atlassian.net/browse/SP",
     },
   ];
 
