@@ -15,9 +15,10 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
       _class: ISSUE_ENTITY_CLASS,
       id: issue.id,
       name: issue.key,
+      displayName: issue.key,
       summary: issue.fields.summary,
       category: "issue",
-      webLink: issue.self,
+      webLink: `https://${issue.self.split("/")[2]}/browse/${issue.key}`,
       status: issue.fields.status.name,
       reporter: issue.fields.reporter && issue.fields.reporter.name,
       assignee:

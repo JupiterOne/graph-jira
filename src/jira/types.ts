@@ -28,6 +28,7 @@ export interface Project {
   simplified: boolean;
   style: string;
   isPrivate: boolean;
+  url: string;
 }
 
 export interface User {

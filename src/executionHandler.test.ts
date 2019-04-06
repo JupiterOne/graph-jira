@@ -31,6 +31,7 @@ const twoProjects: Project[] = [
     simplified: false,
     style: "classic",
     isPrivate: false,
+    url: "https://dualboot-test.atlassian.net/browse/FP",
   },
   {
     self: "https://dualboot-test.atlassian.net/rest/api/3/project/10001",
@@ -51,6 +52,7 @@ const twoProjects: Project[] = [
     simplified: false,
     style: "classic",
     isPrivate: false,
+    url: "https://dualboot-test.atlassian.net/browse/SP",
   },
 ];
 

@@ -22,6 +22,7 @@ export function createProjectEntities(data: Project[]): ProjectEntity[] {
       simplified: project.simplified,
       style: project.style,
       isPrivate: project.isPrivate,
+      webLink: project.url,
     };
 
     return projectEntity;

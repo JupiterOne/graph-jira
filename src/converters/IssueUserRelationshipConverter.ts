@@ -1,31 +1,29 @@
 import { Issue } from "../jira";
-
 import {
-  ISSUE_CREATED_BY_USER_RELATIONSHIP_CLASS,
-  ISSUE_CREATED_BY_USER_RELATIONSHIP_TYPE,
   ISSUE_ENTITY_TYPE,
-  ISSUE_REPORTED_BY_USER_RELATIONSHIP_CLASS,
-  ISSUE_REPORTED_BY_USER_RELATIONSHIP_TYPE,
-  IssueCreatedByUserRelationship,
-  IssueReportedByUserRelationship,
+  USER_CREATED_ISSUE_RELATIONSHIP_CLASS,
+  USER_CREATED_ISSUE_RELATIONSHIP_TYPE,
   USER_ENTITY_TYPE,
+  USER_REPORTED_ISSUE_RELATIONSHIP_CLASS,
+  USER_REPORTED_ISSUE_RELATIONSHIP_TYPE,
+  UserIssueRelationship,
 } from "../jupiterone";
 import generateEntityKey from "../utils/generateEntityKey";
 
-export function createIssueCreatedByUserRelationships(issues: Issue[]) {
-  const defaultValue: IssueCreatedByUserRelationship[] = [];
+export function createUserCreatedIssueRelationships(issues: Issue[]) {
+  const defaultValue: UserIssueRelationship[] = [];
 
   return issues.reduce((acc, issue) => {
-    const parentKey = generateEntityKey(ISSUE_ENTITY_TYPE, issue.id);
-    const childKey = generateEntityKey(
+    const childKey = generateEntityKey(ISSUE_ENTITY_TYPE, issue.id);
+    const parentKey = generateEntityKey(
       USER_ENTITY_TYPE,
       issue.fields.creator.accountId,
     );
-    const relationship: IssueCreatedByUserRelationship = {
-      _class: ISSUE_CREATED_BY_USER_RELATIONSHIP_CLASS,
-      _type: ISSUE_CREATED_BY_USER_RELATIONSHIP_TYPE,
+    const relationship: UserIssueRelationship = {
+      _class: USER_CREATED_ISSUE_RELATIONSHIP_CLASS,
+      _type: USER_CREATED_ISSUE_RELATIONSHIP_TYPE,
       _fromEntityKey: parentKey,
-      _key: `${parentKey}_createdBy_${childKey}`,
+      _key: `${parentKey}_created_${childKey}`,
       _toEntityKey: childKey,
     };
 
@@ -33,24 +31,24 @@ export function createIssueCreatedByUserRelationships(issues: Issue[]) {
   }, defaultValue);
 }
 
-export function createIssueReportedByUserRelationships(issues: Issue[]) {
-  const defaultValue: IssueReportedByUserRelationship[] = [];
+export function createUserReportedIssueRelationships(issues: Issue[]) {
+  const defaultValue: UserIssueRelationship[] = [];
 
   return issues.reduce((acc, issue) => {
     if (!issue.fields.reporter) {
       return acc;
     } else {
-      const parentKey = generateEntityKey(ISSUE_ENTITY_TYPE, issue.id);
-      const childKey = generateEntityKey(
+      const childKey = generateEntityKey(ISSUE_ENTITY_TYPE, issue.id);
+      const parentKey = generateEntityKey(
         USER_ENTITY_TYPE,
         issue.fields.reporter.accountId,
       );
 
-      const relationship: IssueReportedByUserRelationship = {
-        _class: ISSUE_REPORTED_BY_USER_RELATIONSHIP_CLASS,
-        _type: ISSUE_REPORTED_BY_USER_RELATIONSHIP_TYPE,
+      const relationship: UserIssueRelationship = {
+        _class: USER_REPORTED_ISSUE_RELATIONSHIP_CLASS,
+        _type: USER_REPORTED_ISSUE_RELATIONSHIP_TYPE,
         _fromEntityKey: parentKey,
-        _key: `${parentKey}_reportedBy_${childKey}`,
+        _key: `${parentKey}_reported_${childKey}`,
         _toEntityKey: childKey,
       };
 

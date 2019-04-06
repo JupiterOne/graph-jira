@@ -21,7 +21,8 @@
         "projectTypeKey": "software",
         "simplified": false,
         "style": "classic",
-        "isPrivate": false
+        "isPrivate": false,
+        "url": "https://dualboot-test.atlassian.net/browse/FP"
       },
       {
         "expand": "description,lead,issueTypes,url,projectKeys",
@@ -38,7 +39,8 @@
         "projectTypeKey": "software",
         "simplified": false,
         "style": "classic",
-        "isPrivate": false
+        "isPrivate": false,
+        "url": "https://dualboot-test.atlassian.net/browse/SP"
       }
     ],
     "rawHeaders": [
