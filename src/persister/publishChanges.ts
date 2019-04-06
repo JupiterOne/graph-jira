@@ -8,14 +8,13 @@ import {
 import {
   createAccountEntity,
   createAccountProjectRelationships,
-  createIssueCreatedByUserRelationships,
   createIssueEntities,
-  createIssueReportedByUserRelationships,
   createProjectEntities,
   createProjectIssueRelationships,
+  createUserCreatedIssueRelationships,
   createUserEntities,
+  createUserReportedIssueRelationships,
 } from "../converters";
-
 import { JiraDataModel } from "../jira";
 import {
   JupiterOneDataModel,
@@ -117,10 +116,10 @@ export function convertRelationships(
       jiraData.projects,
     ),
     projectIssueRelationships: createProjectIssueRelationships(jiraData.issues),
-    issueCreatedByUserRelationships: createIssueCreatedByUserRelationships(
+    userCreatedIssueRelationships: createUserCreatedIssueRelationships(
       jiraData.issues,
     ),
-    issueReportedByUserRelationships: createIssueReportedByUserRelationships(
+    userReportedIssueRelationships: createUserReportedIssueRelationships(
       jiraData.issues,
     ),
   };

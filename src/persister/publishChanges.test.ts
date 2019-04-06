@@ -355,7 +355,7 @@ describe("Convert data after fetching", () => {
     nockDone();
   });
 
-  test("convert issue-createdBy-user relations", async () => {
+  test("convert user-created-issue relations", async () => {
     const { nockDone } = await nock.back("issue-created-by-user-ok.json", {
       before: prepareScope,
     });
@@ -364,40 +364,40 @@ describe("Convert data after fetching", () => {
     jira.fetchServerInfo = jest.fn().mockReturnValue([]);
 
     const newData = convert(await fetchJiraData(jira, projects));
-    expect(newData.relationships.issueCreatedByUserRelationships).toEqual([
+    expect(newData.relationships.userCreatedIssueRelationships).toEqual([
       {
-        _class: "CREATED_BY",
-        _fromEntityKey: "jira_issue_10003",
-        _key: "jira_issue_10003_createdBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
-        _type: "jira_issue_created_by_user",
+        _class: "CREATED",
+        _fromEntityKey: "jira_user_5c937560807a642e13136645",
+        _key: "jira_user_5c937560807a642e13136645_created_jira_issue_10003",
+        _toEntityKey: "jira_issue_10003",
+        _type: "jira_user_created_issue",
       },
       {
-        _class: "CREATED_BY",
-        _fromEntityKey: "jira_issue_10000",
-        _key: "jira_issue_10000_createdBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
-        _type: "jira_issue_created_by_user",
+        _class: "CREATED",
+        _fromEntityKey: "jira_user_5c937560807a642e13136645",
+        _key: "jira_user_5c937560807a642e13136645_created_jira_issue_10000",
+        _toEntityKey: "jira_issue_10000",
+        _type: "jira_user_created_issue",
       },
       {
-        _class: "CREATED_BY",
-        _fromEntityKey: "jira_issue_10002",
-        _key: "jira_issue_10002_createdBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
-        _type: "jira_issue_created_by_user",
+        _class: "CREATED",
+        _fromEntityKey: "jira_user_5c937560807a642e13136645",
+        _key: "jira_user_5c937560807a642e13136645_created_jira_issue_10002",
+        _toEntityKey: "jira_issue_10002",
+        _type: "jira_user_created_issue",
       },
       {
-        _class: "CREATED_BY",
-        _fromEntityKey: "jira_issue_10001",
-        _key: "jira_issue_10001_createdBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
-        _type: "jira_issue_created_by_user",
+        _class: "CREATED",
+        _fromEntityKey: "jira_user_5c937560807a642e13136645",
+        _key: "jira_user_5c937560807a642e13136645_created_jira_issue_10001",
+        _toEntityKey: "jira_issue_10001",
+        _type: "jira_user_created_issue",
       },
     ]);
     nockDone();
   });
 
-  test("convert issue-reportedBy-user relations", async () => {
+  test("convert user-reported-issue relations", async () => {
     const { nockDone } = await nock.back("issue-reported-by-user-ok.json", {
       before: prepareScope,
     });
@@ -406,34 +406,34 @@ describe("Convert data after fetching", () => {
     jira.fetchServerInfo = jest.fn().mockReturnValue([]);
 
     const newData = convert(await fetchJiraData(jira, projects));
-    expect(newData.relationships.issueReportedByUserRelationships).toEqual([
+    expect(newData.relationships.userReportedIssueRelationships).toEqual([
       {
-        _class: "REPORTED_BY",
-        _fromEntityKey: "jira_issue_10003",
-        _key: "jira_issue_10003_reportedBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
-        _type: "jira_issue_reported_by_user",
+        _class: "REPORTED",
+        _fromEntityKey: "jira_user_5c937560807a642e13136645",
+        _key: "jira_user_5c937560807a642e13136645_reported_jira_issue_10003",
+        _toEntityKey: "jira_issue_10003",
+        _type: "jira_user_reported_issue",
       },
       {
-        _class: "REPORTED_BY",
-        _fromEntityKey: "jira_issue_10000",
-        _key: "jira_issue_10000_reportedBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
-        _type: "jira_issue_reported_by_user",
+        _class: "REPORTED",
+        _fromEntityKey: "jira_user_5c937560807a642e13136645",
+        _key: "jira_user_5c937560807a642e13136645_reported_jira_issue_10000",
+        _toEntityKey: "jira_issue_10000",
+        _type: "jira_user_reported_issue",
       },
       {
-        _class: "REPORTED_BY",
-        _fromEntityKey: "jira_issue_10002",
-        _key: "jira_issue_10002_reportedBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
-        _type: "jira_issue_reported_by_user",
+        _class: "REPORTED",
+        _fromEntityKey: "jira_user_5c937560807a642e13136645",
+        _key: "jira_user_5c937560807a642e13136645_reported_jira_issue_10002",
+        _toEntityKey: "jira_issue_10002",
+        _type: "jira_user_reported_issue",
       },
       {
-        _class: "REPORTED_BY",
-        _fromEntityKey: "jira_issue_10001",
-        _key: "jira_issue_10001_reportedBy_jira_user_5c937560807a642e13136645",
-        _toEntityKey: "jira_user_5c937560807a642e13136645",
-        _type: "jira_issue_reported_by_user",
+        _class: "REPORTED",
+        _fromEntityKey: "jira_user_5c937560807a642e13136645",
+        _key: "jira_user_5c937560807a642e13136645_reported_jira_issue_10001",
+        _toEntityKey: "jira_issue_10001",
+        _type: "jira_user_reported_issue",
       },
     ]);
     nockDone();

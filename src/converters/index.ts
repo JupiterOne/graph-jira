@@ -10,6 +10,6 @@ export {
   createProjectIssueRelationships,
 } from "./ProjectIssueRealationshipConverter";
 export {
-  createIssueCreatedByUserRelationships,
-  createIssueReportedByUserRelationships,
+  createUserCreatedIssueRelationships,
+  createUserReportedIssueRelationships,
 } from "./IssueUserRelationshipConverter";

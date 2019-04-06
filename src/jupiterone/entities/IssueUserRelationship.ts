@@ -1,19 +1,11 @@
 import { RelationshipFromIntegration } from "@jupiterone/jupiter-managed-integration-sdk";
 
-export interface IssueCreatedByUserRelationship
-  extends RelationshipFromIntegration {
+export interface UserIssueRelationship extends RelationshipFromIntegration {
   id?: string;
 }
 
-export const ISSUE_CREATED_BY_USER_RELATIONSHIP_TYPE =
-  "jira_issue_created_by_user";
-export const ISSUE_CREATED_BY_USER_RELATIONSHIP_CLASS = "CREATED_BY";
+export const USER_CREATED_ISSUE_RELATIONSHIP_TYPE = "jira_user_created_issue";
+export const USER_CREATED_ISSUE_RELATIONSHIP_CLASS = "CREATED";
 
-export interface IssueReportedByUserRelationship
-  extends RelationshipFromIntegration {
-  id?: string;
-}
-
-export const ISSUE_REPORTED_BY_USER_RELATIONSHIP_TYPE =
-  "jira_issue_reported_by_user";
-export const ISSUE_REPORTED_BY_USER_RELATIONSHIP_CLASS = "REPORTED_BY";
+export const USER_REPORTED_ISSUE_RELATIONSHIP_TYPE = "jira_user_reported_issue";
+export const USER_REPORTED_ISSUE_RELATIONSHIP_CLASS = "REPORTED";
