@@ -10,6 +10,8 @@ export interface IssueEntity extends EntityFromIntegration {
   category: string;
   webLink: string;
   status: string;
+  active: boolean;
+  issueType: string;
   reporter: string;
   assignee?: string;
   creator: string;
