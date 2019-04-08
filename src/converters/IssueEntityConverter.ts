@@ -7,6 +7,20 @@ import {
 
 import generateEntityKey from "../utils/generateEntityKey";
 
+const DONE = [
+  "done",
+  "accepted",
+  "closed",
+  "canceled",
+  "cancelled",
+  "completed",
+  "finished",
+  "mitigated",
+  "remediated",
+  "resolved",
+  "transferred",
+];
+
 export function createIssueEntities(data: Issue[]): IssueEntity[] {
   return data.map(issue => {
     const status = issue.fields.status.name;
@@ -21,7 +35,7 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
       category: "issue",
       webLink: `https://${issue.self.split("/")[2]}/browse/${issue.key}`,
       status,
-      active: status.toLowerCase() !== "done" && !status.endsWith("ed"),
+      active: DONE.indexOf(status.toLowerCase()) < 0,
       issueType: issue.fields.issuetype.name,
       reporter: issue.fields.reporter && issue.fields.reporter.name,
       assignee:
