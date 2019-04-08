@@ -81,13 +81,15 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("server-info-ok.json", {
       before: prepareScope,
     });
-    const { jira, projects } = await initialize();
+    const { jira, projects, lastJobTimestamp } = await initialize();
 
     jira.fetchUsers = jest.fn().mockReturnValue([]);
     jira.fetchProjects = jest.fn().mockReturnValue([]);
     jira.fetchIssues = jest.fn().mockReturnValue([]);
 
-    const newData = convert(await fetchJiraData(jira, projects));
+    const newData = convert(
+      await fetchJiraData(jira, projects, lastJobTimestamp),
+    );
     expect(newData.entities.accounts).toEqual([
       {
         _class: "Account",
@@ -109,13 +111,15 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("projects-ok.json", {
       before: prepareScope,
     });
-    const { jira, projects } = await initialize();
+    const { jira, projects, lastJobTimestamp } = await initialize();
 
     jira.fetchUsers = jest.fn().mockReturnValue([]);
     jira.fetchServerInfo = jest.fn().mockReturnValue([]);
     jira.fetchIssues = jest.fn().mockReturnValue([]);
 
-    const newData = convert(await fetchJiraData(jira, projects));
+    const newData = convert(
+      await fetchJiraData(jira, projects, lastJobTimestamp),
+    );
     expect(newData.entities.projects).toEqual(projectsEntityMock);
     nockDone();
   });
@@ -124,7 +128,7 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("issues-ok.json", {
       before: prepareScope,
     });
-    const { jira, projects } = await initialize();
+    const { jira, projects, lastJobTimestamp } = await initialize();
 
     jira.fetchUsers = jest.fn().mockReturnValue([]);
     jira.fetchServerInfo = jest.fn().mockReturnValue([]);
@@ -132,7 +136,9 @@ describe("Convert data after fetching", () => {
       .fn()
       .mockReturnValue(projectsEntityMock.slice(0, 1));
 
-    const newData = convert(await fetchJiraData(jira, projects));
+    const newData = convert(
+      await fetchJiraData(jira, projects, lastJobTimestamp),
+    );
     expect(newData.entities.issues).toEqual([
       {
         _class: "Record",
@@ -176,13 +182,15 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("users-ok.json", {
       before: prepareScope,
     });
-    const { jira, projects } = await initialize();
+    const { jira, projects, lastJobTimestamp } = await initialize();
 
     jira.fetchIssues = jest.fn().mockReturnValue([]);
     jira.fetchServerInfo = jest.fn().mockReturnValue([]);
     jira.fetchProjects = jest.fn().mockReturnValue([]);
 
-    const newData = convert(await fetchJiraData(jira, projects));
+    const newData = convert(
+      await fetchJiraData(jira, projects, lastJobTimestamp),
+    );
     expect(newData.entities.users).toEqual([
       {
         _class: "User",
@@ -304,12 +312,14 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("account-projects-ok.json", {
       before: prepareScope,
     });
-    const { jira, projects } = await initialize();
+    const { jira, projects, lastJobTimestamp } = await initialize();
 
     jira.fetchUsers = jest.fn().mockReturnValue([]);
     jira.fetchIssues = jest.fn().mockReturnValue([]);
 
-    const newData = convert(await fetchJiraData(jira, projects));
+    const newData = convert(
+      await fetchJiraData(jira, projects, lastJobTimestamp),
+    );
     expect(newData.relationships.accountProjectRelationships).toEqual([
       {
         _class: "HAS",
@@ -335,7 +345,7 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("issue-ok.json", {
       before: prepareScope,
     });
-    const { jira, projects } = await initialize();
+    const { jira, projects, lastJobTimestamp } = await initialize();
 
     jira.fetchUsers = jest.fn().mockReturnValue([]);
     jira.fetchServerInfo = jest.fn().mockReturnValue([]);
@@ -343,7 +353,9 @@ describe("Convert data after fetching", () => {
       .fn()
       .mockReturnValue(projectsEntityMock.slice(0, 1));
 
-    const newData = convert(await fetchJiraData(jira, projects));
+    const newData = convert(
+      await fetchJiraData(jira, projects, lastJobTimestamp),
+    );
     expect(newData.relationships.projectIssueRelationships).toEqual([
       {
         _class: "HAS",
@@ -367,11 +379,13 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("issue-created-by-user-ok.json", {
       before: prepareScope,
     });
-    const { jira, projects } = await initialize();
+    const { jira, projects, lastJobTimestamp } = await initialize();
 
     jira.fetchServerInfo = jest.fn().mockReturnValue([]);
 
-    const newData = convert(await fetchJiraData(jira, projects));
+    const newData = convert(
+      await fetchJiraData(jira, projects, lastJobTimestamp),
+    );
     expect(newData.relationships.userCreatedIssueRelationships).toEqual([
       {
         _class: "CREATED",
@@ -409,11 +423,13 @@ describe("Convert data after fetching", () => {
     const { nockDone } = await nock.back("issue-reported-by-user-ok.json", {
       before: prepareScope,
     });
-    const { jira, projects } = await initialize();
+    const { jira, projects, lastJobTimestamp } = await initialize();
 
     jira.fetchServerInfo = jest.fn().mockReturnValue([]);
 
-    const newData = convert(await fetchJiraData(jira, projects));
+    const newData = convert(
+      await fetchJiraData(jira, projects, lastJobTimestamp),
+    );
     expect(newData.relationships.userReportedIssueRelationships).toEqual([
       {
         _class: "REPORTED",

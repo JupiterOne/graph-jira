@@ -2,7 +2,8 @@ import "jest-extended";
 import nock from "nock";
 import JiraClient from "./JiraClient";
 
-const JIRA_LOCAL_EXECUTION_HOST = process.env.JIRA_LOCAL_EXECUTION_HOST || "example.atlassian.com";
+const JIRA_LOCAL_EXECUTION_HOST =
+  process.env.JIRA_LOCAL_EXECUTION_HOST || "example.atlassian.com";
 
 function prepareScope(def: nock.NockDefinition) {
   def.scope = `https://${JIRA_LOCAL_EXECUTION_HOST}:443`;
@@ -68,6 +69,20 @@ describe("JiraClient fetch ok data", () => {
     });
     const client = await getAuthenticatedClient();
     const response = await client.fetchIssues("First Project");
+    expect(response).toBeArray();
+    expect(response).not.toBeArrayOfSize(0);
+    nockDone();
+  });
+
+  test("fetch issues with existing project and with updatedAt filter ok", async () => {
+    const { nockDone } = await nock.back("issues-updatedAt-ok.json", {
+      before: prepareScope,
+    });
+    const client = await getAuthenticatedClient();
+    const response = await client.fetchIssues(
+      "First Project",
+      Date.parse("2019-04-08T12:51:50.417Z"),
+    );
     expect(response).toBeArray();
     expect(response).not.toBeArrayOfSize(0);
     nockDone();

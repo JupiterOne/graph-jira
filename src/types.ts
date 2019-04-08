@@ -25,4 +25,5 @@ export interface JiraIntegrationContext
   persister: PersisterClient;
   jira: JiraClient;
   projects: ProjectConfig[];
+  lastJobTimestamp: number | null;
 }

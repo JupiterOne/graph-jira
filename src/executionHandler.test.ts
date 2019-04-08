@@ -4,6 +4,7 @@ import {
   IntegrationInvocationEvent,
   PersisterClient,
 } from "@jupiterone/jupiter-managed-integration-sdk";
+import JobsClient from "@jupiterone/jupiter-managed-integration-sdk/service/JobsClient";
 
 import executionHandler from "./executionHandler";
 import { createJiraClient, Project } from "./jira";
@@ -68,6 +69,10 @@ const clients = {
     publishRelationshipOperations: jest.fn().mockResolvedValue({}),
     publishPersisterOperations: jest.fn().mockResolvedValue({}),
   } as PersisterClient,
+  jobs: {
+    logEvent: jest.fn().mockReturnValue({}),
+    getLastCompleted: jest.fn().mockReturnValue({}),
+  } as JobsClient,
 };
 
 let jiraClient: JiraClient;
