@@ -78,7 +78,7 @@ export default class JiraClient {
         startAt: issues.length,
       });
 
-      const paginatedIssues = response.issues || [];
+      const paginatedIssues = response.issues;
       issues = issues.concat(paginatedIssues);
       resultLength = paginatedIssues.length;
     } while (resultLength > 0);

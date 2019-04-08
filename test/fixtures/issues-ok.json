@@ -449,5 +449,58 @@
       "X-Seraph-LoginReason",
       "OK"
     ]
+  },
+  {
+    "scope": "https://dualboot-test.atlassian.net:443",
+    "method": "POST",
+    "path": "/rest/api/3/search",
+    "body": {
+      "jql": "project='First Project'",
+      "startAt": 2
+    },
+    "status": 200,
+    "response": {
+      "expand": "schema,names",
+      "startAt": 0,
+      "maxResults": 50,
+      "total": 0,
+      "issues": []
+    },
+    "rawHeaders": [
+      "Server",
+      "Atlassian Proxy/1.13.6.2",
+      "Vary",
+      "Accept-Encoding",
+      "Cache-Control",
+      "no-cache, no-store, no-transform",
+      "Content-Type",
+      "application/json;charset=UTF-8",
+      "Strict-Transport-Security",
+      "max-age=315360000; includeSubDomains; preload",
+      "Date",
+      "Wed, 27 Mar 2019 18:44:38 GMT",
+      "ATL-TraceId",
+      "355a51ad018f271e",
+      "X-AACCOUNTID",
+      "5c937560807a642e13136645",
+      "X-AREQUESTID",
+      "40471bbb-e287-4693-a8bd-0a291ee7f824",
+      "X-XSS-Protection",
+      "1; mode=block",
+      "Transfer-Encoding",
+      "chunked",
+      "Timing-Allow-Origin",
+      "*",
+      "X-AUSERNAME",
+      "admin",
+      "X-Content-Type-Options",
+      "nosniff",
+      "Connection",
+      "close",
+      "Set-Cookie",
+      "atlassian.xsrf.token=7c75c5a7-5045-4a1c-a650-e9b79b0e356f_aafe1f24763f334c41e3b12f3f1884dd2de59d25_lin; Path=/; Secure",
+      "X-Seraph-LoginReason",
+      "OK"
+    ]
   }
 ]
