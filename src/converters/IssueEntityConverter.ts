@@ -12,6 +12,7 @@ const DONE = [
   "accepted",
   "closed",
   "canceled",
+  "cancelled",
   "completed",
   "finished",
   "mitigated",
