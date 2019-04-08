@@ -308,7 +308,8 @@
     "method": "POST",
     "path": "/rest/api/3/search",
     "body": {
-      "jql": "project='First Project'"
+      "jql": "project='First Project'",
+      "startAt": 0
     },
     "status": 200,
     "response": {
@@ -774,7 +775,61 @@
     "method": "POST",
     "path": "/rest/api/3/search",
     "body": {
-      "jql": "project='Second project'"
+      "jql": "project='First Project'",
+      "startAt": 2
+    },
+    "status": 200,
+    "response": {
+      "expand": "schema,names",
+      "startAt": 2,
+      "maxResults": 50,
+      "total": 0,
+      "issues": []
+    },
+    "rawHeaders": [
+      "Server",
+      "Atlassian Proxy/1.13.6.2",
+      "Vary",
+      "Accept-Encoding",
+      "Cache-Control",
+      "no-cache, no-store, no-transform",
+      "Content-Type",
+      "application/json;charset=UTF-8",
+      "Strict-Transport-Security",
+      "max-age=315360000; includeSubDomains; preload",
+      "Date",
+      "Wed, 27 Mar 2019 18:44:41 GMT",
+      "ATL-TraceId",
+      "bfe349dbc536774a",
+      "X-AACCOUNTID",
+      "5c937560807a642e13136645",
+      "X-AREQUESTID",
+      "05b99b81-2576-4f24-a5ea-d020c3abacc7",
+      "X-XSS-Protection",
+      "1; mode=block",
+      "Transfer-Encoding",
+      "chunked",
+      "Timing-Allow-Origin",
+      "*",
+      "X-AUSERNAME",
+      "admin",
+      "X-Content-Type-Options",
+      "nosniff",
+      "Connection",
+      "close",
+      "Set-Cookie",
+      "atlassian.xsrf.token=7c75c5a7-5045-4a1c-a650-e9b79b0e356f_64c98eb4cfe7fc91ad4e9c2f9e5db212f79544c0_lin; Path=/; Secure",
+      "X-Seraph-LoginReason",
+      "OK"
+    ]
+  },
+  {
+    "scope": "https://dualboot-test.atlassian.net:443",
+    "method": "POST",
+    "path": "/rest/api/3/search",
+    "body": {
+      "jql": "project='Second project'",
+      "startAt": 0
     },
     "status": 200,
     "response": {
@@ -1092,6 +1147,59 @@
           }
         }
       ]
+    },
+    "rawHeaders": [
+      "Server",
+      "Atlassian Proxy/1.13.6.2",
+      "Vary",
+      "Accept-Encoding",
+      "Cache-Control",
+      "no-cache, no-store, no-transform",
+      "Content-Type",
+      "application/json;charset=UTF-8",
+      "Strict-Transport-Security",
+      "max-age=315360000; includeSubDomains; preload",
+      "Date",
+      "Wed, 27 Mar 2019 18:44:41 GMT",
+      "ATL-TraceId",
+      "bfe349dbc536774a",
+      "X-AACCOUNTID",
+      "5c937560807a642e13136645",
+      "X-AREQUESTID",
+      "05b99b81-2576-4f24-a5ea-d020c3abacc7",
+      "X-XSS-Protection",
+      "1; mode=block",
+      "Transfer-Encoding",
+      "chunked",
+      "Timing-Allow-Origin",
+      "*",
+      "X-AUSERNAME",
+      "admin",
+      "X-Content-Type-Options",
+      "nosniff",
+      "Connection",
+      "close",
+      "Set-Cookie",
+      "atlassian.xsrf.token=7c75c5a7-5045-4a1c-a650-e9b79b0e356f_64c98eb4cfe7fc91ad4e9c2f9e5db212f79544c0_lin; Path=/; Secure",
+      "X-Seraph-LoginReason",
+      "OK"
+    ]
+  },
+  {
+    "scope": "https://dualboot-test.atlassian.net:443",
+    "method": "POST",
+    "path": "/rest/api/3/search",
+    "body": {
+      "jql": "project='Second project'",
+      "startAt": 2
+    },
+    "status": 200,
+    "response": {
+      "expand": "schema,names",
+      "startAt": 2,
+      "maxResults": 50,
+      "total": 0,
+      "issues": []
     },
     "rawHeaders": [
       "Server",
