@@ -4,7 +4,8 @@
     "method": "POST",
     "path": "/rest/api/3/search",
     "body": {
-      "jql": "project='First Project'"
+      "jql": "project='First Project'",
+      "startAt": 0
     },
     "status": 200,
     "response": {
