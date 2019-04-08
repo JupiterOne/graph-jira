@@ -496,6 +496,33 @@ describe("Convert data after creating issue", () => {
         webLink: "https://dualboot-test.atlassian.net/browse/FP-14",
       },
     ]);
+    expect(newData.relationships.projectIssueRelationships).toEqual([
+      {
+        _class: "HAS",
+        _fromEntityKey: "jira_project_10000",
+        _key: "jira_project_10000_has_jira_issue_10015",
+        _toEntityKey: "jira_issue_10015",
+        _type: "jira_project_has_issue",
+      },
+    ]);
+    expect(newData.relationships.userReportedIssueRelationships).toEqual([
+      {
+        _class: "REPORTED",
+        _fromEntityKey: "jira_user_5c937560807a642e13136645",
+        _key: "jira_user_5c937560807a642e13136645_reported_jira_issue_10015",
+        _toEntityKey: "jira_issue_10015",
+        _type: "jira_user_reported_issue",
+      },
+    ]);
+    expect(newData.relationships.userCreatedIssueRelationships).toEqual([
+      {
+        _class: "CREATED",
+        _fromEntityKey: "jira_user_5c937560807a642e13136645",
+        _key: "jira_user_5c937560807a642e13136645_created_jira_issue_10015",
+        _toEntityKey: "jira_issue_10015",
+        _type: "jira_user_created_issue",
+      },
+    ]);
   });
 
   afterAll(() => {
