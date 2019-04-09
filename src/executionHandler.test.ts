@@ -168,13 +168,10 @@ describe("CREATE_ENTITY", () => {
     expect(jiraClient.fetchIssues).toHaveBeenCalledTimes(0);
     expect(jiraClient.addNewIssue).toHaveBeenCalledTimes(1);
     expect(jiraClient.findIssue).toHaveBeenCalledTimes(1);
-    expect(clients.persister.processEntities).toHaveBeenCalledTimes(1);
-    expect(clients.persister.publishEntityOperations).toHaveBeenCalledTimes(1);
-    expect(
-      clients.persister.publishRelationshipOperations,
-    ).toHaveBeenCalledTimes(0);
+    expect(clients.persister.processEntities).toHaveBeenCalledTimes(4);
+    expect(clients.persister.processRelationships).toHaveBeenCalledTimes(4);
     expect(clients.persister.publishPersisterOperations).toHaveBeenCalledTimes(
-      0,
+      1,
     );
   });
 });
@@ -194,6 +191,7 @@ describe("unhandled action", () => {
     expect(jiraClient.addNewIssue).not.toHaveBeenCalled();
     expect(jiraClient.findIssue).not.toHaveBeenCalled();
     expect(clients.persister.processEntities).not.toHaveBeenCalled();
+    expect(clients.persister.processRelationships).not.toHaveBeenCalled();
     expect(clients.persister.publishPersisterOperations).not.toHaveBeenCalled();
   });
 });
