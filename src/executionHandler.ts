@@ -6,8 +6,6 @@ import {
   IntegrationInvocationEvent,
   summarizePersisterOperationsResults,
 } from "@jupiterone/jupiter-managed-integration-sdk";
-
-import { createIssueEntities } from "./converters";
 import initializeContext from "./initializeContext";
 import createJiraIssue from "./jira/createJiraIssue";
 import fetchJiraData from "./jira/fetchJiraData";
@@ -57,14 +55,20 @@ async function createIssue(
     action as IntegrationCreateEntityAction,
   );
 
-  const entityOperations = persister.processEntities(
-    [],
-    createIssueEntities(jiraData.issues),
-  );
+  const emptyOldData: JupiterOneDataModel = {
+    entities: { issues: [], users: [], projects: [], accounts: [] },
+    relationships: {
+      userCreatedIssueRelationships: [],
+      userReportedIssueRelationships: [],
+      projectIssueRelationships: [],
+      accountProjectRelationships: [],
+    },
+  };
 
-  // TODO new relationship operations must also be published
   return {
-    operations: await persister.publishEntityOperations(entityOperations),
+    operations: summarizePersisterOperationsResults(
+      await publishChanges(persister, emptyOldData, jiraData),
+    ),
   };
 }
 
