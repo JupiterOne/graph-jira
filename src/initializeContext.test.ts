@@ -2,8 +2,8 @@ import {
   IntegrationExecutionContext,
   IntegrationInvocationEvent,
   IntegrationJob,
+  JobsClient,
 } from "@jupiterone/jupiter-managed-integration-sdk";
-import JobsClient from "@jupiterone/jupiter-managed-integration-sdk/service/JobsClient";
 
 import initializeContext from "./initializeContext";
 import { createJiraClient } from "./jira";
