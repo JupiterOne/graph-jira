@@ -1,6 +1,7 @@
 import {
   IntegrationExecutionContext,
-  IntegrationInvocationEvent,
+  IntegrationJob,
+  JobsClient,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import initializeContext from "./initializeContext";
@@ -14,9 +15,18 @@ const jiraClient = {};
 const clients = {
   graph: {},
   persister: {},
+  jobs: {
+    logEvent: jest.fn().mockReturnValue({}),
+    getLastCompleted: jest.fn().mockReturnValue({
+      id: "0",
+      integrationInstanceId: "0",
+      createDate: Date.parse("2019-04-08T12:51:50.417Z"),
+      errorsOccurred: false,
+    } as IntegrationJob),
+  } as JobsClient,
 };
 
-let executionContext: IntegrationExecutionContext<IntegrationInvocationEvent>;
+let executionContext: IntegrationExecutionContext;
 
 beforeEach(() => {
   executionContext = {
@@ -26,15 +36,18 @@ beforeEach(() => {
     instance: {
       config: {},
     },
-  } as IntegrationExecutionContext<IntegrationInvocationEvent>;
+  } as IntegrationExecutionContext;
 });
 
 test("defaults", async () => {
   const context = await initializeContext(executionContext);
+  const lastJob = await clients.jobs.getLastCompleted();
+  const lastJobTimestamp = lastJob && lastJob.createDate;
   expect(context.graph).toBe(clients.graph);
   expect(context.persister).toBe(clients.persister);
   expect(context.jira).toBe(jiraClient);
   expect(context.projects).toEqual([]);
+  expect(context.lastJobTimestamp).toEqual(lastJobTimestamp);
 });
 
 describe("config.projects", () => {

@@ -35,7 +35,7 @@ export default async function fetchEntitiesAndRelationships(
 async function fetchEntities(
   graph: GraphClient,
 ): Promise<JupiterOneEntitiesData> {
-  const [accounts, projects, users, issues] = await Promise.all([
+  const [accounts, projects, users] = await Promise.all([
     graph.findEntitiesByType<Entities.AccountEntity>(
       Entities.ACCOUNT_ENTITY_TYPE,
     ),
@@ -43,44 +43,29 @@ async function fetchEntities(
       Entities.PROJECT_ENTITY_TYPE,
     ),
     graph.findEntitiesByType<Entities.UserEntity>(Entities.USER_ENTITY_TYPE),
-    graph.findEntitiesByType<Entities.IssueEntity>(Entities.ISSUE_ENTITY_TYPE),
   ]);
 
   return {
     accounts,
     projects,
     users,
-    issues,
+    issues: [],
   };
 }
 
 export async function fetchRelationships(
   graph: GraphClient,
 ): Promise<JupiterOneRelationshipsData> {
-  const [
-    accountProjectRelationships,
-    projectIssueRelationships,
-    userCreatedIssueRelationships,
-    userReportedIssueRelationships,
-  ] = await Promise.all([
+  const [accountProjectRelationships] = await Promise.all([
     graph.findRelationshipsByType<Entities.AccountProjectRelationship>(
       Entities.ACCOUNT_PROJECT_RELATIONSHIP_TYPE,
-    ),
-    graph.findRelationshipsByType<Entities.ProjectIssueRelationship>(
-      Entities.PROJECT_ISSUE_RELATIONSHIP_TYPE,
-    ),
-    graph.findRelationshipsByType<Entities.UserIssueRelationship>(
-      Entities.USER_CREATED_ISSUE_RELATIONSHIP_TYPE,
-    ),
-    graph.findRelationshipsByType<Entities.UserIssueRelationship>(
-      Entities.USER_REPORTED_ISSUE_RELATIONSHIP_TYPE,
     ),
   ]);
 
   return {
     accountProjectRelationships,
-    projectIssueRelationships,
-    userCreatedIssueRelationships,
-    userReportedIssueRelationships,
+    projectIssueRelationships: [],
+    userCreatedIssueRelationships: [],
+    userReportedIssueRelationships: [],
   };
 }

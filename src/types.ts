@@ -1,7 +1,6 @@
 import {
   GraphClient,
   IntegrationExecutionContext,
-  IntegrationInvocationEvent,
   PersisterClient,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 import JiraClient from "./jira/JiraClient";
@@ -19,10 +18,10 @@ export interface CreateIssueActionProperties {
   classification: string;
 }
 
-export interface JiraIntegrationContext
-  extends IntegrationExecutionContext<IntegrationInvocationEvent> {
+export interface JiraIntegrationContext extends IntegrationExecutionContext {
   graph: GraphClient;
   persister: PersisterClient;
   jira: JiraClient;
   projects: ProjectConfig[];
+  lastJobTimestamp: number | null;
 }

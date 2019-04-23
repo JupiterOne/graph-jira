@@ -1,9 +1,9 @@
 import {
-  IntegrationExecutionContext,
   IntegrationInstanceAuthenticationError,
   IntegrationInstanceConfigError,
-  IntegrationInvocationEvent,
+  IntegrationValidationContext,
 } from "@jupiterone/jupiter-managed-integration-sdk";
+
 import { createJiraClient } from "./jira";
 
 /**
@@ -15,14 +15,14 @@ import { createJiraClient } from "./jira";
  * ensure that credentials are valid. The function will be awaited to support
  * connecting to the provider for this purpose.
  *
- * @param executionContext
+ * @param validationContext
  */
 export default async function invocationValidator(
-  executionContext: IntegrationExecutionContext<IntegrationInvocationEvent>,
+  validationContext: IntegrationValidationContext,
 ) {
   const {
     instance: { config },
-  } = executionContext;
+  } = validationContext;
 
   if (!config.jiraHost || !config.jiraPassword || !config.jiraUsername) {
     throw new IntegrationInstanceConfigError(
@@ -30,7 +30,7 @@ export default async function invocationValidator(
     );
   }
 
-  const provider = createJiraClient(executionContext);
+  const provider = createJiraClient(config);
   try {
     await provider.fetchProjects();
   } catch (err) {

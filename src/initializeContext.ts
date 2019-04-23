@@ -1,17 +1,16 @@
-import {
-  IntegrationExecutionContext,
-  IntegrationInvocationEvent,
-} from "@jupiterone/jupiter-managed-integration-sdk";
+import { IntegrationExecutionContext } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { createJiraClient } from "./jira";
 import { JiraIntegrationContext, ProjectConfig } from "./types";
 
 export default async function initializeContext(
-  context: IntegrationExecutionContext<IntegrationInvocationEvent>,
+  context: IntegrationExecutionContext,
 ): Promise<JiraIntegrationContext> {
-  const jira = createJiraClient(context);
+  const jira = createJiraClient(context.instance.config);
   const projects = buildProjectConfigs(context.instance.config.projects);
-  const { persister, graph } = context.clients.getClients();
+  const { persister, graph, jobs } = context.clients.getClients();
+  const lastJob = await jobs.getLastCompleted();
+  const lastJobTimestamp = lastJob && lastJob.createDate;
 
   return {
     ...context,
@@ -19,6 +18,7 @@ export default async function initializeContext(
     persister,
     jira,
     projects,
+    lastJobTimestamp,
   };
 }
 

@@ -65,7 +65,10 @@ export default class JiraClient {
     return info;
   }
 
-  public async fetchIssues(project: string): Promise<Issue[]> {
+  public async fetchIssues(
+    project: string,
+    sinceAtTimestamp?: number,
+  ): Promise<Issue[]> {
     if (!project) {
       return [] as Issue[];
     }
@@ -73,8 +76,14 @@ export default class JiraClient {
     let issues: Issue[] = [];
     let resultLength = 0;
 
+    const projectQuery = `project='${project}'`;
+    const sinceAtFilter = sinceAtTimestamp
+      ? ` AND updated>=${sinceAtTimestamp}`
+      : "";
+    const searchString = `${projectQuery}${sinceAtFilter}`;
+
     do {
-      const response = await this.client.searchJira(`project='${project}'`, {
+      const response = await this.client.searchJira(searchString, {
         startAt: issues.length,
       });
 
