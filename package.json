@@ -2,7 +2,7 @@
   "name": "@jupiterone/jupiter-integration-jira",
   "version": "0.2.5",
   "description": "A JupiterOne managed integration for https://www.atlassian.com/software/jira.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": "https://github.com/JupiterOne/jupiter-integration-jira",
   "license": "SEE LICENSE IN LICENSE",
   "files": [
