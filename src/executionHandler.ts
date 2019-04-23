@@ -29,11 +29,14 @@ export default async function executionHandler(
 async function synchronize(
   context: JiraIntegrationContext,
 ): Promise<IntegrationExecutionResult> {
-  const { jira, graph, persister, projects } = context;
+  const { jira, graph, persister, projects, lastJobTimestamp } = context;
+
   const graphData: JupiterOneDataModel = await fetchEntitiesAndRelationships(
     graph,
   );
-  const jiraData = await fetchJiraData(jira, projects);
+
+  const jiraData = await fetchJiraData(jira, projects, lastJobTimestamp);
+
   return {
     operations: summarizePersisterOperationsResults(
       await publishChanges(persister, graphData, jiraData),

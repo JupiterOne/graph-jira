@@ -11,7 +11,9 @@ export default async function initializeContext(
 ): Promise<JiraIntegrationContext> {
   const jira = createJiraClient(context);
   const projects = buildProjectConfigs(context.instance.config.projects);
-  const { persister, graph } = context.clients.getClients();
+  const { persister, graph, jobs } = context.clients.getClients();
+  const lastJob = await jobs.getLastCompleted();
+  const lastJobTimestamp = lastJob && lastJob.createDate;
 
   return {
     ...context,
@@ -19,6 +21,7 @@ export default async function initializeContext(
     persister,
     jira,
     projects,
+    lastJobTimestamp,
   };
 }
 
