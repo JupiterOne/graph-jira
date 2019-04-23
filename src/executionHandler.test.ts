@@ -1,7 +1,6 @@
 import {
   IntegrationActionName,
   IntegrationExecutionContext,
-  IntegrationInvocationEvent,
   JobsClient,
   PersisterClient,
 } from "@jupiterone/jupiter-managed-integration-sdk";
@@ -76,7 +75,7 @@ const clients = {
 };
 
 let jiraClient: JiraClient;
-let executionContext: IntegrationExecutionContext<IntegrationInvocationEvent>;
+let executionContext: IntegrationExecutionContext;
 
 beforeEach(() => {
   jiraClient = ({
@@ -102,7 +101,7 @@ beforeEach(() => {
     instance: {
       config: {},
     },
-  } as unknown) as IntegrationExecutionContext<IntegrationInvocationEvent>;
+  } as unknown) as IntegrationExecutionContext;
 });
 
 describe("INGEST", () => {

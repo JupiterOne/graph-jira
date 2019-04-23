@@ -1,6 +1,5 @@
 import {
   IntegrationExecutionContext,
-  IntegrationInvocationEvent,
   IntegrationJob,
   JobsClient,
 } from "@jupiterone/jupiter-managed-integration-sdk";
@@ -27,7 +26,7 @@ const clients = {
   } as JobsClient,
 };
 
-let executionContext: IntegrationExecutionContext<IntegrationInvocationEvent>;
+let executionContext: IntegrationExecutionContext;
 
 beforeEach(() => {
   executionContext = {
@@ -37,7 +36,7 @@ beforeEach(() => {
     instance: {
       config: {},
     },
-  } as IntegrationExecutionContext<IntegrationInvocationEvent>;
+  } as IntegrationExecutionContext;
 });
 
 test("defaults", async () => {

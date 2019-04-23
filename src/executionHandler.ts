@@ -3,7 +3,6 @@ import {
   IntegrationCreateEntityAction,
   IntegrationExecutionContext,
   IntegrationExecutionResult,
-  IntegrationInvocationEvent,
   summarizePersisterOperationsResults,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 import initializeContext from "./initializeContext";
@@ -16,7 +15,7 @@ import publishChanges from "./persister/publishChanges";
 import { JiraIntegrationContext } from "./types";
 
 export default async function executionHandler(
-  context: IntegrationExecutionContext<IntegrationInvocationEvent>,
+  context: IntegrationExecutionContext,
 ): Promise<IntegrationExecutionResult> {
   const actionFunction = ACTIONS[context.event.action.name];
   if (actionFunction) {
