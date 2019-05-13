@@ -99,7 +99,7 @@ describe("Convert data after fetching", () => {
         baseUrl: "https://dualboot-test.atlassian.net",
         version: "1001.0.0-SNAPSHOT",
         buildNumber: 100099,
-        buildDate: "2019-03-25T04:00:00.000+0400",
+        buildDate: 1553472000000,
         scmInfo: "e83467feebdf2319aa1c51e89e38c2c9ae8f4d2a",
         serverTitle: "Jira",
       },
