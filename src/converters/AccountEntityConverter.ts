@@ -1,3 +1,4 @@
+import getTime from "../../test/utils/getTime";
 import { ServerInfo } from "../jira";
 import {
   ACCOUNT_ENTITY_CLASS,
@@ -16,7 +17,7 @@ export function createAccountEntity(serverInfo: ServerInfo): AccountEntity {
     baseUrl: serverInfo.baseUrl,
     version: serverInfo.version,
     buildNumber: serverInfo.buildNumber,
-    buildDate: serverInfo.buildDate,
+    buildDate: getTime(serverInfo.buildDate)!,
     scmInfo: serverInfo.scmInfo,
     serverTitle: serverInfo.serverTitle,
   };
