@@ -1,6 +1,7 @@
 # JupiterOne Managed Integration for Jira
 
-[![Build Status](https://travis-ci.org/JupiterOne/jupiter-integration-jira.svg?branch=master)](https://travis-ci.org/JupiterOne/jupiter-integration-jira) [![Greenkeeper badge](https://badges.greenkeeper.io/JupiterOne/jupiter-integration-jira.svg)](https://greenkeeper.io/)
+[![Build Status](https://travis-ci.org/JupiterOne/jupiter-integration-jira.svg?branch=master)](https://travis-ci.org/JupiterOne/jupiter-integration-jira)
+[![Greenkeeper badge](https://badges.greenkeeper.io/JupiterOne/jupiter-integration-jira.svg)](https://greenkeeper.io/)
 
 A JupiterOne integration ingests information such as configurations and other
 metadata about digital and physical assets belonging to an organization. The
@@ -147,7 +148,3 @@ yarn test
 Managed integrations are deployed into the JupiterOne infrastructure by staff
 engineers using internal projects that declare a dependency on the open source
 integration NPM package. The package will be published by the JupiterOne team.
-
-```sh
-yarn build:publish
-```

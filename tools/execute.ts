@@ -1,7 +1,6 @@
 /* tslint:disable:no-console */
 import { executeIntegrationLocal } from "@jupiterone/jupiter-managed-integration-sdk";
-
-import jiraIntegration from "../src/index";
+import invocationConfig from "../src/index";
 
 const integrationConfig = {
   jiraUsername: process.env.JIRA_LOCAL_EXECUTION_USERNAME,
@@ -12,7 +11,15 @@ const integrationConfig = {
     : [],
 };
 
-executeIntegrationLocal(integrationConfig, jiraIntegration, {}).catch(err => {
+const invocationArgs = {
+  // providerPrivateKey: process.env.PROVIDER_LOCAL_EXECUTION_PRIVATE_KEY
+};
+
+executeIntegrationLocal(
+  integrationConfig,
+  invocationConfig,
+  invocationArgs,
+).catch(err => {
   console.error(err);
   process.exit(1);
 });

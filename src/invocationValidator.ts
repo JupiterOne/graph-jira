@@ -10,19 +10,23 @@ import { createJiraClient } from "./jira";
  * Performs validation of the execution before the execution handler function is
  * invoked.
  *
- * At a minimum, integrations should ensure that the instance configuration is
- * valid. It is also helpful to perform authentication with the provider to
- * ensure that credentials are valid. The function will be awaited to support
- * connecting to the provider for this purpose.
+ * At a minimum, integrations should ensure that the
+ * `context.instance.config` is valid. Integrations that require
+ * additional information in `context.invocationArgs` should also
+ * validate those properties. It is also helpful to perform authentication with
+ * the provider to ensure that credentials are valid.
  *
- * @param validationContext
+ * The function will be awaited to support connecting to the provider for this
+ * purpose.
+ *
+ * @param context
  */
 export default async function invocationValidator(
-  validationContext: IntegrationValidationContext,
+  context: IntegrationValidationContext,
 ) {
   const {
     instance: { config },
-  } = validationContext;
+  } = context;
 
   if (!config.jiraHost || !config.jiraPassword || !config.jiraUsername) {
     throw new IntegrationInstanceConfigError(
