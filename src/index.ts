@@ -3,9 +3,9 @@ import { IntegrationInvocationConfig } from "@jupiterone/jupiter-managed-integra
 import executionHandler from "./executionHandler";
 import invocationValidator from "./invocationValidator";
 
-const config: IntegrationInvocationConfig = {
+const invocationConfig: IntegrationInvocationConfig = {
   executionHandler,
   invocationValidator,
 };
 
-export default config;
+export default invocationConfig;

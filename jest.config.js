@@ -9,6 +9,7 @@ module.exports = {
     "src/**/*.ts",
     "!src/index.ts",
     "!src/ProviderClient.ts",
+    "!src/utils/getLastSyncTime.ts",
   ],
   moduleFileExtensions: [...defaults.moduleFileExtensions, "ts"],
   testEnvironment: "node",

@@ -2,15 +2,15 @@ import { IntegrationExecutionContext } from "@jupiterone/jupiter-managed-integra
 
 import { createJiraClient } from "./jira";
 import { JiraIntegrationContext, ProjectConfig } from "./types";
+import getLastSyncTime from "./utils/getLastSyncTime";
 
 export default async function initializeContext(
   context: IntegrationExecutionContext,
 ): Promise<JiraIntegrationContext> {
   const jira = createJiraClient(context.instance.config);
   const projects = buildProjectConfigs(context.instance.config.projects);
-  const { persister, graph, jobs } = context.clients.getClients();
-  const lastJob = await jobs.getLastCompleted();
-  const lastJobTimestamp = lastJob && lastJob.createDate;
+  const { persister, graph } = context.clients.getClients();
+  const lastJobTimestamp = await getLastSyncTime(context.instance);
 
   return {
     ...context,

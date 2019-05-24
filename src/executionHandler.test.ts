@@ -1,7 +1,6 @@
 import {
   IntegrationActionName,
   IntegrationExecutionContext,
-  JobsClient,
   PersisterClient,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
@@ -68,10 +67,6 @@ const clients = {
     publishRelationshipOperations: jest.fn().mockResolvedValue({}),
     publishPersisterOperations: jest.fn().mockResolvedValue({}),
   } as PersisterClient,
-  jobs: {
-    logEvent: jest.fn().mockReturnValue({}),
-    getLastCompleted: jest.fn().mockReturnValue({}),
-  } as JobsClient,
 };
 
 let jiraClient: JiraClient;
