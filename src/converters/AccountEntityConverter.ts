@@ -1,12 +1,11 @@
-import getTime from "../../test/utils/getTime";
 import { ServerInfo } from "../jira";
 import {
   ACCOUNT_ENTITY_CLASS,
   ACCOUNT_ENTITY_TYPE,
   AccountEntity,
 } from "../jupiterone";
-
 import generateEntityKey from "../utils/generateEntityKey";
+import getTime from "../utils/getTime";
 
 export function createAccountEntity(serverInfo: ServerInfo): AccountEntity {
   return {
