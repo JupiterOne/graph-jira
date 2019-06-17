@@ -34,6 +34,7 @@ export default class JiraClient {
     summary: string,
     projectId: number,
     issueTypeName: IssueTypeName,
+    additionalFields: object = {},
   ): Promise<Issue> {
     const issue: Issue = (await this.client.addNewIssue({
       fields: {
@@ -44,6 +45,7 @@ export default class JiraClient {
         issuetype: {
           name: issueTypeName,
         },
+        ...additionalFields,
       },
     })) as Issue;
     return issue;
