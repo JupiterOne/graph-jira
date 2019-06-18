@@ -16,6 +16,7 @@ export interface CreateIssueActionProperties {
   project: string;
   summary: string;
   classification: string;
+  additionalFields?: object;
 }
 
 export interface JiraIntegrationContext extends IntegrationExecutionContext {

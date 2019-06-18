@@ -480,18 +480,18 @@ describe("Convert data after creating issue", () => {
     });
     const { jira } = await initialize();
 
-    const newData = convert(
-      await createJiraIssue(jira, {
-        name: IntegrationActionName.CREATE_ENTITY,
-        class: "Vulnerability",
-        properties: {
-          summary: "Test Summary",
-          description: "Test Description",
-          classification: "Task",
-          project: "10000",
-        },
-      } as IntegrationCreateEntityAction),
-    );
+    const { data: issueData } = await createJiraIssue(jira, {
+      name: IntegrationActionName.CREATE_ENTITY,
+      class: "Vulnerability",
+      properties: {
+        summary: "Test Summary",
+        description: "Test Description",
+        classification: "Task",
+        project: "10000",
+      },
+    } as IntegrationCreateEntityAction);
+
+    const newData = convert(issueData);
     nockDone();
     expect(newData.entities.issues).toEqual([
       {

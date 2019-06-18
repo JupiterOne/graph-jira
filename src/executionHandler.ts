@@ -52,7 +52,7 @@ async function createIssue(
     event: { action },
   } = context;
 
-  const jiraData = await createJiraIssue(
+  const { data: jiraData, issue } = await createJiraIssue(
     jira,
     action as IntegrationCreateEntityAction,
   );
@@ -71,6 +71,10 @@ async function createIssue(
     operations: summarizePersisterOperationsResults(
       await publishChanges(persister, emptyOldData, jiraData),
     ),
+    actionResult: {
+      name: IntegrationActionName.INGEST,
+      entities: [issue],
+    },
   };
 }
 
