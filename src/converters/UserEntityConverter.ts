@@ -1,5 +1,5 @@
+import { USER_ENTITY_CLASS, USER_ENTITY_TYPE, UserEntity } from "../entities";
 import { User } from "../jira";
-import { USER_ENTITY_CLASS, USER_ENTITY_TYPE, UserEntity } from "../jupiterone";
 
 import generateEntityKey from "../utils/generateEntityKey";
 

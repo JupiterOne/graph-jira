@@ -2,12 +2,12 @@ import { IntegrationCreateEntityAction } from "@jupiterone/jupiter-managed-integ
 
 import { CreateIssueActionProperties } from "../types";
 import JiraClient from "./JiraClient";
-import { Issue, JiraDataModel, Project, ServerInfo } from "./types";
+import { Issue } from "./types";
 
 export default async function createJiraIssue(
   client: JiraClient,
   action: IntegrationCreateEntityAction,
-): Promise<{ data: JiraDataModel; issue: Issue }> {
+): Promise<Issue> {
   const {
     summary,
     classification,
@@ -23,16 +23,6 @@ export default async function createJiraIssue(
     classification as any,
     additionalFields,
   );
-  const issueFullData: Issue = (await client.findIssue(newIssue.key)) as Issue;
-  const issues = ([] as Issue[]).concat(issueFullData);
 
-  return {
-    data: {
-      projects: [] as Project[],
-      serverInfo: {} as ServerInfo,
-      users: [],
-      issues,
-    },
-    issue: issueFullData,
-  };
+  return client.findIssue(newIssue.key);
 }

@@ -1,9 +1,9 @@
-import { Project } from "../jira";
 import {
   PROJECT_ENTITY_CLASS,
   PROJECT_ENTITY_TYPE,
   ProjectEntity,
-} from "../jupiterone";
+} from "../entities";
+import { Project } from "../jira";
 
 import generateEntityKey from "../utils/generateEntityKey";
 

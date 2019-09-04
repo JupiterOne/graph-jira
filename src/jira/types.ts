@@ -1,10 +1,3 @@
-export interface JiraDataModel {
-  serverInfo: ServerInfo;
-  projects: Project[];
-  users: User[];
-  issues: Issue[];
-}
-
 export interface ServerInfo {
   baseUrl: string;
   version: string;
@@ -16,9 +9,12 @@ export interface ServerInfo {
   serverTitle: string;
 }
 
-export interface Project {
-  self: string;
+export interface Resource {
   id: string;
+}
+
+export interface Project extends Resource {
+  self: string;
   key: string;
   name: string;
   avatarUrls: {
@@ -31,9 +27,8 @@ export interface Project {
   url: string;
 }
 
-export interface User {
+export interface User extends Resource {
   self: string;
-  id: string;
   key: string;
   name: string;
   avatarUrls: {
@@ -47,8 +42,7 @@ export interface User {
   locale?: string;
 }
 
-export interface Issue {
-  id: string;
+export interface Issue extends Resource {
   self: string;
   key: string;
   fields: {

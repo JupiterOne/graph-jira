@@ -1,4 +1,3 @@
-import { Issue } from "../jira";
 import {
   ISSUE_ENTITY_TYPE,
   USER_CREATED_ISSUE_RELATIONSHIP_CLASS,
@@ -7,7 +6,8 @@ import {
   USER_REPORTED_ISSUE_RELATIONSHIP_CLASS,
   USER_REPORTED_ISSUE_RELATIONSHIP_TYPE,
   UserIssueRelationship,
-} from "../jupiterone";
+} from "../entities";
+import { Issue } from "../jira";
 import generateEntityKey from "../utils/generateEntityKey";
 
 export function createUserCreatedIssueRelationships(issues: Issue[]) {

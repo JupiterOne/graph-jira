@@ -1,9 +1,9 @@
-import { ServerInfo } from "../jira";
 import {
   ACCOUNT_ENTITY_CLASS,
   ACCOUNT_ENTITY_TYPE,
   AccountEntity,
-} from "../jupiterone";
+} from "../entities";
+import { ServerInfo } from "../jira";
 import generateEntityKey from "../utils/generateEntityKey";
 import getTime from "../utils/getTime";
 

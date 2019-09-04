@@ -57,7 +57,7 @@ describe("JiraClient fetch ok data", () => {
       before: prepareScope,
     });
     const client = await getAuthenticatedClient();
-    const response = await client.fetchUsers();
+    const response = await client.fetchUsersPage();
     expect(response).toBeArray();
     expect(response).not.toBeArrayOfSize(0);
     nockDone();
@@ -68,7 +68,7 @@ describe("JiraClient fetch ok data", () => {
       before: prepareScope,
     });
     const client = await getAuthenticatedClient();
-    const response = await client.fetchIssues("First Project");
+    const response = await client.fetchIssuesPage({ project: "First Project" });
     expect(response).toBeArray();
     expect(response).not.toBeArrayOfSize(0);
     nockDone();
@@ -79,10 +79,10 @@ describe("JiraClient fetch ok data", () => {
       before: prepareScope,
     });
     const client = await getAuthenticatedClient();
-    const response = await client.fetchIssues(
-      "First Project",
-      Date.parse("2019-04-08T12:51:50.417Z"),
-    );
+    const response = await client.fetchIssuesPage({
+      project: "First Project",
+      sinceAtTimestamp: Date.parse("2019-04-08T12:51:50.417Z"),
+    });
     expect(response).toBeArray();
     expect(response).not.toBeArrayOfSize(0);
     nockDone();
@@ -93,7 +93,9 @@ describe("JiraClient fetch ok data", () => {
       before: prepareScope,
     });
     const client = await getAuthenticatedClient();
-    await expect(client.fetchIssues("NotExistedProject")).rejects.toThrow();
+    await expect(
+      client.fetchIssuesPage({ project: "NotExistedProject" }),
+    ).rejects.toThrow();
     nockDone();
   });
 
@@ -102,7 +104,7 @@ describe("JiraClient fetch ok data", () => {
       before: prepareScope,
     });
     const client = await getAuthenticatedClient();
-    const issues = await client.fetchIssues("");
+    const issues = await client.fetchIssuesPage({ project: "" });
     expect(issues).toEqual([]);
     nockDone();
   });

@@ -1,9 +1,9 @@
-import { Issue } from "../jira";
 import {
   ISSUE_ENTITY_CLASS,
   ISSUE_ENTITY_TYPE,
   IssueEntity,
-} from "../jupiterone";
+} from "../entities";
+import { Issue } from "../jira";
 
 import generateEntityKey from "../utils/generateEntityKey";
 
