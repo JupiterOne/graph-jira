@@ -1,6 +1,6 @@
 // @ts-ignore
 import markdownTable = require("markdown-table");
-import Entities = require("../src/jupiterone");
+import Entities = require("../src/entities");
 
 const INTEGRATION_NAME = "Jira";
 

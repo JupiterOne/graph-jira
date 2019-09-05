@@ -6,7 +6,7 @@ import {
   ACCOUNT_PROJECT_RELATIONSHIP_TYPE,
   AccountProjectRelationship,
   PROJECT_ENTITY_TYPE,
-} from "../jupiterone";
+} from "../entities";
 
 import generateEntityKey from "../utils/generateEntityKey";
 

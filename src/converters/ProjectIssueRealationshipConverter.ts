@@ -6,7 +6,7 @@ import {
   PROJECT_ISSUE_RELATIONSHIP_CLASS,
   PROJECT_ISSUE_RELATIONSHIP_TYPE,
   ProjectIssueRelationship,
-} from "../jupiterone";
+} from "../entities";
 import generateEntityKey from "../utils/generateEntityKey";
 
 export function createProjectIssueRelationships(issues: Issue[]) {

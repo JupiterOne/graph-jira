@@ -8,6 +8,16 @@ interface JiraParams {
   username: string;
 }
 
+interface PaginationOptions {
+  startAt?: number;
+  pageSize?: number;
+}
+
+interface IssuesOptions extends PaginationOptions {
+  project: string;
+  sinceAtTimestamp?: number;
+}
+
 type IssueTypeName =
   | "Epic"
   | "Improvement"
@@ -67,16 +77,14 @@ export default class JiraClient {
     return info;
   }
 
-  public async fetchIssues(
-    project: string,
-    sinceAtTimestamp?: number,
-  ): Promise<Issue[]> {
+  public async fetchIssuesPage({
+    project,
+    sinceAtTimestamp,
+    startAt,
+  }: IssuesOptions): Promise<Issue[]> {
     if (!project) {
       return [] as Issue[];
     }
-
-    let issues: Issue[] = [];
-    let resultLength = 0;
 
     const projectQuery = `project='${project}'`;
     const sinceAtFilter = sinceAtTimestamp
@@ -84,34 +92,21 @@ export default class JiraClient {
       : "";
     const searchString = `${projectQuery}${sinceAtFilter}`;
 
-    do {
-      const response = await this.client.searchJira(searchString, {
-        startAt: issues.length,
-      });
+    const response = await this.client.searchJira(searchString, {
+      startAt: startAt || 0,
+    });
 
-      const paginatedIssues = response.issues;
-      issues = issues.concat(paginatedIssues);
-      resultLength = paginatedIssues.length;
-    } while (resultLength > 0);
-
-    return issues;
+    return response.issues as Promise<Issue[]>;
   }
 
-  public async fetchUsers(): Promise<User[]> {
-    let users: User[] = [];
-    let resultLength = 0;
-
-    do {
-      const paginatedUsers: User[] = (await this.client.searchUsers({
-        startAt: users.length,
-        username: "",
-        includeInactive: true,
-      })) as User[];
-
-      users = users.concat(paginatedUsers);
-      resultLength = paginatedUsers.length;
-    } while (resultLength > 0);
-
-    return users;
+  public async fetchUsersPage(
+    options: PaginationOptions = {},
+  ): Promise<User[]> {
+    return this.client.searchUsers({
+      startAt: options.startAt || 0,
+      username: "",
+      includeInactive: true,
+      maxResults: options.pageSize,
+    }) as Promise<User[]>;
   }
 }

@@ -5,14 +5,28 @@ import {
   IntegrationExecutionResult,
   summarizePersisterOperationsResults,
 } from "@jupiterone/jupiter-managed-integration-sdk";
+
+import {
+  createIssueEntities,
+  createProjectIssueRelationships,
+  createUserCreatedIssueRelationships,
+  createUserReportedIssueRelationships,
+} from "./converters";
 import initializeContext from "./initializeContext";
 import createJiraIssue from "./jira/createJiraIssue";
-import fetchJiraData from "./jira/fetchJiraData";
-import fetchEntitiesAndRelationships, {
-  JupiterOneDataModel,
-} from "./jupiterone/fetchEntitiesAndRelationships";
-import publishChanges from "./persister/publishChanges";
 import { JiraIntegrationContext } from "./types";
+
+type ActionFunction = (
+  context: JiraIntegrationContext,
+) => Promise<IntegrationExecutionResult>;
+
+interface ActionMap {
+  [actionName: string]: ActionFunction | undefined;
+}
+
+const ACTIONS: ActionMap = {
+  [IntegrationActionName.CREATE_ENTITY]: createIssue,
+};
 
 export default async function executionHandler(
   context: IntegrationExecutionContext,
@@ -25,24 +39,6 @@ export default async function executionHandler(
   }
 }
 
-async function synchronize(
-  context: JiraIntegrationContext,
-): Promise<IntegrationExecutionResult> {
-  const { jira, graph, persister, projects, lastJobTimestamp } = context;
-
-  const graphData: JupiterOneDataModel = await fetchEntitiesAndRelationships(
-    graph,
-  );
-
-  const jiraData = await fetchJiraData(jira, projects, lastJobTimestamp);
-
-  return {
-    operations: summarizePersisterOperationsResults(
-      await publishChanges(persister, graphData, jiraData),
-    ),
-  };
-}
-
 async function createIssue(
   context: JiraIntegrationContext,
 ): Promise<IntegrationExecutionResult> {
@@ -52,41 +48,33 @@ async function createIssue(
     event: { action },
   } = context;
 
-  const { data: jiraData, issue } = await createJiraIssue(
+  const issue = await createJiraIssue(
     jira,
     action as IntegrationCreateEntityAction,
   );
+  const issues = issue ? [issue] : [];
+  const issueEntities = createIssueEntities(issues);
 
-  const emptyOldData: JupiterOneDataModel = {
-    entities: { issues: [], users: [], projects: [], accounts: [] },
-    relationships: {
-      userCreatedIssueRelationships: [],
-      userReportedIssueRelationships: [],
-      projectIssueRelationships: [],
-      accountProjectRelationships: [],
-    },
-  };
+  const entityOperations = persister.processEntities([], issueEntities);
+  const relationshipOperations = persister.processRelationships(
+    [],
+    [
+      ...createProjectIssueRelationships(issues),
+      ...createUserCreatedIssueRelationships(issues),
+      ...createUserReportedIssueRelationships(issues),
+    ],
+  );
 
   return {
     operations: summarizePersisterOperationsResults(
-      await publishChanges(persister, emptyOldData, jiraData),
+      await persister.publishPersisterOperations([
+        entityOperations,
+        relationshipOperations,
+      ]),
     ),
     actionResult: {
       name: IntegrationActionName.INGEST,
-      entities: [issue],
+      entities: issues,
     },
   };
 }
-
-type ActionFunction = (
-  context: JiraIntegrationContext,
-) => Promise<IntegrationExecutionResult>;
-
-interface ActionMap {
-  [actionName: string]: ActionFunction | undefined;
-}
-
-const ACTIONS: ActionMap = {
-  [IntegrationActionName.INGEST]: synchronize,
-  [IntegrationActionName.CREATE_ENTITY]: createIssue,
-};
