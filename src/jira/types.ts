@@ -10,12 +10,12 @@ export interface ServerInfo {
 }
 
 export interface Resource {
-  id: string;
+  key: string;
 }
 
 export interface Project extends Resource {
   self: string;
-  key: string;
+  id: string;
   name: string;
   avatarUrls: {
     [size: string]: string;
@@ -29,7 +29,6 @@ export interface Project extends Resource {
 
 export interface User extends Resource {
   self: string;
-  key: string;
   name: string;
   avatarUrls: {
     [size: string]: string;
@@ -44,7 +43,7 @@ export interface User extends Resource {
 
 export interface Issue extends Resource {
   self: string;
-  key: string;
+  id: string;
   fields: {
     issuetype: IssueType;
     project: Project;

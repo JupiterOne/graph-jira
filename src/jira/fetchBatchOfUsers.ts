@@ -38,7 +38,7 @@ export default async function(
     }
 
     for (const user of usersPage) {
-      userIds.push(user.id);
+      userIds.push(user.key);
       users.push(user);
     }
 

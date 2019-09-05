@@ -7,14 +7,18 @@ export interface JiraCacheEntry<T> {
 }
 
 export class JiraCache<T extends Resource> {
-  constructor(readonly resource: string, readonly cache: IntegrationCache) {}
+  protected idsKey: string;
+
+  constructor(readonly resource: string, readonly cache: IntegrationCache) {
+    this.idsKey = resource + "Keys";
+  }
 
   public async putIds(ids: string[]) {
-    return this.cache.putEntry({ key: this.resource + "Ids", data: ids });
+    return this.cache.putEntry({ key: this.idsKey, data: ids });
   }
 
   public async getIds() {
-    const entry = await this.cache.getEntry(this.resource + "Ids");
+    const entry = await this.cache.getEntry(this.idsKey);
     if (entry) {
       return entry.data as string[];
     }
@@ -22,7 +26,7 @@ export class JiraCache<T extends Resource> {
 
   public async putResources(resources: T[]) {
     const entries = resources.map(r => ({
-      key: this.resource + r.id,
+      key: this.resource + r.key,
       data: r,
     }));
     return this.cache.putEntries(entries);

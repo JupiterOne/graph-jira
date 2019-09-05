@@ -46,7 +46,7 @@ export default async function(
     }
 
     for (const issue of issuesPage) {
-      issueIds.push(issue.id);
+      issueIds.push(issue.key);
       issues.push(issue);
     }
 
