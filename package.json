@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/jupiter-integration-jira",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "A JupiterOne managed integration for https://www.atlassian.com/software/jira.",
   "main": "dist/index.js",
   "repository": "https://github.com/JupiterOne/jupiter-integration-jira",
