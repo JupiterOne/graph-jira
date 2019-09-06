@@ -14,7 +14,7 @@ import { JiraIntegrationContext } from "../types";
 export default async function(
   executionContext: JiraIntegrationContext,
 ): Promise<IntegrationExecutionResult> {
-  const { jira, graph, persister } = executionContext;
+  const { jira, graph, persister, logger } = executionContext;
 
   const existingAccountEntity = await graph.findEntitiesByType<
     Entities.AccountEntity
@@ -32,7 +32,9 @@ export default async function(
     jira.fetchProjects(),
   ]);
 
+  logger.trace({ serverInfo }, "Creating entity for serverInfo...");
   const accountEntity = await createAccountEntity(serverInfo);
+  logger.trace({ projects }, "Creating entities for projects...");
   const projectEntities = await createProjectEntities(projects);
 
   const accountProjectRelationships = createAccountProjectRelationships(
