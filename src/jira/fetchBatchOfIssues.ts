@@ -8,7 +8,7 @@ import { JiraCache } from "./cache";
 import { Issue } from "./types";
 
 const PAGE_SIZE = Number(process.env.ISSUES_PAGE_SIZE) || 200;
-const PAGE_LIMIT = Number(process.env.ISSUES_PAGE_LIMIT) || 5;
+const PAGE_LIMIT = Number(process.env.ISSUES_PAGE_LIMIT) || 10;
 
 export default async function(
   executionContext: JiraIntegrationContext,
