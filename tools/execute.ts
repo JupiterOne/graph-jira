@@ -1,6 +1,6 @@
 /* tslint:disable:no-console */
 import { executeIntegrationLocal } from "@jupiterone/jupiter-managed-integration-sdk";
-import invocationConfig from "../src/index";
+import { stepFunctionsInvocationConfig } from "../src/index";
 
 const integrationConfig = {
   jiraUsername: process.env.JIRA_LOCAL_EXECUTION_USERNAME,
@@ -17,7 +17,7 @@ const invocationArgs = {
 
 executeIntegrationLocal(
   integrationConfig,
-  invocationConfig,
+  stepFunctionsInvocationConfig,
   invocationArgs,
 ).catch(err => {
   console.error(err);
