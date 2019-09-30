@@ -20,5 +20,5 @@ deploy:
   on:
     tags: true
     branch: master
-    repo: JupiterOne/jupiter-integration-jira
+    repo: JupiterOne/graph-jira
     node: '8'
