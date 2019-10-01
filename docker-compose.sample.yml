@@ -2,9 +2,9 @@ version: '3.7'
 
 services:
   integration:
-    image: jupiter-integration-jira-app
+    image: graph-jira-app
     build: .
-    container_name: jupiter-integration-jira-app
+    container_name: graph-jira-app
     volumes:
       - .:/app:cached
       - ~/.ssh:/root/.ssh
