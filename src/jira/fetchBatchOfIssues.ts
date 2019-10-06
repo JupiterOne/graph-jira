@@ -15,13 +15,13 @@ export default async function(
   iterationState: IntegrationStepIterationState,
 ): Promise<IntegrationStepExecutionResult> {
   const { projects, jira, lastJobTimestamp, logger } = executionContext;
-  logger.trace({ projects }, "Ingesting issues for projects");
+  logger.debug({ projects, lastJobTimestamp }, "Ingesting issues for projects");
   const cache = executionContext.clients.getCache();
   const issueCache = new JiraCache<Issue>("issue", cache);
 
   const issueIds: string[] =
     iterationState.iteration > 0 ? (await issueCache.getIds())! : [];
-  logger.trace({ issueIds }, "Fetched issue IDs from cache");
+  logger.debug({ issueIds }, "Fetched issue IDs from cache");
   const issues: Issue[] = [];
 
   let page = 0;
@@ -31,7 +31,7 @@ export default async function(
 
   while (page < PAGE_LIMIT) {
     const project = projects[projectIndex];
-    logger.trace({ page, project: project.key }, "Paging through issues...");
+    logger.debug({ page, project: project.key }, "Paging through issues...");
     const issuesPage = await jira.fetchIssuesPage({
       project: project.key,
       sinceAtTimestamp: lastJobTimestamp || undefined,
@@ -41,13 +41,13 @@ export default async function(
 
     if (issuesPage.length === 0) {
       if (projectIndex < projects.length - 1) {
-        logger.trace(
+        logger.debug(
           { page, project: project.key },
           "Paged through all issues of project",
         );
         projectIndex++;
       } else {
-        logger.trace(
+        logger.debug(
           { page, project: project.key },
           "Paged through all issues, exiting",
         );
@@ -62,7 +62,7 @@ export default async function(
       issues.push(issue);
     }
 
-    logger.trace(
+    logger.debug(
       {
         page,
         project: project.key,
@@ -75,18 +75,18 @@ export default async function(
     page++;
   }
 
-  logger.trace("Putting issues into cache...");
+  logger.debug({ issuesCount: issues.length }, "Putting issues into cache...");
   await Promise.all([
     issueCache.putResources(issues),
     issueCache.putIds(issueIds),
   ]);
 
   if (finished) {
-    logger.trace("Recording success...");
+    logger.debug("Recording success...");
     issueCache.recordSuccess();
   }
 
-  logger.trace(
+  logger.debug(
     { finished, startAt, project: projects[projectIndex] },
     "Finished iteration",
   );

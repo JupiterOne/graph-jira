@@ -32,9 +32,9 @@ export default async function(
     jira.fetchProjects(),
   ]);
 
-  logger.trace({ serverInfo }, "Creating entity for serverInfo...");
+  logger.debug({ serverInfo }, "Creating entity for serverInfo...");
   const accountEntity = await createAccountEntity(serverInfo);
-  logger.trace({ projects }, "Creating entities for projects...");
+  logger.debug({ projects }, "Creating entities for projects...");
   const projectEntities = await createProjectEntities(projects);
 
   const accountProjectRelationships = createAccountProjectRelationships(

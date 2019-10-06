@@ -14,7 +14,7 @@ import { JiraIntegrationContext } from "../types";
 export default async function(
   executionContext: JiraIntegrationContext,
 ): Promise<IntegrationExecutionResult> {
-  const { graph, persister } = executionContext;
+  const { graph, persister, logger } = executionContext;
   const cache = executionContext.clients.getCache();
   const issueCache = new JiraCache<Issue>("issue", cache);
 
@@ -27,6 +27,10 @@ export default async function(
   }
 
   const issueIds = await issueCache.getIds();
+  logger.debug(
+    { issueIds },
+    "Fetched issue IDs from cache for synchronization",
+  );
   if (!issueIds) {
     executionContext.logger.info("No issues in cache");
     return {
@@ -39,6 +43,10 @@ export default async function(
   }
 
   const issues = await issueCache.getResources(issueIds);
+  logger.debug(
+    { issuesCount: issues.length },
+    "Fetched issues from cache for synchronization",
+  );
   const issueEntities = createIssueEntities(issues);
 
   const existingIssueEntities = await graph.findEntitiesByType<
