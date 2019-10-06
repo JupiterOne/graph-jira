@@ -14,7 +14,7 @@ export default async function initializeContext(
     { integrationInstance: context.instance },
     "Fetching lastJobTimestamp",
   );
-  const lastJobTimestamp = await getLastSyncTime(context.instance);
+  const lastJobTimestamp = await getLastSyncTime(context);
   context.logger.debug(
     { lastJobTimestamp },
     `Fetched lastJobTimestamp (${lastJobTimestamp})`,
