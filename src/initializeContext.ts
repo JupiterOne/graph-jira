@@ -10,7 +10,15 @@ export default async function initializeContext(
   const jira = createJiraClient(context.instance.config);
   const projects = buildProjectConfigs(context.instance.config.projects);
   const { persister, graph } = context.clients.getClients();
-  const lastJobTimestamp = await getLastSyncTime(context.instance);
+  context.logger.debug(
+    { integrationInstance: context.instance },
+    "Fetching lastJobTimestamp",
+  );
+  const lastJobTimestamp = await getLastSyncTime(context);
+  context.logger.debug(
+    { lastJobTimestamp },
+    `Fetched lastJobTimestamp (${lastJobTimestamp})`,
+  );
 
   return {
     ...context,

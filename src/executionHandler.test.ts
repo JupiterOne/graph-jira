@@ -22,6 +22,9 @@ const clients = {
     publishRelationshipOperations: jest.fn().mockResolvedValue({}),
     publishPersisterOperations: jest.fn().mockResolvedValue({}),
   } as PersisterClient,
+  integrationService: {
+    lastSuccessfulSynchronizationTime: jest.fn().mockResolvedValue(null),
+  },
 };
 
 let jiraClient: JiraClient;
@@ -50,6 +53,9 @@ beforeEach(() => {
     },
     instance: {
       config: {},
+    },
+    logger: {
+      debug: jest.fn(),
     },
   } as unknown) as IntegrationExecutionContext;
 });

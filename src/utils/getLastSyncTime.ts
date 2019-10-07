@@ -1,10 +1,9 @@
-import {
-  IntegrationInstance,
-  lastSuccessfulSynchronizationTime,
-} from "@jupiterone/jupiter-managed-integration-sdk";
+import { IntegrationExecutionContext } from "@jupiterone/jupiter-managed-integration-sdk";
 
 export default async function getLastSyncTime(
-  instance: IntegrationInstance,
+  context: IntegrationExecutionContext,
 ): Promise<number | null> {
-  return lastSuccessfulSynchronizationTime(instance.accountId, instance.id);
+  return context.clients
+    .getClients()
+    .integrationService.lastSuccessfulSynchronizationTime();
 }
