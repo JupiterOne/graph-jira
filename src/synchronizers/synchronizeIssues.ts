@@ -6,7 +6,6 @@ import {
   createUserCreatedIssueRelationships,
   createUserReportedIssueRelationships,
 } from "../converters";
-import * as Entities from "../entities";
 import { Issue } from "../jira";
 import { JiraCache } from "../jira/cache";
 import { JiraIntegrationContext } from "../types";
@@ -14,7 +13,7 @@ import { JiraIntegrationContext } from "../types";
 export default async function(
   executionContext: JiraIntegrationContext,
 ): Promise<IntegrationExecutionResult> {
-  const { graph, persister, logger } = executionContext;
+  const { persister, logger } = executionContext;
   const cache = executionContext.clients.getCache();
   const issueCache = new JiraCache<Issue>("issue", cache);
 
@@ -49,14 +48,7 @@ export default async function(
   );
   const issueEntities = createIssueEntities(issues);
 
-  const existingIssueEntities = await graph.findEntitiesByType<
-    Entities.IssueEntity
-  >(Entities.ISSUE_ENTITY_TYPE);
-
-  const entityOperations = persister.processEntities(
-    existingIssueEntities,
-    issueEntities,
-  );
+  const entityOperations = persister.processEntities([], issueEntities);
 
   const projectIssueRelationships = createProjectIssueRelationships(issues);
   const userCreatedIssueRelationships = createUserCreatedIssueRelationships(
