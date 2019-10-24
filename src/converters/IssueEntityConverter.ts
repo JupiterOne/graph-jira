@@ -1,10 +1,14 @@
 import {
+  CHANGE_ISSUE_ENTITY_CLASS,
+  FINDING_ISSUE_ENTITY_CLASS,
+  INCIDENT_ISSUE_ENTITY_CLASS,
   ISSUE_ENTITY_CLASS,
   ISSUE_ENTITY_TYPE,
   IssueEntity,
+  RISK_ISSUE_ENTITY_CLASS,
+  VULN_ISSUE_ENTITY_CLASS,
 } from "../entities";
 import { Issue } from "../jira";
-
 import generateEntityKey from "../utils/generateEntityKey";
 
 const DONE = [
@@ -24,10 +28,33 @@ const DONE = [
 export function createIssueEntities(data: Issue[]): IssueEntity[] {
   return data.map(issue => {
     const status = issue.fields.status.name;
+    const issueType = issue.fields.issuetype.name;
+    let issueClass: string | string[];
+    switch (issueType.toLowerCase()) {
+      case "change":
+        issueClass = CHANGE_ISSUE_ENTITY_CLASS;
+        break;
+      case "finding":
+        issueClass = FINDING_ISSUE_ENTITY_CLASS;
+        break;
+      case "incident":
+        issueClass = INCIDENT_ISSUE_ENTITY_CLASS;
+        break;
+      case "risk":
+        issueClass = RISK_ISSUE_ENTITY_CLASS;
+        break;
+      case "vulnerability":
+        issueClass = VULN_ISSUE_ENTITY_CLASS;
+        break;
+      default:
+        issueClass = issue.key.startsWith("PRODCM")
+          ? CHANGE_ISSUE_ENTITY_CLASS
+          : ISSUE_ENTITY_CLASS;
+    }
     const issueEntity: IssueEntity = {
       _key: generateEntityKey(ISSUE_ENTITY_TYPE, issue.id),
       _type: ISSUE_ENTITY_TYPE,
-      _class: ISSUE_ENTITY_CLASS,
+      _class: issueClass,
       id: issue.id,
       name: issue.key,
       displayName: issue.key,
@@ -36,7 +63,7 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
       webLink: `https://${issue.self.split("/")[2]}/browse/${issue.key}`,
       status,
       active: DONE.indexOf(status.toLowerCase()) < 0,
-      issueType: issue.fields.issuetype.name,
+      issueType,
       reporter: issue.fields.reporter && issue.fields.reporter.name,
       assignee:
         (issue.fields.assignee && issue.fields.assignee.name) || undefined,

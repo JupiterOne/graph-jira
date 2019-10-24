@@ -25,6 +25,11 @@ export interface AccountProjectRelationship
 
 export const ISSUE_ENTITY_TYPE = "jira_issue";
 export const ISSUE_ENTITY_CLASS = "Record";
+export const CHANGE_ISSUE_ENTITY_CLASS = ["Change", "Record"];
+export const FINDING_ISSUE_ENTITY_CLASS = ["Finding", "Record"];
+export const INCIDENT_ISSUE_ENTITY_CLASS = ["Incident", "Record"];
+export const RISK_ISSUE_ENTITY_CLASS = ["Risk", "Record"];
+export const VULN_ISSUE_ENTITY_CLASS = ["Vulnerability", "Record"];
 
 export interface IssueEntity extends EntityFromIntegration {
   id: string;
