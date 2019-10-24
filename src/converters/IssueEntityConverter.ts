@@ -55,6 +55,7 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
       _key: generateEntityKey(ISSUE_ENTITY_TYPE, issue.id),
       _type: ISSUE_ENTITY_TYPE,
       _class: issueClass,
+      _rawData: [{ name: "default", rawData: issue }],
       id: issue.id,
       name: issue.key,
       displayName: issue.key,

@@ -8,7 +8,7 @@ export {
 } from "./AccountProjectRelationshipConverter";
 export {
   createProjectIssueRelationships,
-} from "./ProjectIssueRealationshipConverter";
+} from "./ProjectIssueRelationshipConverter";
 export {
   createUserCreatedIssueRelationships,
   createUserReportedIssueRelationships,
