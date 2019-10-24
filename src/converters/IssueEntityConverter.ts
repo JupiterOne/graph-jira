@@ -29,9 +29,7 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
   return data.map(issue => {
     const status = issue.fields.status.name;
     const issueType = issue.fields.issuetype.name;
-    let issueClass: string | string[] = issue.key.startsWith("PRODCM")
-      ? CHANGE_ISSUE_ENTITY_CLASS
-      : ISSUE_ENTITY_CLASS;
+    let issueClass: string | string[];
     switch (issueType.toLowerCase()) {
       case "change":
         issueClass = CHANGE_ISSUE_ENTITY_CLASS;
@@ -48,6 +46,10 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
       case "vulnerability":
         issueClass = VULN_ISSUE_ENTITY_CLASS;
         break;
+      default:
+        issueClass = issue.key.startsWith("PRODCM")
+          ? CHANGE_ISSUE_ENTITY_CLASS
+          : ISSUE_ENTITY_CLASS;
     }
     const issueEntity: IssueEntity = {
       _key: generateEntityKey(ISSUE_ENTITY_TYPE, issue.id),
