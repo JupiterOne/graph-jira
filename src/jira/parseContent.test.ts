@@ -2,7 +2,7 @@ import { TextContent } from "./";
 import parseContent from "./parseContent";
 
 test("parse paragraph contents", () => {
-  const testContent1: TextContent = {
+  const testContent: TextContent = {
     type: "doc",
     content: [
       {
@@ -26,7 +26,7 @@ test("parse paragraph contents", () => {
     ],
   };
 
-  const text = parseContent(testContent1.content!);
+  const text = parseContent(testContent.content!);
   expect(text).toEqual(
     `When a user is added to the organization...
 
@@ -35,7 +35,7 @@ Mitigating controls should be put in place...`,
 });
 
 test("parse code block contents", () => {
-  const testContent1: TextContent = {
+  const testContent: TextContent = {
     type: "doc",
     content: [
       {
@@ -62,7 +62,7 @@ test("parse code block contents", () => {
     ],
   };
 
-  const text = parseContent(testContent1.content!);
+  const text = parseContent(testContent.content!);
   expect(text).toEqual(
     `Example CLI Code:
 
