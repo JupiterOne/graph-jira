@@ -47,6 +47,7 @@ export default async function(
           "Paged through all issues of project",
         );
         projectIndex++;
+        startAt = 0;
       } else {
         logger.debug(
           { page, project: project.key },
