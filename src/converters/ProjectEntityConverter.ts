@@ -13,6 +13,7 @@ export function createProjectEntities(data: Project[]): ProjectEntity[] {
       _key: generateEntityKey(PROJECT_ENTITY_TYPE, project.id),
       _type: PROJECT_ENTITY_TYPE,
       _class: PROJECT_ENTITY_CLASS,
+      _rawData: [{ name: "default", rawData: project }],
       id: project.id,
       displayName: project.name,
       self: project.self,
