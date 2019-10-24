@@ -40,3 +40,14 @@ The following relationships are created/mapped:
 [1]:
   https://developer.atlassian.com/cloud/jira/platform/security-for-other-integrations/
 [2]: https://confluence.atlassian.com/cloud/api-tokens-938839638.html
+
+## Pro Tips
+
+In Jira, if you create custom issue types and use one of the following, the
+integration parse them and translate them to the corresponding entity class:
+
+- `Change` (this also maps when the issue key starts with `PRODCM`)
+- `Finding`
+- `Incident`
+- `Risk`
+- `Vulnerability`
