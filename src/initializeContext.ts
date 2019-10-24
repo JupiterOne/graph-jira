@@ -14,7 +14,9 @@ export default async function initializeContext(
     { integrationInstance: context.instance },
     "Fetching lastJobTimestamp",
   );
-  const lastJobTimestamp = await getLastSyncTime(context);
+  const msInOneYear = 86400000 * 365;
+  const lastJobTimestamp =
+    (await getLastSyncTime(context)) || new Date().getTime() - msInOneYear;
   context.logger.debug(
     { lastJobTimestamp },
     `Fetched lastJobTimestamp (${lastJobTimestamp})`,

@@ -35,6 +35,7 @@ export interface IssueEntity extends EntityFromIntegration {
   id: string;
   name: string;
   summary: string;
+  description: string;
   category: string;
   webLink: string;
   status: string;
@@ -43,6 +44,14 @@ export interface IssueEntity extends EntityFromIntegration {
   reporter: string;
   assignee?: string;
   creator: string;
+  createdOn?: number;
+  updatedOn?: number;
+  resolvedOn?: number;
+  dueOn?: number;
+  labels: string[];
+  components: string[];
+  resolution?: string;
+  priority: string;
 }
 
 export const USER_CREATED_ISSUE_RELATIONSHIP_TYPE = "jira_user_created_issue";
