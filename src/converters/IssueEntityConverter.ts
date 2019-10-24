@@ -35,14 +35,19 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
     switch (issueType.toLowerCase()) {
       case "change":
         issueClass = CHANGE_ISSUE_ENTITY_CLASS;
+        break;
       case "finding":
         issueClass = FINDING_ISSUE_ENTITY_CLASS;
+        break;
       case "incident":
         issueClass = INCIDENT_ISSUE_ENTITY_CLASS;
+        break;
       case "risk":
         issueClass = RISK_ISSUE_ENTITY_CLASS;
+        break;
       case "vulnerability":
         issueClass = VULN_ISSUE_ENTITY_CLASS;
+        break;
     }
     const issueEntity: IssueEntity = {
       _key: generateEntityKey(ISSUE_ENTITY_TYPE, issue.id),
