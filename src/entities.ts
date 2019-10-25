@@ -33,6 +33,7 @@ export const VULN_ISSUE_ENTITY_CLASS = ["Vulnerability", "Record"];
 
 export interface IssueEntity extends EntityFromIntegration {
   id: string;
+  key: string;
   name: string;
   summary: string;
   description: string;
