@@ -17,9 +17,9 @@ export default async function initializeContext(
   const msInOneYear = 86400000 * 365;
   const lastJobTimestamp =
     (await getLastSyncTime(context)) || new Date().getTime() - msInOneYear;
-  context.logger.debug(
+  context.logger.info(
     { lastJobTimestamp },
-    `Fetched lastJobTimestamp (${lastJobTimestamp})`,
+    `Fetched lastJobTimestamp (${new Date(lastJobTimestamp).toString()})`,
   );
 
   return {

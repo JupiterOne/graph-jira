@@ -48,16 +48,29 @@ export interface Component {
   description: string;
 }
 
+export interface TextMark {
+  type: string;
+}
+
 export interface TextContent {
-  type: "doc" | "codeBlock" | "text" | "paragraph" | "mention";
+  type:
+    | "doc"
+    | "codeBlock"
+    | "text"
+    | "paragraph"
+    | "mention"
+    | "inlineCard"
+    | "hardBreak"
+    | "blockquote";
   attrs?: {
     id?: string;
     text?: string;
     language?: string;
+    url?: string;
   };
   content?: TextContent[];
   text?: string;
-  marks?: object[];
+  marks?: TextMark[];
 }
 
 export interface Issue extends Resource {
