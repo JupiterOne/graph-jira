@@ -28,7 +28,7 @@ The following entity resources are ingested when the integration runs:
 
 (\*) The integration ingests issues up to a year prior to the date of execution.
 Issues ingested are kept as records, such that issues older than a year that
-were previously ingested will remain in the graph when integration runs again.
+were previously ingested will remain in the graph when the integration runs again.
 Issues are deleted only when the integration instance is deleted, along with
 other entities associated with the integration instance.
 
