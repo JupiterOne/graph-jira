@@ -27,7 +27,7 @@ function parseContentBlock(content: TextContent): string {
         : "";
     }
     default: {
-      return "";
+      return content.text || "";
     }
   }
 }
