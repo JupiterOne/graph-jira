@@ -58,10 +58,13 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
       _type: ISSUE_ENTITY_TYPE,
       _class: issueClass,
       id: issue.id,
+      key: issue.key,
       name: issue.key,
       displayName: issue.key,
       summary: issue.fields.summary,
-      description: parseContent(issue.fields.description.content),
+      description:
+        issue.fields.description &&
+        parseContent(issue.fields.description.content),
       category: "issue",
       webLink: `https://${issue.self.split("/")[2]}/browse/${issue.key}`,
       status,
