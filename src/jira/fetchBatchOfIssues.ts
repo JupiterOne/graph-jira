@@ -32,10 +32,9 @@ export default async function(
   while (page < PAGE_LIMIT) {
     const project = projects[projectIndex];
     logger.debug({ page, project: project.key }, "Paging through issues...");
-    logger.info("Ignoring lastJobTimestamp and fetching ALL issues!");
     const issuesPage = await jira.fetchIssuesPage({
       project: project.key,
-      sinceAtTimestamp: undefined,
+      sinceAtTimestamp: lastJobTimestamp || undefined,
       startAt,
       pageSize: PAGE_SIZE,
     });

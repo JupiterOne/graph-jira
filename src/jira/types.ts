@@ -41,6 +41,25 @@ export interface User extends Resource {
   locale?: string;
 }
 
+export interface Component {
+  self: string;
+  id: string;
+  name: string;
+  description: string;
+}
+
+export interface TextContent {
+  type: "doc" | "codeBlock" | "text" | "paragraph" | "mention";
+  attrs?: {
+    id?: string;
+    text?: string;
+    language?: string;
+  };
+  content?: TextContent[];
+  text?: string;
+  marks?: object[];
+}
+
 export interface Issue extends Resource {
   self: string;
   id: string;
@@ -48,7 +67,12 @@ export interface Issue extends Resource {
     issuetype: IssueType;
     project: Project;
     created: string;
+    updated: string | null;
+    resolutiondate: string | null;
+    duedate: string | null;
+    resolution: string | null;
     labels: string[];
+    components: Component[];
     priority: {
       name: string;
       id: string;
@@ -72,6 +96,7 @@ export interface Issue extends Resource {
     reporter: User;
     assignee?: User;
     summary: string;
+    description: TextContent;
     subtasks: Issue[];
   };
 }

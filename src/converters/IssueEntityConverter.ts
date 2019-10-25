@@ -9,7 +9,9 @@ import {
   VULN_ISSUE_ENTITY_CLASS,
 } from "../entities";
 import { Issue } from "../jira";
+import parseContent from "../jira/parseContent";
 import generateEntityKey from "../utils/generateEntityKey";
+import getTime from "../utils/getTime";
 
 const DONE = [
   "done",
@@ -55,11 +57,11 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
       _key: generateEntityKey(ISSUE_ENTITY_TYPE, issue.id),
       _type: ISSUE_ENTITY_TYPE,
       _class: issueClass,
-      _rawData: [{ name: "default", rawData: issue }],
       id: issue.id,
       name: issue.key,
       displayName: issue.key,
       summary: issue.fields.summary,
+      description: parseContent(issue.fields.description.content),
       category: "issue",
       webLink: `https://${issue.self.split("/")[2]}/browse/${issue.key}`,
       status,
@@ -69,6 +71,14 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
       assignee:
         (issue.fields.assignee && issue.fields.assignee.name) || undefined,
       creator: issue.fields.creator && issue.fields.creator.name,
+      createdOn: getTime(issue.fields.created),
+      updatedOn: getTime(issue.fields.updated),
+      resolvedOn: getTime(issue.fields.resolutiondate),
+      dueOn: getTime(issue.fields.duedate),
+      resolution: issue.fields.resolution || undefined,
+      labels: issue.fields.labels,
+      components: issue.fields.components.map(c => c.name),
+      priority: issue.fields.priority.name,
     };
 
     return issueEntity;
