@@ -72,6 +72,54 @@ j1 -o delete --alert -a j1dev -f ./alerts.json\r\nDone!
   );
 });
 
+test("parse url contents", () => {
+  const testContent: TextContent = {
+    type: "doc",
+    content: [
+      {
+        type: "paragraph",
+        content: [
+          {
+            type: "text",
+            text: "The summary will contain the following items:",
+          },
+          {
+            type: "hardBreak",
+          },
+          {
+            type: "text",
+            text: "• summary.csv (see ",
+          },
+          {
+            type: "inlineCard",
+            attrs: {
+              url: "https://domain.atlassian.net/browse/KEY-1234#icft=KEY-1234",
+            },
+          },
+          {
+            type: "text",
+            text: ")",
+          },
+          {
+            type: "hardBreak",
+          },
+          {
+            type: "text",
+            text: "• policies.csv",
+          },
+        ],
+      },
+    ],
+  };
+
+  const text = parseContent(testContent.content!);
+  expect(text).toEqual(
+    `The summary will contain the following items:
+• summary.csv (see [KEY-1234](https://domain.atlassian.net/browse/KEY-1234#icft=KEY-1234))
+• policies.csv`,
+  );
+});
+
 test("parse complex contents", () => {
   const testContent: TextContent = {
     type: "doc",
@@ -137,7 +185,20 @@ test("parse complex contents", () => {
           },
           {
             type: "text",
-            text: ": The team changed the access control policy.",
+            text: ": The team changed the access control policy in ",
+          },
+          {
+            type: "text",
+            text: "code",
+            marks: [
+              {
+                type: "code",
+              },
+            ],
+          },
+          {
+            type: "text",
+            text: ".",
           },
         ],
       },
@@ -181,14 +242,14 @@ test("parse complex contents", () => {
   };
   const text = parseContent(testContent.content!);
   expect(text).toEqual(
-    `Issue: At 5pm on Monday Sept 9th 2019, @Joe Smith discovered an issue. 
+    `**Issue**: At 5pm on Monday Sept 9th 2019, @Joe Smith discovered an issue. 
 
-Determination: This issue was due to a misconfiguration.
+**Determination**: This issue was due to a misconfiguration.
 
-Resolution: The team changed the access control policy.
+**Resolution**: The team changed the access control policy in \`code\`.
 
-Length of Exposure: This issue has been present for a day.
+**Length of Exposure**: This issue has been present for a day.
 
-Forensic Analysis: No breach.`,
+**Forensic Analysis**: No breach.`,
   );
 });

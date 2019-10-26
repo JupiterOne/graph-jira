@@ -28,6 +28,7 @@ beforeEach(() => {
     },
     logger: {
       debug: jest.fn(),
+      info: jest.fn(),
     } as any,
   } as IntegrationExecutionContext;
 });
