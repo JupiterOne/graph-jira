@@ -29,10 +29,11 @@ const DONE = [
 
 export function createIssueEntities(data: Issue[]): IssueEntity[] {
   return data.map(issue => {
-    const status = issue.fields.status.name;
-    const issueType = issue.fields.issuetype.name;
+    const status = issue.fields.status && issue.fields.status.name;
+    const issueType = issue.fields.issuetype && issue.fields.issuetype.name;
+
     let issueClass: string | string[];
-    switch (issueType.toLowerCase()) {
+    switch ((issueType || "").toLowerCase()) {
       case "change":
         issueClass = CHANGE_ISSUE_ENTITY_CLASS;
         break;
@@ -53,6 +54,7 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
           ? CHANGE_ISSUE_ENTITY_CLASS
           : ISSUE_ENTITY_CLASS;
     }
+
     const issueEntity: IssueEntity = {
       _key: generateEntityKey(ISSUE_ENTITY_TYPE, issue.id),
       _type: ISSUE_ENTITY_TYPE,
@@ -71,8 +73,7 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
       active: DONE.indexOf(status.toLowerCase()) < 0,
       issueType,
       reporter: issue.fields.reporter && issue.fields.reporter.name,
-      assignee:
-        (issue.fields.assignee && issue.fields.assignee.name) || undefined,
+      assignee: issue.fields.assignee && issue.fields.assignee.name,
       creator: issue.fields.creator && issue.fields.creator.name,
       createdOn: getTime(issue.fields.created),
       updatedOn: getTime(issue.fields.updated),
@@ -80,8 +81,8 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
       dueOn: getTime(issue.fields.duedate),
       resolution: issue.fields.resolution || undefined,
       labels: issue.fields.labels,
-      components: issue.fields.components.map(c => c.name),
-      priority: issue.fields.priority.name,
+      components: issue.fields.components && issue.fields.components.map(c => c.name),
+      priority: issue.fields.priority && issue.fields.priority.name,
     };
 
     return issueEntity;
