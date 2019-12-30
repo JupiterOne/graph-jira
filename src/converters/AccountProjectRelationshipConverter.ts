@@ -26,6 +26,7 @@ export function createAccountProjectRelationships(
     const relationship: AccountProjectRelationship = {
       _class: ACCOUNT_PROJECT_RELATIONSHIP_CLASS,
       _type: ACCOUNT_PROJECT_RELATIONSHIP_TYPE,
+      _scope: ACCOUNT_PROJECT_RELATIONSHIP_TYPE,
       _fromEntityKey: parentKey,
       _key: `${parentKey}_has_${childKey}`,
       _toEntityKey: childKey,

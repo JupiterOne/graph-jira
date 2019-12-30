@@ -63,12 +63,10 @@ export default async function(
 
   logger.debug({ finished, startAt }, "Finished iteration");
   return {
-    iterationState: {
-      ...iterationState,
-      finished,
-      state: {
-        startAt,
-      },
+    ...iterationState,
+    finished,
+    state: {
+      startAt,
     },
   };
 }

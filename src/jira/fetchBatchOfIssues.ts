@@ -92,13 +92,11 @@ export default async function(
     "Finished iteration",
   );
   return {
-    iterationState: {
-      ...iterationState,
-      finished,
-      state: {
-        startAt,
-        projectIndex,
-      },
+    ...iterationState,
+    finished,
+    state: {
+      startAt,
+      projectIndex,
     },
   };
 }

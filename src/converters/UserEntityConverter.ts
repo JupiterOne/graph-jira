@@ -8,6 +8,7 @@ export function createUserEntities(data: User[]): UserEntity[] {
     const userEntity: UserEntity = {
       _key: generateEntityKey(USER_ENTITY_TYPE, user.accountId),
       _type: USER_ENTITY_TYPE,
+      _scope: USER_ENTITY_TYPE,
       _class: USER_ENTITY_CLASS,
       id: user.accountId,
       displayName: user.displayName,
