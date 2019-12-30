@@ -45,6 +45,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
       steps: [
         {
           name: "Synchronize Account & Projects",
+          id: "account-and-projects",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
           ) => {
@@ -58,6 +59,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
     {
       steps: [
         {
+          id: "fetch-users",
           name: "Fetch Users",
           iterates: true,
           executionHandler: async (
@@ -80,6 +82,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
     {
       steps: [
         {
+          id: "synchronize-users",
           name: "Synchronize Users",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,
@@ -92,6 +95,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
     {
       steps: [
         {
+          id: "fetch-issues",
           name: "Fetch Issues",
           iterates: true,
           executionHandler: async (
@@ -114,6 +118,7 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
     {
       steps: [
         {
+          id: "synchronize-issues",
           name: "Synchronize Issues",
           executionHandler: async (
             executionContext: IntegrationStepExecutionContext,

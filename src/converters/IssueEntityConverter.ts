@@ -58,6 +58,7 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
     const issueEntity: IssueEntity = {
       _key: generateEntityKey(ISSUE_ENTITY_TYPE, issue.id),
       _type: ISSUE_ENTITY_TYPE,
+      _scope: ISSUE_ENTITY_TYPE,
       _class: issueClass,
       id: issue.id,
       key: issue.key,
@@ -81,7 +82,8 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
       dueOn: getTime(issue.fields.duedate),
       resolution: issue.fields.resolution || undefined,
       labels: issue.fields.labels,
-      components: issue.fields.components && issue.fields.components.map(c => c.name),
+      components:
+        issue.fields.components && issue.fields.components.map(c => c.name),
       priority: issue.fields.priority && issue.fields.priority.name,
     };
 

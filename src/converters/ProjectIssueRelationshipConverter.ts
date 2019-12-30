@@ -22,6 +22,7 @@ export function createProjectIssueRelationships(issues: Issue[]) {
     const relationship: ProjectIssueRelationship = {
       _class: PROJECT_ISSUE_RELATIONSHIP_CLASS,
       _type: PROJECT_ISSUE_RELATIONSHIP_TYPE,
+      _scope: PROJECT_ISSUE_RELATIONSHIP_TYPE,
       _fromEntityKey: parentKey,
       _key: `${parentKey}_has_${childKey}`,
       _toEntityKey: childKey,

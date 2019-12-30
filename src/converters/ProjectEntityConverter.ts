@@ -12,6 +12,7 @@ export function createProjectEntities(data: Project[]): ProjectEntity[] {
     const projectEntity: ProjectEntity = {
       _key: generateEntityKey(PROJECT_ENTITY_TYPE, project.id),
       _type: PROJECT_ENTITY_TYPE,
+      _scope: PROJECT_ENTITY_TYPE,
       _class: PROJECT_ENTITY_CLASS,
       id: project.id,
       displayName: project.name,

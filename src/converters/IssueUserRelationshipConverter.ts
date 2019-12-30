@@ -22,6 +22,7 @@ export function createUserCreatedIssueRelationships(issues: Issue[]) {
     const relationship: UserIssueRelationship = {
       _class: USER_CREATED_ISSUE_RELATIONSHIP_CLASS,
       _type: USER_CREATED_ISSUE_RELATIONSHIP_TYPE,
+      _scope: USER_CREATED_ISSUE_RELATIONSHIP_TYPE,
       _fromEntityKey: parentKey,
       _key: `${parentKey}_created_${childKey}`,
       _toEntityKey: childKey,
@@ -47,6 +48,7 @@ export function createUserReportedIssueRelationships(issues: Issue[]) {
       const relationship: UserIssueRelationship = {
         _class: USER_REPORTED_ISSUE_RELATIONSHIP_CLASS,
         _type: USER_REPORTED_ISSUE_RELATIONSHIP_TYPE,
+        _scope: USER_REPORTED_ISSUE_RELATIONSHIP_TYPE,
         _fromEntityKey: parentKey,
         _key: `${parentKey}_reported_${childKey}`,
         _toEntityKey: childKey,

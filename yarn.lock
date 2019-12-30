@@ -844,10 +844,10 @@
     "@types/istanbul-lib-coverage" "^2.0.0"
     "@types/yargs" "^12.0.9"
 
-"@jupiterone/jupiter-managed-integration-sdk@26.0.0":
-  version "26.0.0"
-  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-26.0.0.tgz#a37e0d52b057ef86d345b52a0942d7fc5ceb6cd8"
-  integrity sha512-1q6oFn8IdHHwVn1/XG2+Dfe0MGCghGa/15dVD9ZXgnkUueyxmj6IgpFtmelV/DuFwc9I3bUWHm3RyoMG/Ynvrg==
+"@jupiterone/jupiter-managed-integration-sdk@30.1.1":
+  version "30.1.1"
+  resolved "https://registry.yarnpkg.com/@jupiterone/jupiter-managed-integration-sdk/-/jupiter-managed-integration-sdk-30.1.1.tgz#1103dcaf16bf54f4b6aaeb7bb2684b375e1a91d5"
+  integrity sha512-icHWgGcWl9mlQK8lk1FnPikeT/OJUUBEYSdbdXeD2YreTZgJONB3w0RaRYsxXaEzMlq2OH+3p5ryu5YHGLJEoQ==
 
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
@@ -6369,10 +6369,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^3.4.5:
-  version "3.4.5"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.4.5.tgz#2d2618d10bb566572b8d7aad5180d84257d70a99"
-  integrity sha512-YycBxUb49UUhdNMU5aJ7z5Ej2XGmaIBL0x34vZ82fn3hGvD+bgrMrVDpatgz2f7YxUMJxMkbWxJZeAvDxVe7Vw==
+typescript@3.6.x:
+  version "3.6.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.6.4.tgz#b18752bb3792bc1a0281335f7f6ebf1bbfc5b91d"
+  integrity sha512-unoCll1+l+YK4i4F8f22TaNVPRHcD9PA3yCuZ8g5e0qGqlVlJ/8FSateOLLSagn+Yg5+ZwuPkL8LFUc0Jcvksg==
 
 uglify-js@^3.1.4:
   version "3.7.3"
