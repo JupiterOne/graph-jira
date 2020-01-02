@@ -80,7 +80,9 @@ export function createIssueEntities(data: Issue[]): IssueEntity[] {
       updatedOn: getTime(issue.fields.updated),
       resolvedOn: getTime(issue.fields.resolutiondate),
       dueOn: getTime(issue.fields.duedate),
-      resolution: issue.fields.resolution || undefined,
+      resolution: issue.fields.resolution
+        ? issue.fields.resolution.name
+        : undefined,
       labels: issue.fields.labels,
       components:
         issue.fields.components && issue.fields.components.map(c => c.name),

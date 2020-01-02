@@ -83,7 +83,9 @@ export interface Issue extends Resource {
     updated: string | null;
     resolutiondate: string | null;
     duedate: string | null;
-    resolution: string | null;
+    resolution: {
+      name: string;
+    } | null;
     labels: string[];
     components: Component[];
     priority: {
