@@ -7,7 +7,7 @@ import {
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import {
-  createIssueEntities,
+  createIssueEntity,
   createProjectIssueRelationships,
   createUserCreatedIssueRelationships,
   createUserReportedIssueRelationships,
@@ -52,8 +52,9 @@ async function createIssue(
     jira,
     action as IntegrationCreateEntityAction,
   );
+
   const issues = issue ? [issue] : [];
-  const issueEntities = createIssueEntities(issues);
+  const issueEntities = issue ? [createIssueEntity(issue)] : [];
 
   const entityOperations = persister.processEntities([], issueEntities);
   const relationshipOperations = persister.processRelationships(

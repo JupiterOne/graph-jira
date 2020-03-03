@@ -1,73 +1,70 @@
-import { IntegrationExecutionResult } from "@jupiterone/jupiter-managed-integration-sdk";
+import {
+  IntegrationCacheEntry,
+  IntegrationError,
+  IntegrationExecutionResult,
+} from "@jupiterone/jupiter-managed-integration-sdk";
 
 import {
-  createIssueEntities,
-  createProjectIssueRelationships,
-  createUserCreatedIssueRelationships,
-  createUserReportedIssueRelationships,
+  createIssueEntity,
+  createProjectIssueRelationship,
+  createUserCreatedIssueRelationship,
+  createUserReportedIssueRelationship,
 } from "../converters";
+import {
+  IssueEntity,
+  ProjectIssueRelationship,
+  UserIssueRelationship,
+} from "../entities";
 import { Issue } from "../jira";
-import { JiraCache } from "../jira/cache";
-import { JiraIntegrationContext } from "../types";
+import { JiraIntegrationContext, ResourceCacheState } from "../types";
 
 export default async function(
   executionContext: JiraIntegrationContext,
 ): Promise<IntegrationExecutionResult> {
-  const { persister, logger } = executionContext;
+  const { persister } = executionContext;
   const cache = executionContext.clients.getCache();
-  const issueCache = new JiraCache<Issue>("issue", cache);
 
-  if (!(await issueCache.fetchSuccess())) {
-    const err = new Error("Fetching of issues did not complete");
-    executionContext.logger.error({ err }, "Issue synchronization aborted");
-    return {
-      error: err,
-    };
+  const issuesCache = cache.iterableCache<
+    IntegrationCacheEntry,
+    ResourceCacheState
+  >("issues");
+
+  const issuesState = await issuesCache.getState();
+  if (!issuesState || !issuesState.resourceFetchCompleted) {
+    throw new IntegrationError(
+      "Issues fetching did not complete, cannot synchronize issues",
+    );
   }
 
-  const issueIds = await issueCache.getIds();
-  logger.debug(
-    { issueIds },
-    "Fetched issue IDs from cache for synchronization",
-  );
-  if (!issueIds) {
-    executionContext.logger.info("No issues in cache");
-    return {
-      operations: {
-        created: 0,
-        updated: 0,
-        deleted: 0,
-      },
-    };
-  }
+  const projectIssueRelationships: ProjectIssueRelationship[] = [];
+  const userCreatedIssueRelationships: UserIssueRelationship[] = [];
+  const userReportedIssueRelationships: UserIssueRelationship[] = [];
 
-  const issues = await issueCache.getResources(issueIds);
-  logger.debug(
-    { issuesCount: issues.length },
-    "Fetched issues from cache for synchronization",
-  );
-  const issueEntities = createIssueEntities(issues);
-
-  const entityOperations = persister.processEntities([], issueEntities);
-
-  const projectIssueRelationships = createProjectIssueRelationships(issues);
-  const userCreatedIssueRelationships = createUserCreatedIssueRelationships(
-    issues,
-  );
-  const userReportedIssueRelationships = createUserReportedIssueRelationships(
-    issues,
-  );
-
-  const relationshipOperations = [
-    ...persister.processRelationships([], projectIssueRelationships),
-    ...persister.processRelationships([], userCreatedIssueRelationships),
-    ...persister.processRelationships([], userReportedIssueRelationships),
-  ];
+  const newEntities: IssueEntity[] = [];
+  await issuesCache.forEach(e => {
+    const issue: Issue = e.entry.data;
+    newEntities.push(createIssueEntity(issue));
+    projectIssueRelationships.push(
+      createProjectIssueRelationship(issue.fields.project, issue),
+    );
+    userCreatedIssueRelationships.push(
+      createUserCreatedIssueRelationship(issue.fields.creator, issue),
+    );
+    if (issue.fields.reporter) {
+      userReportedIssueRelationships.push(
+        createUserReportedIssueRelationship(issue.fields.reporter, issue),
+      );
+    }
+  });
 
   return {
     operations: await persister.publishPersisterOperations([
-      entityOperations,
-      relationshipOperations,
+      persister.processEntities([], newEntities),
+      [
+        ...persister.processRelationships([], projectIssueRelationships),
+        ...persister.processRelationships([], userCreatedIssueRelationships),
+        ...persister.processRelationships([], userReportedIssueRelationships),
+      ],
     ]),
   };
 }

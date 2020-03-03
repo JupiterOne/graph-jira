@@ -26,3 +26,7 @@ export interface JiraIntegrationContext extends IntegrationExecutionContext {
   projects: ProjectConfig[];
   lastJobTimestamp: number | null;
 }
+
+export interface ResourceCacheState {
+  resourceFetchCompleted?: boolean;
+}

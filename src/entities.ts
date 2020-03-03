@@ -42,7 +42,7 @@ export interface IssueEntity extends EntityFromIntegration {
   status: string;
   active: boolean;
   issueType: string;
-  reporter: string;
+  reporter?: string;
   assignee?: string;
   creator: string;
   createdOn?: number;
@@ -92,7 +92,6 @@ export const USER_ENTITY_CLASS = "User";
 export interface UserEntity extends EntityFromIntegration {
   id: string;
   self: string;
-  key: string;
   name: string;
   email: string;
   timeZone: string;

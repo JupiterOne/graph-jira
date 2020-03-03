@@ -27,7 +27,7 @@ export interface Project extends Resource {
   url: string;
 }
 
-export interface User extends Resource {
+export interface User {
   self: string;
   name: string;
   avatarUrls: {
@@ -108,7 +108,7 @@ export interface Issue extends Resource {
       };
     };
     creator: User;
-    reporter: User;
+    reporter?: User;
     assignee?: User;
     summary: string;
     description: TextContent;
