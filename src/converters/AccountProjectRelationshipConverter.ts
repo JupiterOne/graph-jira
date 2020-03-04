@@ -1,5 +1,3 @@
-import { Project, ServerInfo } from "../jira";
-
 import {
   ACCOUNT_ENTITY_TYPE,
   ACCOUNT_PROJECT_RELATIONSHIP_CLASS,
@@ -7,31 +5,31 @@ import {
   AccountProjectRelationship,
   PROJECT_ENTITY_TYPE,
 } from "../entities";
-
+import { Project, ServerInfo } from "../jira";
 import generateEntityKey from "../utils/generateEntityKey";
 
 export function createAccountProjectRelationships(
   serverInfo: ServerInfo,
   projects: Project[],
 ) {
-  const defaultValue: AccountProjectRelationship[] = [];
+  const accountKey = generateEntityKey(ACCOUNT_ENTITY_TYPE, serverInfo.baseUrl);
+  return projects.reduce((acc: AccountProjectRelationship[], project) => {
+    return [...acc, createAccountProjectRelationship(accountKey, project)];
+  }, []);
+}
 
-  return projects.reduce((acc, group) => {
-    const parentKey = generateEntityKey(
-      ACCOUNT_ENTITY_TYPE,
-      serverInfo.baseUrl,
-    );
-    const childKey = generateEntityKey(PROJECT_ENTITY_TYPE, group.id);
+export function createAccountProjectRelationship(
+  accountKey: string,
+  project: Project,
+): AccountProjectRelationship {
+  const childKey = generateEntityKey(PROJECT_ENTITY_TYPE, project.id);
 
-    const relationship: AccountProjectRelationship = {
-      _class: ACCOUNT_PROJECT_RELATIONSHIP_CLASS,
-      _type: ACCOUNT_PROJECT_RELATIONSHIP_TYPE,
-      _scope: ACCOUNT_PROJECT_RELATIONSHIP_TYPE,
-      _fromEntityKey: parentKey,
-      _key: `${parentKey}_has_${childKey}`,
-      _toEntityKey: childKey,
-    };
-
-    return [...acc, relationship];
-  }, defaultValue);
+  return {
+    _class: ACCOUNT_PROJECT_RELATIONSHIP_CLASS,
+    _type: ACCOUNT_PROJECT_RELATIONSHIP_TYPE,
+    _scope: ACCOUNT_PROJECT_RELATIONSHIP_TYPE,
+    _fromEntityKey: accountKey,
+    _key: `${accountKey}_has_${childKey}`,
+    _toEntityKey: childKey,
+  };
 }
