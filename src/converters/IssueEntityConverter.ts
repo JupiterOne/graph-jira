@@ -32,6 +32,7 @@ const DONE = [
 export function createIssueEntity(
   issue: Issue,
   fieldsById: { [id: string]: Field } = {},
+  customFieldsToInclude: string[] = [],
 ): IssueEntity {
   const status = issue.fields.status && issue.fields.status.name;
   const issueType = issue.fields.issuetype && issue.fields.issuetype.name;
@@ -40,13 +41,18 @@ export function createIssueEntity(
   for (const [key, value] of Object.entries(issue.fields)) {
     if (key.startsWith("customfield_") && value && fieldsById[key]) {
       const fieldName = camelCase(fieldsById[key].name);
-      if (typeof value === "string") {
-        customFields[fieldName] = value;
-      } else if (typeof value === "object") {
-        if (value.type === "doc" && value.content) {
-          customFields[fieldName] = parseContent(
-            value.content as TextContent[],
-          );
+      if (
+        customFieldsToInclude.includes(key) ||
+        customFieldsToInclude.includes(fieldName)
+      ) {
+        if (typeof value === "string") {
+          customFields[fieldName] = value;
+        } else if (typeof value === "object") {
+          if (value.type === "doc" && value.content) {
+            customFields[fieldName] = parseContent(
+              value.content as TextContent[],
+            );
+          }
         }
       }
     }

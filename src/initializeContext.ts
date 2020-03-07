@@ -1,3 +1,5 @@
+import camelCase from "lodash/camelCase";
+
 import { IntegrationExecutionContext } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { createJiraClient } from "./jira";
@@ -9,6 +11,9 @@ export default async function initializeContext(
 ): Promise<JiraIntegrationContext> {
   const jira = createJiraClient(context.instance.config);
   const projects = buildProjectConfigs(context.instance.config.projects);
+  const customFieldsToInclude = buildCustomFields(
+    context.instance.config.customFields,
+  );
   const { persister, graph } = context.clients.getClients();
   context.logger.debug(
     { integrationInstance: context.instance },
@@ -28,8 +33,22 @@ export default async function initializeContext(
     persister,
     jira,
     projects,
+    customFieldsToInclude,
     lastJobTimestamp,
   };
+}
+
+function buildCustomFields(fields: any): string[] {
+  const customFields: string[] = [];
+  if (fields) {
+    for (const f of Array.isArray(fields) ? fields : [fields]) {
+      customFields.push(camelCase(f));
+      if (!f.startsWith("customfield_")) {
+        customFields.push(`customfield_${f}`);
+      }
+    }
+  }
+  return customFields;
 }
 
 function buildProjectConfigs(projects: any): ProjectConfig[] {

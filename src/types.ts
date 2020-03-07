@@ -24,6 +24,7 @@ export interface JiraIntegrationContext extends IntegrationExecutionContext {
   persister: PersisterClient;
   jira: JiraClient;
   projects: ProjectConfig[];
+  customFieldsToInclude: string[];
   lastJobTimestamp: number | null;
 }
 

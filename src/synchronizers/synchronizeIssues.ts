@@ -21,7 +21,7 @@ import { JiraIntegrationContext, ResourceCacheState } from "../types";
 export default async function(
   executionContext: JiraIntegrationContext,
 ): Promise<IntegrationExecutionResult> {
-  const { jira, persister } = executionContext;
+  const { customFieldsToInclude, jira, persister } = executionContext;
   const cache = executionContext.clients.getCache();
 
   const issuesCache = cache.iterableCache<
@@ -50,7 +50,9 @@ export default async function(
   const newEntities: IssueEntity[] = [];
   await issuesCache.forEach(e => {
     const issue: Issue = e.entry.data;
-    newEntities.push(createIssueEntity(issue, fieldsById));
+    newEntities.push(
+      createIssueEntity(issue, fieldsById, customFieldsToInclude),
+    );
     projectIssueRelationships.push(
       createProjectIssueRelationship(issue.fields.project, issue),
     );
