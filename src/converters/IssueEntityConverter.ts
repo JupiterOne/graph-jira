@@ -1,3 +1,5 @@
+import camelCase from "lodash/camelCase";
+
 import {
   CHANGE_ISSUE_ENTITY_CLASS,
   FINDING_ISSUE_ENTITY_CLASS,
@@ -8,7 +10,7 @@ import {
   RISK_ISSUE_ENTITY_CLASS,
   VULN_ISSUE_ENTITY_CLASS,
 } from "../entities";
-import { Issue } from "../jira";
+import { Field, Issue, TextContent } from "../jira";
 import parseContent from "../jira/parseContent";
 import generateEntityKey from "../utils/generateEntityKey";
 import getTime from "../utils/getTime";
@@ -27,9 +29,28 @@ const DONE = [
   "transferred",
 ];
 
-export function createIssueEntity(issue: Issue): IssueEntity {
+export function createIssueEntity(
+  issue: Issue,
+  fieldsById: { [id: string]: Field },
+): IssueEntity {
   const status = issue.fields.status && issue.fields.status.name;
   const issueType = issue.fields.issuetype && issue.fields.issuetype.name;
+  const customFields: { [key: string]: any } = {};
+
+  for (const [key, value] of Object.entries(issue.fields)) {
+    if (key.startsWith("customfield_") && value) {
+      const fieldName = camelCase(fieldsById[key].name);
+      if (typeof value === "string") {
+        customFields[fieldName] = value;
+      } else if (typeof value === "object") {
+        if (value.type === "doc" && value.content) {
+          customFields[fieldName] = parseContent(
+            value.content as TextContent[],
+          );
+        }
+      }
+    }
+  }
 
   let issueClass: string | string[];
   switch ((issueType || "").toLowerCase()) {
@@ -59,6 +80,7 @@ export function createIssueEntity(issue: Issue): IssueEntity {
     _type: ISSUE_ENTITY_TYPE,
     _scope: ISSUE_ENTITY_TYPE,
     _class: issueClass,
+    ...customFields,
     id: issue.id,
     key: issue.key,
     name: issue.key,

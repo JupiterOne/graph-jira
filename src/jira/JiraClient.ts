@@ -1,6 +1,6 @@
 import JiraApi from "jira-client";
 
-import { Issue, Project, ServerInfo, User } from "./types";
+import { Field, Issue, Project, ServerInfo, User } from "./types";
 
 interface JiraParams {
   host: string;
@@ -64,6 +64,11 @@ export default class JiraClient {
   public async findIssue(issueIdOrKey: string): Promise<Issue> {
     const issue: Issue = (await this.client.findIssue(issueIdOrKey)) as Issue;
     return issue;
+  }
+
+  public async fetchFields(): Promise<Field[]> {
+    const fields: Field[] = (await this.client.listFields()) as Field[];
+    return fields;
   }
 
   public async fetchProjects(): Promise<Project[]> {

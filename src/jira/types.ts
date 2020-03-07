@@ -13,6 +13,24 @@ export interface Resource {
   key: string;
 }
 
+export interface FieldSchema {
+  type: string;
+  system?: string;
+  custom?: string;
+  customId?: string;
+}
+
+export interface Field extends Resource {
+  id: string;
+  name: string;
+  custom: boolean;
+  orderable: boolean;
+  navigable: boolean;
+  searchable: boolean;
+  clauseNames: string[];
+  schema?: FieldSchema;
+}
+
 export interface Project extends Resource {
   self: string;
   id: string;
@@ -113,6 +131,7 @@ export interface Issue extends Resource {
     summary: string;
     description: TextContent;
     subtasks: Issue[];
+    customfield?: any;
   };
 }
 
