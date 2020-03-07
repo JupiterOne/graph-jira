@@ -31,14 +31,14 @@ const DONE = [
 
 export function createIssueEntity(
   issue: Issue,
-  fieldsById: { [id: string]: Field },
+  fieldsById: { [id: string]: Field } = {},
 ): IssueEntity {
   const status = issue.fields.status && issue.fields.status.name;
   const issueType = issue.fields.issuetype && issue.fields.issuetype.name;
   const customFields: { [key: string]: any } = {};
 
   for (const [key, value] of Object.entries(issue.fields)) {
-    if (key.startsWith("customfield_") && value) {
+    if (key.startsWith("customfield_") && value && fieldsById[key]) {
       const fieldName = camelCase(fieldsById[key].name);
       if (typeof value === "string") {
         customFields[fieldName] = value;

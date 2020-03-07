@@ -32,6 +32,7 @@ let executionContext: IntegrationExecutionContext;
 
 beforeEach(() => {
   jiraClient = ({
+    fetchFields: jest.fn().mockReturnValue([]),
     fetchProjects: jest.fn().mockReturnValue([]),
     fetchServerInfo: jest.fn().mockReturnValue([]),
     fetchIssuesPage: jest.fn().mockReturnValue([]),
