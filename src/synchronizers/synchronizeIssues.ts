@@ -15,13 +15,13 @@ import {
   ProjectIssueRelationship,
   UserIssueRelationship,
 } from "../entities";
-import { Issue } from "../jira";
+import { Field, Issue } from "../jira";
 import { JiraIntegrationContext, ResourceCacheState } from "../types";
 
 export default async function(
   executionContext: JiraIntegrationContext,
 ): Promise<IntegrationExecutionResult> {
-  const { persister } = executionContext;
+  const { customFieldsToInclude, jira, persister } = executionContext;
   const cache = executionContext.clients.getCache();
 
   const issuesCache = cache.iterableCache<
@@ -36,6 +36,13 @@ export default async function(
     );
   }
 
+  const fields = await jira.fetchFields();
+  const fieldsById: { [id: string]: Field } = {};
+
+  for (const field of fields) {
+    fieldsById[field.id] = field;
+  }
+
   const projectIssueRelationships: ProjectIssueRelationship[] = [];
   const userCreatedIssueRelationships: UserIssueRelationship[] = [];
   const userReportedIssueRelationships: UserIssueRelationship[] = [];
@@ -43,7 +50,9 @@ export default async function(
   const newEntities: IssueEntity[] = [];
   await issuesCache.forEach(e => {
     const issue: Issue = e.entry.data;
-    newEntities.push(createIssueEntity(issue));
+    newEntities.push(
+      createIssueEntity(issue, fieldsById, customFieldsToInclude),
+    );
     projectIssueRelationships.push(
       createProjectIssueRelationship(issue.fields.project, issue),
     );
