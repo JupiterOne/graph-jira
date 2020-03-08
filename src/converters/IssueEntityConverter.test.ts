@@ -290,13 +290,13 @@ test("createIssueEntity", () => {
     residualRisk: "there is none",
   };
   const jiraIssueEntity = {
-    _key: generateEntityKey("jira_issue", jiraIssue.id),
+    _key: generateEntityKey("jira_issue", "47788"),
     _type: "jira_issue",
     _scope: "jira_issue",
     _class: ["Risk", "Record"],
     _rawData: [{ name: "default", rawData: jiraIssue }],
     ...customFields,
-    id: jiraIssue.id,
+    id: "47788",
     key: "J1TEMP-112",
     name: "J1TEMP-112",
     displayName: "J1TEMP-112",
@@ -314,12 +314,10 @@ test("createIssueEntity", () => {
     updatedOn: getTime(jiraIssue.fields.updated),
     resolvedOn: getTime(jiraIssue.fields.resolutiondate),
     dueOn: getTime(jiraIssue.fields.duedate),
-    resolution: jiraIssue.fields.resolution
-      ? jiraIssue.fields.resolution.name
-      : undefined,
-    labels: jiraIssue.fields.labels,
+    resolution: undefined,
+    labels: [],
     components: [],
-    priority: jiraIssue.fields.priority && jiraIssue.fields.priority.name,
+    priority: "Medium",
   };
   expect(
     createIssueEntity(
