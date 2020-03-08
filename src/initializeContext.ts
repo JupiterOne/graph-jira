@@ -42,9 +42,12 @@ function buildCustomFields(fields: any): string[] {
   const customFields: string[] = [];
   if (fields) {
     for (const f of Array.isArray(fields) ? fields : [fields]) {
-      customFields.push(camelCase(f));
-      if (!f.startsWith("customfield_")) {
+      if (f.startsWith("customfield_")) {
+        customFields.push(f);
+      } else if (f.match(/\d{5}/)) {
         customFields.push(`customfield_${f}`);
+      } else {
+        customFields.push(camelCase(f));
       }
     }
   }

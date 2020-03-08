@@ -86,6 +86,7 @@ export function createIssueEntity(
     _type: ISSUE_ENTITY_TYPE,
     _scope: ISSUE_ENTITY_TYPE,
     _class: issueClass,
+    _rawData: [{ name: "default", rawData: issue }],
     ...customFields,
     id: issue.id,
     key: issue.key,
