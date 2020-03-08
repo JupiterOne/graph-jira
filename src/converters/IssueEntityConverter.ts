@@ -120,9 +120,15 @@ export function createIssueEntity(
     status,
     active: DONE.indexOf(status.toLowerCase()) < 0,
     issueType,
-    reporter: issue.fields.reporter && issue.fields.reporter.name,
-    assignee: issue.fields.assignee && issue.fields.assignee.name,
-    creator: issue.fields.creator && issue.fields.creator.name,
+    reporter:
+      issue.fields.reporter &&
+      (issue.fields.reporter.emailAddress || issue.fields.reporter.displayName),
+    assignee:
+      issue.fields.assignee &&
+      (issue.fields.assignee.emailAddress || issue.fields.assignee.displayName),
+    creator:
+      issue.fields.creator &&
+      (issue.fields.creator.emailAddress || issue.fields.creator.displayName),
     createdOn: getTime(issue.fields.created),
     updatedOn: getTime(issue.fields.updated),
     resolvedOn: getTime(issue.fields.resolutiondate),
