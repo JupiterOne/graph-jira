@@ -2,8 +2,9 @@ import { TextContent } from ".";
 
 export default function parseContent(
   content: TextContent[] | undefined,
+  joinWith: string = "\n\n",
 ): string {
-  return content ? content.map(c => parseContentBlock(c)).join("\n\n") : "";
+  return content ? content.map(c => parseContentBlock(c)).join(joinWith) : "";
 }
 
 function parseTextStyle(mark: { type: string }): string {
@@ -22,6 +23,15 @@ function parseTextStyle(mark: { type: string }): string {
 
 function parseContentBlock(content: TextContent): string {
   switch (content.type) {
+    case "panel": {
+      return parseContent(content.content) + "\n\n---";
+    }
+    case "bulletList": {
+      return "- " + parseContent(content.content, "\n\n- ");
+    }
+    case "listItem": {
+      return parseContent(content.content, "\n\n  ");
+    }
     case "codeBlock": {
       if (content.content) {
         const code = content.content.map(c => c.text).join("\n");

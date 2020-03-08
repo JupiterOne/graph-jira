@@ -79,12 +79,18 @@ export interface TextContent {
     | "mention"
     | "inlineCard"
     | "hardBreak"
-    | "blockquote";
+    | "blockquote"
+    | "panel"
+    | "emoji"
+    | "bulletList"
+    | "listItem";
   attrs?: {
     id?: string;
     text?: string;
     language?: string;
     url?: string;
+    panelType?: string;
+    shortName?: string;
   };
   content?: TextContent[];
   text?: string;

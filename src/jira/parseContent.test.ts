@@ -253,3 +253,354 @@ test("parse complex contents", () => {
 **Forensic Analysis**: No breach.`,
   );
 });
+
+test("parse content with panels and lists", () => {
+  const testContent: TextContent = {
+    type: "doc",
+    content: [
+      {
+        type: "panel",
+        attrs: {
+          panelType: "info",
+        },
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Summary",
+                marks: [
+                  {
+                    type: "strong",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "emoji",
+                attrs: {
+                  shortName: ":check_mark:",
+                  id: "atlassian-check_mark",
+                  text: ":check_mark:",
+                },
+              },
+              {
+                type: "text",
+                text:
+                  " This request should be approved because the correct processes were followed",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: "panel",
+        attrs: {
+          panelType: "info",
+        },
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Code changes review",
+                marks: [
+                  {
+                    type: "strong",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "The previous approval (",
+              },
+              {
+                type: "inlineCard",
+                attrs: {
+                  url:
+                    "https://test.atlassian.net/browse/PRODCM-12345#icft=PRODCM-12345",
+                },
+              },
+              {
+                type: "text",
+                text: ") was for build jupiter-integration-jira/master:65.",
+              },
+            ],
+          },
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "In jupiterone/jupiter-integration-jira:",
+              },
+            ],
+          },
+          {
+            type: "bulletList",
+            content: [
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "emoji",
+                        attrs: {
+                          shortName: ":check_mark:",
+                          id: "atlassian-check_mark",
+                          text: ":check_mark:",
+                        },
+                      },
+                      {
+                        type: "text",
+                        text: " Merged in custom-fields (",
+                      },
+                      {
+                        type: "text",
+                        text: "pull request #71",
+                        marks: [
+                          {
+                            type: "link",
+                            attrs: {
+                              href:
+                                "https://bitbucket.org/jupiterone/jupiter-integration-jira/pull-requests/71",
+                            },
+                          },
+                        ],
+                      },
+                      {
+                        type: "text",
+                        text: ")",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "emoji",
+                        attrs: {
+                          shortName: ":check_mark:",
+                          id: "atlassian-check_mark",
+                          text: ":check_mark:",
+                        },
+                      },
+                      {
+                        type: "text",
+                        text: " upgrade to v1.6.4",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "emoji",
+                        attrs: {
+                          shortName: ":check_mark:",
+                          id: "atlassian-check_mark",
+                          text: ":check_mark:",
+                        },
+                      },
+                      {
+                        type: "text",
+                        text: " upgrade to 1.6.3",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "emoji",
+                        attrs: {
+                          shortName: ":check_mark:",
+                          id: "atlassian-check_mark",
+                          text: ":check_mark:",
+                        },
+                      },
+                      {
+                        type: "text",
+                        text: " v1.6.1",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "emoji",
+                        attrs: {
+                          shortName: ":check_mark:",
+                          id: "atlassian-check_mark",
+                          text: ":check_mark:",
+                        },
+                      },
+                      {
+                        type: "text",
+                        text: " upgrade to v1.6.0",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "emoji",
+                        attrs: {
+                          shortName: ":check_mark:",
+                          id: "atlassian-check_mark",
+                          text: ":check_mark:",
+                        },
+                      },
+                      {
+                        type: "text",
+                        text: " update description",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "emoji",
+                        attrs: {
+                          shortName: ":check_mark:",
+                          id: "atlassian-check_mark",
+                          text: ":check_mark:",
+                        },
+                      },
+                      {
+                        type: "text",
+                        text: " Add customFields to integration definition",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: "panel",
+        attrs: {
+          panelType: "info",
+        },
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Security process review",
+                marks: [
+                  {
+                    type: "strong",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "emoji",
+                attrs: {
+                  shortName: ":check_mark:",
+                  id: "atlassian-check_mark",
+                  text: ":check_mark:",
+                },
+              },
+              {
+                type: "text",
+                text: " Snyk scan was detected and found no problems",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  const text = parseContent(testContent.content!);
+  expect(text).toEqual(
+    `**Summary**
+
+:check_mark: This request should be approved because the correct processes were followed
+
+---
+
+**Code changes review**
+
+The previous approval ([PRODCM-12345](https://test.atlassian.net/browse/PRODCM-12345#icft=PRODCM-12345)) was for build jupiter-integration-jira/master:65.
+
+In jupiterone/jupiter-integration-jira:
+
+- :check_mark: Merged in custom-fields (pull request #71)
+
+- :check_mark: upgrade to v1.6.4
+
+- :check_mark: upgrade to 1.6.3
+
+- :check_mark: v1.6.1
+
+- :check_mark: upgrade to v1.6.0
+
+- :check_mark: update description
+
+- :check_mark: Add customFields to integration definition
+
+---
+
+**Security process review**
+
+:check_mark: Snyk scan was detected and found no problems
+
+---`,
+  );
+});
