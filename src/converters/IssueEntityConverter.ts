@@ -29,7 +29,10 @@ const DONE = [
   "transferred",
 ];
 
-function parseNumber(s: string): number | string {
+function parseNumber(s: string | number): number | string {
+  if (typeof s !== "string") {
+    return s;
+  }
   const NUM_REGEX = /^[\d,]*(\.[\d]*)?(e[\d]*)?$/;
   const match = s.match(NUM_REGEX);
   if (match) {
@@ -67,7 +70,7 @@ export function createIssueEntity(
             customFields[fieldName] =
               typeof value.value === "object"
                 ? JSON.stringify(value.value)
-                : parseNumber(value);
+                : parseNumber(value.value);
           }
         }
       }
