@@ -7,6 +7,11 @@ export default function parseContent(
   return content ? content.map(c => parseContentBlock(c)).join(joinWith) : "";
 }
 
+const EMOJI_MAP: { [key: string]: string } = {
+  ":check_mark:": "✅",
+  ":cross_mark:": "❌",
+};
+
 function parseTextStyle(mark: { type: string }): string {
   const type = mark && mark.type;
   switch (type) {
@@ -31,6 +36,13 @@ function parseContentBlock(content: TextContent): string {
     }
     case "listItem": {
       return parseContent(content.content, "\n\n  ");
+    }
+    case "emoji": {
+      if (content.attrs && content.attrs.text) {
+        return EMOJI_MAP[content.attrs.text] || content.attrs.text;
+      } else {
+        return "";
+      }
     }
     case "codeBlock": {
       if (content.content) {

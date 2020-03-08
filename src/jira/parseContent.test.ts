@@ -284,15 +284,14 @@ test("parse content with panels and lists", () => {
               {
                 type: "emoji",
                 attrs: {
-                  shortName: ":check_mark:",
-                  id: "atlassian-check_mark",
-                  text: ":check_mark:",
+                  shortName: ":cross_mark:",
+                  id: "atlassian-cross_mark",
+                  text: ":cross_mark:",
                 },
               },
               {
                 type: "text",
-                text:
-                  " This request should be approved because the correct processes were followed",
+                text: " Review required",
               },
             ],
           },
@@ -571,7 +570,7 @@ test("parse content with panels and lists", () => {
   expect(text).toEqual(
     `**Summary**
 
-:check_mark: This request should be approved because the correct processes were followed
+❌ Review required
 
 ---
 
@@ -581,25 +580,25 @@ The previous approval ([PRODCM-12345](https://test.atlassian.net/browse/PRODCM-1
 
 In jupiterone/jupiter-integration-jira:
 
-- :check_mark: Merged in custom-fields (pull request #71)
+- ✅ Merged in custom-fields (pull request #71)
 
-- :check_mark: upgrade to v1.6.4
+- ✅ upgrade to v1.6.4
 
-- :check_mark: upgrade to 1.6.3
+- ✅ upgrade to 1.6.3
 
-- :check_mark: v1.6.1
+- ✅ v1.6.1
 
-- :check_mark: upgrade to v1.6.0
+- ✅ upgrade to v1.6.0
 
-- :check_mark: update description
+- ✅ update description
 
-- :check_mark: Add customFields to integration definition
+- ✅ Add customFields to integration definition
 
 ---
 
 **Security process review**
 
-:check_mark: Snyk scan was detected and found no problems
+✅ Snyk scan was detected and found no problems
 
 ---`,
   );

@@ -83,7 +83,10 @@ export interface TextContent {
     | "panel"
     | "emoji"
     | "bulletList"
-    | "listItem";
+    | "listItem"
+    | "table"
+    | "tableRow"
+    | "tableCell";
   attrs?: {
     id?: string;
     text?: string;
@@ -91,6 +94,8 @@ export interface TextContent {
     url?: string;
     panelType?: string;
     shortName?: string;
+    isNumberColumnEnabled?: boolean;
+    layout?: string;
   };
   content?: TextContent[];
   text?: string;
