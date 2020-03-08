@@ -29,7 +29,10 @@ const DONE = [
   "transferred",
 ];
 
-function parseNumber(s: string): number | string {
+function parseNumber(s: string | number): number | string {
+  if (typeof s !== "string") {
+    return s;
+  }
   const NUM_REGEX = /^[\d,]*(\.[\d]*)?(e[\d]*)?$/;
   const match = s.match(NUM_REGEX);
   if (match) {
@@ -67,7 +70,7 @@ export function createIssueEntity(
             customFields[fieldName] =
               typeof value.value === "object"
                 ? JSON.stringify(value.value)
-                : parseNumber(value);
+                : parseNumber(value.value);
           }
         }
       }
@@ -117,9 +120,15 @@ export function createIssueEntity(
     status,
     active: DONE.indexOf(status.toLowerCase()) < 0,
     issueType,
-    reporter: issue.fields.reporter && issue.fields.reporter.name,
-    assignee: issue.fields.assignee && issue.fields.assignee.name,
-    creator: issue.fields.creator && issue.fields.creator.name,
+    reporter:
+      issue.fields.reporter &&
+      (issue.fields.reporter.emailAddress || issue.fields.reporter.displayName),
+    assignee:
+      issue.fields.assignee &&
+      (issue.fields.assignee.emailAddress || issue.fields.assignee.displayName),
+    creator:
+      issue.fields.creator &&
+      (issue.fields.creator.emailAddress || issue.fields.creator.displayName),
     createdOn: getTime(issue.fields.created),
     updatedOn: getTime(issue.fields.updated),
     resolvedOn: getTime(issue.fields.resolutiondate),
