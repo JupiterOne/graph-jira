@@ -52,6 +52,8 @@ export function createIssueEntity(
             customFields[fieldName] = parseContent(
               value.content as TextContent[],
             );
+          } else if (value.value) {
+            customFields[fieldName] = JSON.stringify(value.value);
           }
         }
       }
