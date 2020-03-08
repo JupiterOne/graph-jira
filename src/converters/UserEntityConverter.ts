@@ -8,6 +8,7 @@ export function createUserEntity(user: User): UserEntity {
     _type: USER_ENTITY_TYPE,
     _scope: USER_ENTITY_TYPE,
     _class: USER_ENTITY_CLASS,
+    _rawData: [{ name: "default", rawData: user }],
     id: user.accountId,
     displayName: user.displayName,
     self: user.self,
