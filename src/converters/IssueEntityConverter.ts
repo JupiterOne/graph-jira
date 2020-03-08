@@ -33,7 +33,8 @@ function parseNumber(s: string): number | string {
   const NUM_REGEX = /^[\d,]*(\.[\d]*)?(e[\d]*)?$/;
   const match = s.match(NUM_REGEX);
   if (match) {
-    return match[1] || match[2] ? parseFloat(s) : parseInt(s, 10);
+    const numStr = s.replace(",", "");
+    return match[1] || match[2] ? parseFloat(numStr) : parseInt(numStr, 10);
   } else {
     return s;
   }
