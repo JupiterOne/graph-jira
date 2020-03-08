@@ -53,7 +53,10 @@ export function createIssueEntity(
               value.content as TextContent[],
             );
           } else if (value.value) {
-            customFields[fieldName] = JSON.stringify(value.value);
+            customFields[fieldName] =
+              typeof value.value === "object"
+                ? JSON.stringify(value.value)
+                : value;
           }
         }
       }
