@@ -29,7 +29,6 @@ export function createUserCreatedIssueRelationship(
   return {
     _class: USER_CREATED_ISSUE_RELATIONSHIP_CLASS,
     _type: USER_CREATED_ISSUE_RELATIONSHIP_TYPE,
-    _scope: USER_CREATED_ISSUE_RELATIONSHIP_TYPE,
     _fromEntityKey: userKey,
     _key: `${userKey}_created_${issueKey}`,
     _toEntityKey: issueKey,
@@ -59,7 +58,6 @@ export function createUserReportedIssueRelationship(
   return {
     _class: USER_REPORTED_ISSUE_RELATIONSHIP_CLASS,
     _type: USER_REPORTED_ISSUE_RELATIONSHIP_TYPE,
-    _scope: USER_REPORTED_ISSUE_RELATIONSHIP_TYPE,
     _fromEntityKey: userKey,
     _key: `${userKey}_reported_${issueKey}`,
     _toEntityKey: issueKey,

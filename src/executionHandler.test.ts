@@ -28,6 +28,7 @@ const clients = {
 };
 
 let jiraClient: JiraClient;
+let projectKeyToProjectIdMock: jest.Mock;
 let executionContext: IntegrationExecutionContext;
 
 beforeEach(() => {
@@ -39,9 +40,11 @@ beforeEach(() => {
     fetchUsersPage: jest.fn().mockReturnValue([]),
     addNewIssue: jest.fn().mockReturnValue({}),
     findIssue: jest.fn().mockReturnValue(undefined),
+    projectKeyToProjectId: jest.fn(),
   } as unknown) as JiraClient;
 
   (createJiraClient as jest.Mock).mockReturnValue(jiraClient);
+  projectKeyToProjectIdMock = jiraClient.projectKeyToProjectId as jest.Mock;
 
   executionContext = ({
     event: {
@@ -63,7 +66,7 @@ beforeEach(() => {
 });
 
 describe("CREATE_ENTITY", () => {
-  test("creates issue", async () => {
+  test("creates issue with a string project id", async () => {
     (executionContext as any).event = {
       action: {
         name: IntegrationActionName.CREATE_ENTITY,
@@ -72,10 +75,127 @@ describe("CREATE_ENTITY", () => {
           summary: "Test Summary",
           description: "Test Description",
           classification: "Test Classification",
-          project: "Test Project key/id",
+          project: "12345",
         },
       },
     };
+
+    projectKeyToProjectIdMock.mockRejectedValueOnce(
+      new Error("should not call projectKeyToProjectId"),
+    );
+    await executionHandler(executionContext);
+
+    expect(jiraClient.fetchProjects).toHaveBeenCalledTimes(0);
+    expect(jiraClient.fetchServerInfo).toHaveBeenCalledTimes(0);
+    expect(jiraClient.fetchUsersPage).toHaveBeenCalledTimes(0);
+    expect(jiraClient.fetchIssuesPage).toHaveBeenCalledTimes(0);
+
+    expect(jiraClient.addNewIssue).toHaveBeenCalledTimes(1);
+    expect(jiraClient.addNewIssue).toHaveBeenCalledWith(
+      "Test Summary",
+      12345,
+      "Test Classification",
+      undefined,
+    );
+
+    expect(jiraClient.findIssue).toHaveBeenCalledTimes(1);
+    expect(projectKeyToProjectIdMock).toHaveBeenCalledTimes(0);
+    expect(clients.persister.processEntities).toHaveBeenCalledTimes(1);
+    expect(clients.persister.processRelationships).toHaveBeenCalledTimes(1);
+    expect(clients.persister.publishPersisterOperations).toHaveBeenCalledTimes(
+      1,
+    );
+  });
+
+  test("should throw error attempting to create an entity if project includes has a decimal of 0", async () => {
+    (executionContext as any).event = {
+      action: {
+        name: IntegrationActionName.CREATE_ENTITY,
+        class: "Vulnerability",
+        properties: {
+          summary: "Test Summary",
+          description: "Test Description",
+          classification: "Test Classification",
+          project: "12345.0",
+        },
+      },
+    };
+
+    projectKeyToProjectIdMock.mockRejectedValueOnce(
+      new Error("should not call projectKeyToProjectId"),
+    );
+    await expect(executionHandler(executionContext)).rejects.toThrowError(
+      "Invalid project id provided (projectId=12345.0)",
+    );
+
+    expect(jiraClient.fetchProjects).toHaveBeenCalledTimes(0);
+    expect(jiraClient.fetchServerInfo).toHaveBeenCalledTimes(0);
+    expect(jiraClient.fetchUsersPage).toHaveBeenCalledTimes(0);
+    expect(jiraClient.fetchIssuesPage).toHaveBeenCalledTimes(0);
+    expect(jiraClient.addNewIssue).toHaveBeenCalledTimes(0);
+    expect(jiraClient.findIssue).toHaveBeenCalledTimes(0);
+    expect(projectKeyToProjectIdMock).toHaveBeenCalledTimes(0);
+    expect(clients.persister.processEntities).toHaveBeenCalledTimes(0);
+    expect(clients.persister.processRelationships).toHaveBeenCalledTimes(0);
+    expect(clients.persister.publishPersisterOperations).toHaveBeenCalledTimes(
+      0,
+    );
+  });
+
+  test("should throw error attempting to create an entity if project includes has a decimal that is not 0", async () => {
+    (executionContext as any).event = {
+      action: {
+        name: IntegrationActionName.CREATE_ENTITY,
+        class: "Vulnerability",
+        properties: {
+          summary: "Test Summary",
+          description: "Test Description",
+          classification: "Test Classification",
+          project: "12345.5",
+        },
+      },
+    };
+
+    projectKeyToProjectIdMock.mockRejectedValueOnce(
+      new Error("should not call projectKeyToProjectId"),
+    );
+    await expect(executionHandler(executionContext)).rejects.toThrowError(
+      "Invalid project id provided (projectId=12345.5)",
+    );
+
+    expect(jiraClient.fetchProjects).toHaveBeenCalledTimes(0);
+    expect(jiraClient.fetchServerInfo).toHaveBeenCalledTimes(0);
+    expect(jiraClient.fetchUsersPage).toHaveBeenCalledTimes(0);
+    expect(jiraClient.fetchIssuesPage).toHaveBeenCalledTimes(0);
+    expect(jiraClient.addNewIssue).toHaveBeenCalledTimes(0);
+    expect(jiraClient.findIssue).toHaveBeenCalledTimes(0);
+    expect(projectKeyToProjectIdMock).toHaveBeenCalledTimes(0);
+    expect(clients.persister.processEntities).toHaveBeenCalledTimes(0);
+    expect(clients.persister.processRelationships).toHaveBeenCalledTimes(0);
+    expect(clients.persister.publishPersisterOperations).toHaveBeenCalledTimes(
+      0,
+    );
+  });
+
+  test("creates issue with a string project key", async () => {
+    (executionContext as any).event = {
+      action: {
+        name: IntegrationActionName.CREATE_ENTITY,
+        class: "Vulnerability",
+        properties: {
+          summary: "Test Summary",
+          description: "Test Description",
+          classification: "Test Classification",
+          project: "TEST",
+        },
+      },
+    };
+
+    projectKeyToProjectIdMock.mockImplementationOnce(
+      async (projectKey: string) => {
+        return 12345;
+      },
+    );
 
     await executionHandler(executionContext);
 
@@ -83,8 +203,19 @@ describe("CREATE_ENTITY", () => {
     expect(jiraClient.fetchServerInfo).toHaveBeenCalledTimes(0);
     expect(jiraClient.fetchUsersPage).toHaveBeenCalledTimes(0);
     expect(jiraClient.fetchIssuesPage).toHaveBeenCalledTimes(0);
-    expect(jiraClient.addNewIssue).toHaveBeenCalledTimes(1);
     expect(jiraClient.findIssue).toHaveBeenCalledTimes(1);
+
+    expect(jiraClient.addNewIssue).toHaveBeenCalledTimes(1);
+    expect(jiraClient.addNewIssue).toHaveBeenCalledWith(
+      "Test Summary",
+      12345,
+      "Test Classification",
+      undefined,
+    );
+
+    expect(projectKeyToProjectIdMock).toHaveBeenCalledTimes(1);
+    expect(projectKeyToProjectIdMock).toHaveBeenLastCalledWith("TEST");
+
     expect(clients.persister.processEntities).toHaveBeenCalledTimes(1);
     expect(clients.persister.processRelationships).toHaveBeenCalledTimes(1);
     expect(clients.persister.publishPersisterOperations).toHaveBeenCalledTimes(

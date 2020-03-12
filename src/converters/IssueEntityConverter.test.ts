@@ -292,7 +292,6 @@ test("createIssueEntity", () => {
   const jiraIssueEntity = {
     _key: generateEntityKey("jira_issue", "47788"),
     _type: "jira_issue",
-    _scope: "jira_issue",
     _class: ["Risk", "Record"],
     _rawData: [{ name: "default", rawData: jiraIssue }],
     ...customFields,

@@ -1,5 +1,4 @@
 import JiraApi from "jira-client";
-
 import { Field, Issue, Project, ServerInfo, User } from "./types";
 
 interface JiraParams {
@@ -113,5 +112,17 @@ export default class JiraClient {
       includeInactive: true,
       maxResults: options.pageSize,
     }) as Promise<User[]>;
+  }
+
+  /**
+   * Converts a Jira project key to a Jira project id.
+   *
+   * e.g. TEST -> 12345
+   */
+  public async projectKeyToProjectId(projectKey: string) {
+    const project: Project = (await this.client.getProject(
+      projectKey,
+    )) as Project;
+    return Number(project.id);
   }
 }

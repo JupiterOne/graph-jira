@@ -188,6 +188,29 @@ describe("JiraClient creating data", () => {
     expect(foundIssue).toContainKeys(["id", "key", "self", "fields"]);
   });
 
+  test("#projectKeyToProjectId should return project id number if successful", async () => {
+    const { nockDone } = await nock.back("project-ok.json", {
+      before: prepareScope,
+    });
+
+    const client = await getAuthenticatedClient();
+    expect(await client.projectKeyToProjectId("PROJECTNAME")).toEqual(10000);
+    nockDone();
+  });
+
+  test("#projectKeyToProjectId should return null project key does not exist", async () => {
+    const { nockDone } = await nock.back("project-bad.json", {
+      before: prepareScope,
+    });
+
+    const client = await getAuthenticatedClient();
+    await expect(
+      client.projectKeyToProjectId("PROJECTNAMEBAD"),
+    ).rejects.toThrow(`No project could be found with key 'PROJECTNAMEBAD'`);
+
+    nockDone();
+  });
+
   afterAll(() => {
     nock.restore();
   });

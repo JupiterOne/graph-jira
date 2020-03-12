@@ -14,8 +14,8 @@
   },
   "scripts": {
     "start": "ts-node --require dotenv/config tools/execute.ts | bunyan",
-    "start:graph": "docker run -d --rm --name jupiterone-local-graph -p 8182:8182 tinkerpop/gremlin-server:3.3",
-    "stop:graph": "docker stop jupiterone-local-graph",
+    "start:graph": "docker-compose up -d graph",
+    "stop:graph": "docker-compose down",
     "prebuild": "yarn test",
     "build": "rm -rf dist/* && yarn build:types && yarn build:src && yarn build:docs",
     "build:src": "babel src --extensions '.ts' --out-dir dist",
@@ -29,7 +29,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@jupiterone/jupiter-managed-integration-sdk": "30.1.1",
+    "@jupiterone/jupiter-managed-integration-sdk": "^33.2.0",
     "jira-client": "^6.7.1",
     "lodash.camelcase": "^4.3.0"
   },
@@ -48,6 +48,7 @@
     "@types/lodash.camelcase": "^4.3.6",
     "@types/nock": "^10.0.3",
     "@types/node": "~8.10.0",
+    "aws-sdk": "^2.638.0",
     "bunyan": "^1.8.12",
     "dotenv": "^8.0.0",
     "fs-extra": "^8.0.1",
