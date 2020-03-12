@@ -27,7 +27,6 @@ export function createProjectIssueRelationship(
   return {
     _class: PROJECT_ISSUE_RELATIONSHIP_CLASS,
     _type: PROJECT_ISSUE_RELATIONSHIP_TYPE,
-    _scope: PROJECT_ISSUE_RELATIONSHIP_TYPE,
     _fromEntityKey: projectKey,
     _key: `${projectKey}_has_${issueKey}`,
     _toEntityKey: issueKey,

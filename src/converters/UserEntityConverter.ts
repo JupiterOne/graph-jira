@@ -6,7 +6,6 @@ export function createUserEntity(user: User): UserEntity {
   return {
     _key: generateEntityKey(USER_ENTITY_TYPE, user.accountId),
     _type: USER_ENTITY_TYPE,
-    _scope: USER_ENTITY_TYPE,
     _class: USER_ENTITY_CLASS,
     _rawData: [{ name: "default", rawData: user }],
     id: user.accountId,

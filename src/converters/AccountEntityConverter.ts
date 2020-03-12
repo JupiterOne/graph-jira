@@ -12,7 +12,6 @@ export function createAccountEntity(serverInfo: ServerInfo): AccountEntity {
     _class: ACCOUNT_ENTITY_CLASS,
     _key: generateEntityKey(ACCOUNT_ENTITY_TYPE, serverInfo.baseUrl),
     _type: ACCOUNT_ENTITY_TYPE,
-    _scope: ACCOUNT_ENTITY_TYPE,
     displayName: serverInfo.serverTitle,
     baseUrl: serverInfo.baseUrl,
     version: serverInfo.version,
