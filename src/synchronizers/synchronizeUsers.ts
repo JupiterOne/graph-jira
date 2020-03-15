@@ -1,11 +1,21 @@
 import {
+  createIntegrationRelationship,
+  DataModel,
   IntegrationCacheEntry,
   IntegrationError,
   IntegrationExecutionResult,
+  IntegrationRelationship,
+  summarizePersisterOperationsResults,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
 import { createUserEntity } from "../converters";
-import { USER_ENTITY_TYPE, UserEntity } from "../entities";
+import {
+  ACCOUNT_ENTITY_TYPE,
+  ACCOUNT_USER_RELATIONSHIP_TYPE,
+  AccountEntity,
+  USER_ENTITY_TYPE,
+  UserEntity,
+} from "../entities";
 import { JiraIntegrationContext, ResourceCacheState } from "../types";
 
 export default async function(
@@ -25,18 +35,53 @@ export default async function(
     );
   }
 
+  const [
+    existingJiraAccounts,
+    existingUserEntities,
+    existingAccountUserRelationships,
+  ] = await Promise.all([
+    graph.findEntitiesByType<AccountEntity>(ACCOUNT_ENTITY_TYPE),
+    graph.findEntitiesByType<UserEntity>(USER_ENTITY_TYPE),
+    graph.findRelationshipsByType<IntegrationRelationship>(
+      ACCOUNT_USER_RELATIONSHIP_TYPE,
+    ),
+  ]);
+
+  const accountEntity = existingJiraAccounts && existingJiraAccounts[0];
   const newUserEntities: UserEntity[] = [];
+  const newAccountUserRelationships: IntegrationRelationship[] = [];
   await usersCache.forEach(e => {
-    newUserEntities.push(createUserEntity(e.entry.data));
+    const entity = createUserEntity(e.entry.data);
+    newUserEntities.push(entity);
+    if (accountEntity) {
+      newAccountUserRelationships.push(
+        createIntegrationRelationship({
+          _class: DataModel.RelationshipClass.HAS,
+          fromKey: accountEntity._key,
+          fromType: accountEntity._type,
+          toKey: entity._key,
+          toType: entity._type,
+        }),
+      );
+    }
   });
 
-  const existingUserEntities = await graph.findEntitiesByType<UserEntity>(
-    USER_ENTITY_TYPE,
+  const entityOperations = persister.processEntities(
+    existingUserEntities,
+    newUserEntities,
+  );
+
+  const relationshipOperations = persister.processRelationships(
+    existingAccountUserRelationships,
+    newAccountUserRelationships,
   );
 
   return {
-    operations: await persister.publishEntityOperations([
-      ...persister.processEntities(existingUserEntities, newUserEntities),
-    ]),
+    operations: summarizePersisterOperationsResults(
+      await persister.publishPersisterOperations([
+        entityOperations,
+        relationshipOperations,
+      ]),
+    ),
   };
 }
