@@ -2,9 +2,15 @@ import { TextContent } from ".";
 
 export default function parseContent(
   content: TextContent[] | undefined,
+  joinWith: string = "\n\n",
 ): string {
-  return content ? content.map(c => parseContentBlock(c)).join("\n\n") : "";
+  return content ? content.map(c => parseContentBlock(c)).join(joinWith) : "";
 }
+
+const EMOJI_MAP: { [key: string]: string } = {
+  ":check_mark:": "✅",
+  ":cross_mark:": "❌",
+};
 
 function parseTextStyle(mark: { type: string }): string {
   const type = mark && mark.type;
@@ -22,6 +28,22 @@ function parseTextStyle(mark: { type: string }): string {
 
 function parseContentBlock(content: TextContent): string {
   switch (content.type) {
+    case "panel": {
+      return parseContent(content.content) + "\n\n---";
+    }
+    case "bulletList": {
+      return "- " + parseContent(content.content, "\n\n- ");
+    }
+    case "listItem": {
+      return parseContent(content.content, "\n\n  ");
+    }
+    case "emoji": {
+      if (content.attrs && content.attrs.text) {
+        return EMOJI_MAP[content.attrs.text] || content.attrs.text;
+      } else {
+        return "";
+      }
+    }
     case "codeBlock": {
       if (content.content) {
         const code = content.content.map(c => c.text).join("\n");
