@@ -13,7 +13,18 @@ import synchronizeAccountAndProjects from "./synchronizers/synchronizeAccountAnd
 import synchronizeIssues from "./synchronizers/synchronizeIssues";
 import synchronizeUsers from "./synchronizers/synchronizeUsers";
 
+/**
+ * The invocation config for actions other than INGEST.
+ */
 export const invocationConfig: IntegrationInvocationConfig = {
+  invocationValidator,
+  executionHandler,
+};
+
+/**
+ * The invocation config for INGEST.
+ */
+export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
   instanceConfigFields: {
     jiraHost: {
       type: "string",
@@ -34,8 +45,6 @@ export const invocationConfig: IntegrationInvocationConfig = {
   },
 
   invocationValidator,
-
-  executionHandler,
 
   integrationStepPhases: [
     {
