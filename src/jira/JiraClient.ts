@@ -106,12 +106,10 @@ export default class JiraClient {
   public async fetchUsersPage(
     options: PaginationOptions = {},
   ): Promise<User[]> {
-    return this.client.searchUsers({
-      startAt: options.startAt || 0,
-      username: "",
-      includeInactive: true,
-      maxResults: options.pageSize,
-    }) as Promise<User[]>;
+    return (this.client as any).getUsers(
+      options.startAt || 0,
+      options.pageSize,
+    ) as Promise<User[]>;
   }
 
   /**

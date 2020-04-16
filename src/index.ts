@@ -14,11 +14,6 @@ import synchronizeIssues from "./synchronizers/synchronizeIssues";
 import synchronizeUsers from "./synchronizers/synchronizeUsers";
 
 export const invocationConfig: IntegrationInvocationConfig = {
-  invocationValidator,
-  executionHandler,
-};
-
-export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
   instanceConfigFields: {
     jiraHost: {
       type: "string",
@@ -39,6 +34,8 @@ export const stepFunctionsInvocationConfig: IntegrationInvocationConfig = {
   },
 
   invocationValidator,
+
+  executionHandler,
 
   integrationStepPhases: [
     {
