@@ -8,7 +8,6 @@ module.exports = {
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/index.ts",
-    "!src/ProviderClient.ts",
     "!src/utils/getLastSyncTime.ts",
   ],
   moduleFileExtensions: [...defaults.moduleFileExtensions, "ts"],
