@@ -57,6 +57,7 @@ export interface User {
   displayName: string;
   timeZone: string;
   locale?: string;
+  accountType?: string; // e.g. 'atlassian' or 'customer'
 }
 
 export interface Component {

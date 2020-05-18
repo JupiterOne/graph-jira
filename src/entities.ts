@@ -99,4 +99,5 @@ export interface UserEntity extends EntityFromIntegration {
   email: string;
   timeZone: string;
   active: boolean;
+  accountType?: string;
 }
