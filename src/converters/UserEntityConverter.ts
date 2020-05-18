@@ -15,5 +15,6 @@ export function createUserEntity(user: User): UserEntity {
     email: user.emailAddress,
     timeZone: user.timeZone,
     active: user.active,
+    accountType: user.accountType,
   };
 }
