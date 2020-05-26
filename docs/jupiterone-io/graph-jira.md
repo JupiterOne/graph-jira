@@ -15,6 +15,13 @@ and password (or [API token][2] when passwords require MFA) to JupiterOne for
 HTTP Basic Auth as described in the [Jira Security for Other Integrations][1]
 documentation.
 
+1. Create a Jira user for exclusive use of JupiterOne.
+1. Authorize browse access to specific projects and issues, using [group,
+   project, role, and issue security features of Jira][3]. Note that retricting
+   to read-only access may require explicit removal of write permissions. Please
+   see the Jira article on [How to Create a Read Only User][4];
+1. Log in to Jira as the JupiterOne user and [create an API token][2].
+
 ## Entities
 
 The following entity resources are ingested when the integration runs:
@@ -28,9 +35,9 @@ The following entity resources are ingested when the integration runs:
 
 (\*) The integration ingests issues up to a year prior to the date of execution.
 Issues ingested are kept as records, such that issues older than a year that
-were previously ingested will remain in the graph when the integration runs again.
-Issues are deleted only when the integration instance is deleted, along with
-other entities associated with the integration instance.
+were previously ingested will remain in the graph when the integration runs
+again. Issues are deleted only when the integration instance is deleted, along
+with other entities associated with the integration instance.
 
 ## Relationships
 
@@ -46,6 +53,10 @@ The following relationships are created/mapped:
 [1]:
   https://developer.atlassian.com/cloud/jira/platform/security-for-other-integrations/
 [2]: https://confluence.atlassian.com/cloud/api-tokens-938839638.html
+[3]:
+  https://support.atlassian.com/jira-core-cloud/docs/how-do-jira-permissions-work/
+[4]:
+  https://confluence.atlassian.com/jirakb/jira-cloud-how-to-create-a-read-only-user-779160729.html
 
 ## Pro Tips
 
