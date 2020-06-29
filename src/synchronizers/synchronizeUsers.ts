@@ -66,15 +66,15 @@ export default async function(
     }
   });
 
-  const entityOperations = persister.processEntities(
-    existingUserEntities,
-    newUserEntities,
-  );
+  const entityOperations = persister.processEntities({
+    oldEntities: existingUserEntities,
+    newEntities: newUserEntities,
+  });
 
-  const relationshipOperations = persister.processRelationships(
-    existingAccountUserRelationships,
-    newAccountUserRelationships,
-  );
+  const relationshipOperations = persister.processRelationships({
+    oldRelationships: existingAccountUserRelationships,
+    newRelationships: newAccountUserRelationships,
+  });
 
   return {
     operations: summarizePersisterOperationsResults(

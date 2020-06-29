@@ -68,11 +68,20 @@ export default async function(
 
   return {
     operations: await persister.publishPersisterOperations([
-      persister.processEntities([], newEntities),
+      persister.processEntities({ oldEntities: [], newEntities }),
       [
-        ...persister.processRelationships([], projectIssueRelationships),
-        ...persister.processRelationships([], userCreatedIssueRelationships),
-        ...persister.processRelationships([], userReportedIssueRelationships),
+        ...persister.processRelationships({
+          oldRelationships: [],
+          newRelationships: projectIssueRelationships,
+        }),
+        ...persister.processRelationships({
+          oldRelationships: [],
+          newRelationships: userCreatedIssueRelationships,
+        }),
+        ...persister.processRelationships({
+          oldRelationships: [],
+          newRelationships: userReportedIssueRelationships,
+        }),
       ],
     ]),
   };

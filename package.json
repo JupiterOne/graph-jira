@@ -29,7 +29,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@jupiterone/jupiter-managed-integration-sdk": "33.7.5",
+    "@jupiterone/jupiter-managed-integration-sdk": "34.1.0",
     "jira-client": "^6.16.0",
     "lodash.camelcase": "^4.3.0"
   },
