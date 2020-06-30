@@ -33,9 +33,9 @@ export default async function(
   ]);
 
   logger.debug({ serverInfo }, "Creating entity for serverInfo...");
-  const accountEntity = await createAccountEntity(serverInfo);
+  const accountEntity = createAccountEntity(serverInfo);
   logger.debug({ projects }, "Creating entities for projects...");
-  const projectEntities = await createProjectEntities(projects);
+  const projectEntities = createProjectEntities(projects);
 
   const accountProjectRelationships = createAccountProjectRelationships(
     serverInfo,
@@ -43,15 +43,21 @@ export default async function(
   );
 
   const entityOperations = [
-    ...persister.processEntities(existingAccountEntity, [accountEntity]),
-    ...persister.processEntities(existingProjectEntities, projectEntities),
+    ...persister.processEntities({
+      oldEntities: existingAccountEntity,
+      newEntities: [accountEntity],
+    }),
+    ...persister.processEntities({
+      oldEntities: existingProjectEntities,
+      newEntities: projectEntities,
+    }),
   ];
 
   const relationshipOperations = [
-    ...persister.processRelationships(
-      existingAccountProjectRelationships,
-      accountProjectRelationships,
-    ),
+    ...persister.processRelationships({
+      oldRelationships: existingAccountProjectRelationships,
+      newRelationships: accountProjectRelationships,
+    }),
   ];
 
   return {

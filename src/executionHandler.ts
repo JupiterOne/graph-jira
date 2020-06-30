@@ -56,15 +56,18 @@ async function createIssue(
   const issues = issue ? [issue] : [];
   const issueEntities = issue ? [createIssueEntity(issue)] : [];
 
-  const entityOperations = persister.processEntities([], issueEntities);
-  const relationshipOperations = persister.processRelationships(
-    [],
-    [
+  const entityOperations = persister.processEntities({
+    oldEntities: [],
+    newEntities: issueEntities,
+  });
+  const relationshipOperations = persister.processRelationships({
+    oldRelationships: [],
+    newRelationships: [
       ...createProjectIssueRelationships(issues),
       ...createUserCreatedIssueRelationships(issues),
       ...createUserReportedIssueRelationships(issues),
     ],
-  );
+  });
 
   return {
     operations: summarizePersisterOperationsResults(
