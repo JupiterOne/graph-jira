@@ -54,7 +54,7 @@ function buildCustomFields(fields: any): string[] {
   return customFields;
 }
 
-function buildProjectConfigs(projects: any): ProjectConfig[] {
+export function buildProjectConfigs(projects: any): ProjectConfig[] {
   const projectConfigs: ProjectConfig[] = [];
 
   if (Array.isArray(projects)) {

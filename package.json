@@ -24,6 +24,7 @@
     "build:docs:model": "ts-node tools/entities-relationships-table-md.ts",
     "prepack": "yarn build",
     "lint": "yarn lint:ts && yarn lint:md",
+    "type-check": "tsc",
     "lint:md": "remark .",
     "lint:ts": "tslint --project .",
     "format": "yarn prettier --write '**/*.{ts,js,json,md}'",

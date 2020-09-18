@@ -4,6 +4,7 @@ import {
   IntegrationValidationContext,
 } from "@jupiterone/jupiter-managed-integration-sdk";
 
+import { buildProjectConfigs } from "./initializeContext";
 import { createJiraClient } from "./jira";
 
 /**
@@ -42,9 +43,27 @@ export default async function invocationValidator(
   }
 
   const provider = createJiraClient(config);
+
+  let fetchedProjectKeys: string[];
   try {
-    await provider.fetchProjects();
+    const fetchedProjects = await provider.fetchProjects();
+    fetchedProjectKeys = fetchedProjects.map(p => p.key);
   } catch (err) {
     throw new IntegrationInstanceAuthenticationError(err);
+  }
+
+  const configProjectKeys = buildProjectConfigs(config.projects).map(
+    p => p.key,
+  );
+
+  const invalidConfigProjectKeys = configProjectKeys.filter(
+    k => !fetchedProjectKeys.includes(k),
+  );
+  if (invalidConfigProjectKeys.length) {
+    throw new IntegrationInstanceConfigError(
+      `The following project key(s) are invalid: ${JSON.stringify(
+        invalidConfigProjectKeys,
+      )}. Ensure the authenticated user has access to this project.`,
+    );
   }
 }
