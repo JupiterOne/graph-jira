@@ -24,7 +24,7 @@ import { createJiraClient } from "./jira";
  */
 export default async function invocationValidator(
   context: IntegrationValidationContext,
-): Promise<boolean | undefined> {
+) {
   const {
     instance: { config },
   } = context;
@@ -66,5 +66,4 @@ export default async function invocationValidator(
       )}. Ensure the authenticated user has access to this project.`,
     );
   }
-  return true;
 }

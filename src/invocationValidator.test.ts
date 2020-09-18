@@ -83,7 +83,7 @@ describe("projects", () => {
 
     const result = await invocationValidator(executionContext as any);
 
-    expect(result).toBe(true);
+    expect(result).toBeUndefined();
     nockDone();
   });
 
