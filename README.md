@@ -1,6 +1,7 @@
 # JupiterOne Managed Integration for Jira
 
-[![Build Status](https://travis-ci.org/JupiterOne/graph-jira.svg?branch=master)](https://travis-ci.org/JupiterOne/graph-jira)
+[![Build Status](https://github.com/JupiterOne/graph-jira/workflows/Build/badge.svg)](https://github.com/JupiterOne/graph-jira/actions?query=workflow%3ABuild)
+[![Gitleaks Status](https://github.com/JupiterOne/graph-jira/workflows/gitleaks/badge.svg)](https://github.com/JupiterOne/graph-jira/actions?query=workflow%3Agitleaks)
 [![Greenkeeper badge](https://badges.greenkeeper.io/JupiterOne/graph-jira.svg)](https://greenkeeper.io/)
 
 A JupiterOne integration ingests information such as configurations and other
