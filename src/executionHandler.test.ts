@@ -1,5 +1,4 @@
 import {
-  IntegrationActionName,
   IntegrationExecutionContext,
   PersisterClient,
 } from "@jupiterone/jupiter-managed-integration-sdk";
@@ -15,13 +14,13 @@ const clients = {
     findEntitiesByType: jest.fn().mockResolvedValue([]),
     findRelationshipsByType: jest.fn().mockResolvedValue([]),
   },
-  persister: {
+  persister: ({
     processEntities: jest.fn().mockReturnValue([]),
     processRelationships: jest.fn().mockReturnValue([]),
     publishEntityOperations: jest.fn().mockResolvedValue({}),
     publishRelationshipOperations: jest.fn().mockResolvedValue({}),
     publishPersisterOperations: jest.fn().mockResolvedValue({}),
-  } as PersisterClient,
+  } as unknown) as PersisterClient,
   integrationService: {
     lastSuccessfulSynchronizationTime: jest.fn().mockResolvedValue(null),
   },
@@ -49,7 +48,7 @@ beforeEach(() => {
   executionContext = ({
     event: {
       action: {
-        name: IntegrationActionName.INGEST,
+        name: "INGEST",
       },
     },
     clients: {
@@ -69,7 +68,7 @@ describe("CREATE_ENTITY", () => {
   test("creates issue with a string project id", async () => {
     (executionContext as any).event = {
       action: {
-        name: IntegrationActionName.CREATE_ENTITY,
+        name: "CREATE_ENTITY",
         class: "Vulnerability",
         properties: {
           summary: "Test Summary",
@@ -110,7 +109,7 @@ describe("CREATE_ENTITY", () => {
   test("should throw error attempting to create an entity if project includes has a decimal of 0", async () => {
     (executionContext as any).event = {
       action: {
-        name: IntegrationActionName.CREATE_ENTITY,
+        name: "CREATE_ENTITY",
         class: "Vulnerability",
         properties: {
           summary: "Test Summary",
@@ -145,7 +144,7 @@ describe("CREATE_ENTITY", () => {
   test("should throw error attempting to create an entity if project includes has a decimal that is not 0", async () => {
     (executionContext as any).event = {
       action: {
-        name: IntegrationActionName.CREATE_ENTITY,
+        name: "CREATE_ENTITY",
         class: "Vulnerability",
         properties: {
           summary: "Test Summary",
@@ -180,7 +179,7 @@ describe("CREATE_ENTITY", () => {
   test("creates issue with a string project key", async () => {
     (executionContext as any).event = {
       action: {
-        name: IntegrationActionName.CREATE_ENTITY,
+        name: "CREATE_ENTITY",
         class: "Vulnerability",
         properties: {
           summary: "Test Summary",
@@ -227,7 +226,7 @@ describe("CREATE_ENTITY", () => {
 describe("unhandled action", () => {
   test("ignored", async () => {
     (executionContext.event as any).action = {
-      name: IntegrationActionName.SCAN,
+      name: "SCAN",
     };
 
     await executionHandler(executionContext);

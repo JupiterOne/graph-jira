@@ -1,6 +1,4 @@
 import {
-  IntegrationActionName,
-  IntegrationCreateEntityAction,
   IntegrationExecutionContext,
   IntegrationExecutionResult,
   summarizePersisterOperationsResults,
@@ -25,7 +23,7 @@ interface ActionMap {
 }
 
 const ACTIONS: ActionMap = {
-  [IntegrationActionName.CREATE_ENTITY]: createIssue,
+  CREATE_ENTITY: createIssue,
 };
 
 export default async function executionHandler(
@@ -48,10 +46,7 @@ async function createIssue(
     event: { action },
   } = context;
 
-  const issue = await createJiraIssue(
-    jira,
-    action as IntegrationCreateEntityAction,
-  );
+  const issue = await createJiraIssue(jira, action);
 
   const issues = issue ? [issue] : [];
   const issueEntities = issue ? [createIssueEntity(issue)] : [];
@@ -77,7 +72,7 @@ async function createIssue(
       ]),
     ),
     actionResult: {
-      name: IntegrationActionName.INGEST,
+      name: "INGEST",
       entities: issues,
     },
   };

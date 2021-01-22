@@ -31,7 +31,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@jupiterone/jupiter-managed-integration-sdk": "34.1.0",
+    "@jupiterone/jupiter-managed-integration-sdk": "^36.0.1",
     "jira-client": "^6.16.0",
     "lodash.camelcase": "^4.3.0"
   },
@@ -50,7 +50,7 @@
     "@types/lodash.camelcase": "^4.3.6",
     "@types/nock": "^10.0.3",
     "@types/node": "~8.10.0",
-    "aws-sdk": "^2.638.0",
+    "aws-sdk": "^2.828.0",
     "bunyan": "^1.8.12",
     "dotenv": "^8.0.0",
     "fs-extra": "^8.0.1",
