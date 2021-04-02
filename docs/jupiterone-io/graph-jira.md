@@ -5,6 +5,30 @@
 JupiterOne provides a managed integration with Jira. The integration connects
 directly to Jira APIs to obtain project information and issues.
 
+## Jira + JupiterOne Integration Benefits
+
+- Visualize Jira projects, users, and issues in the JupiterOne graph.
+- Map Jira users to employees in your JupiterOne account.
+- Monitor Jira issues configured as vulnerabilities or findings within the
+  alerts app.
+- Monitor changes to Jira users, projects, and issues using JupiterOne alerts.
+- Create Jira tickets from JupiterOne alerts and monitor progress against those
+  tickets in JupiterOne.
+- Create Jira tickets from JupiterOne compliance controls that need attention.
+
+## How it Works
+
+- JupiterOne periodically fetches Jira projects, users, and issues to update the graph.
+- Write JupiterOne queries to review and monitor updates to the graph.
+- Configure alerts to take action when the JupiterOne graph changes.
+
+## Requirements
+
+- JupiterOne requires the hostname for your Jira organization. JupiterOne also requires the 
+email and password for a user that has the correct permissions enabled. Use an API key instead
+of a user's password when MFA is enabled.
+- You must have permission in JupiterOne to install new integrations.
+
 ## Integration Instance Configuration
 
 The integration is triggered by an event containing the information for a
