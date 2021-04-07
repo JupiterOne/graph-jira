@@ -7,9 +7,9 @@
 - Monitor Jira issues configured as vulnerabilities or findings within the
   alerts app.
 - Monitor changes to Jira users, projects, and issues using JupiterOne alerts.
-- Create Jira tickets from JupiterOne alerts and monitor progress against those
-  tickets in JupiterOne.
-- Create Jira tickets from JupiterOne compliance controls that need attention.
+- Create Jira issues from JupiterOne alerts and monitor progress against those
+  issues in JupiterOne.
+- Create Jira issues from JupiterOne compliance controls that need attention.
 
 ## How it Works
 
