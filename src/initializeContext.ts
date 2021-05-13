@@ -38,7 +38,7 @@ export default async function initializeContext(
   };
 }
 
-function buildCustomFields(fields: any): string[] {
+export function buildCustomFields(fields: any): string[] {
   const customFields: string[] = [];
   if (fields) {
     for (const f of Array.isArray(fields) ? fields : [fields]) {
