@@ -51,7 +51,12 @@ export default async function(
   await issuesCache.forEach(e => {
     const issue: Issue = e.entry.data;
     newEntities.push(
-      createIssueEntity(issue, fieldsById, customFieldsToInclude),
+      createIssueEntity(
+        issue,
+        executionContext.logger,
+        fieldsById,
+        customFieldsToInclude,
+      ),
     );
     projectIssueRelationships.push(
       createProjectIssueRelationship(issue.fields.project, issue),

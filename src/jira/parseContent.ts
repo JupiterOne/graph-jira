@@ -95,3 +95,17 @@ function parseContentBlock(content: TextContent): string {
     }
   }
 }
+
+export function parseNumber(s: string | number): number | string {
+  if (typeof s !== "string") {
+    return s;
+  }
+  const NUM_REGEX = /^[\d,]*(\.[\d]*)?(e[\d]*)?$/;
+  const match = s.match(NUM_REGEX);
+  if (match) {
+    const numStr = s.replace(",", "");
+    return match[1] || match[2] ? parseFloat(numStr) : parseInt(numStr, 10);
+  } else {
+    return s;
+  }
+}

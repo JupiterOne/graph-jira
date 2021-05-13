@@ -49,7 +49,7 @@ async function createIssue(
   const issue = await createJiraIssue(jira, action);
 
   const issues = issue ? [issue] : [];
-  const issueEntities = issue ? [createIssueEntity(issue)] : [];
+  const issueEntities = issue ? [createIssueEntity(issue, context.logger)] : [];
 
   const entityOperations = persister.processEntities({
     oldEntities: [],
