@@ -51,7 +51,7 @@ function parseNumber(s: string | number): number | string {
  *
  * https://developer.atlassian.com/server/jira/platform/jira-rest-api-examples/#setting-custom-field-data-for-other-field-types
  */
-function extractValueFromCustomField(value: any): any {
+export function extractValueFromCustomField(value: any): any {
   /**
    * Handles:
    *   DatePickerFields
@@ -73,7 +73,7 @@ function extractValueFromCustomField(value: any): any {
     } else if (value.value) {
       /**
        * Handles:
-       *   CascadingSelectFields (minus the child values) TODO
+       *   CascadingSelectFields (minus the child values)
        *   RadioButtons
        *   SelectLists
        */
@@ -104,7 +104,7 @@ function extractValueFromCustomField(value: any): any {
        *   Multi Select
        *   Multi User Picker
        */
-      return value.map(extractValueFromCustomField);
+      return value.map(extractValueFromCustomField).join(",");
     } else {
       // We may want to throw an error here
       return undefined;
