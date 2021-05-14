@@ -53,7 +53,7 @@ export function createIssueEntity(
       ) {
         const extractedValue = extractValueFromCustomField(value);
         if (extractedValue === UNABLE_TO_PARSE_RESPONSE) {
-          logger.warn(`Unable to parse custom field ${fieldName}`);
+          logger.warn({ fieldName }, "Unable to parse custom field");
         } else {
           customFields[fieldName] = extractedValue;
         }
