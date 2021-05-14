@@ -8,6 +8,17 @@ and this project adheres to
 
 ## [Unreleased](https://github.com/JuptiterOne/graph-jira/compare/v1.9.8...HEAD)
 
+## [1.10.0] - 2021-05-21
+
+### Added
+
+- Ingestion for all Jira custom field types.
+
+### Changed
+
+- Validate `projects` config variable in `invocationValidation` and expose
+  better errors.
+
 ## [1.9.8](https://github.com/github.com/JuptiterOne/graph-jira/compare/v1.9.7...v1.9.8) - 2020-09-18
 
 ### Changed

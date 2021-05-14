@@ -1,4 +1,6 @@
+import { createTestLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 import { createIssueEntity } from ".";
+import { buildCustomFields } from "../initializeContext";
 import generateEntityKey from "../utils/generateEntityKey";
 import getTime from "../utils/getTime";
 
@@ -58,6 +60,7 @@ const jiraIssue: any = {
     },
     customfield_10312: null,
     customfield_10433: {
+      // doc object field (idk where this is in the documentation)
       version: 1,
       type: "doc",
       content: [
@@ -92,6 +95,7 @@ const jiraIssue: any = {
     customfield_10306: null,
     customfield_10307: null,
     customfield_10428: {
+      // standard object field
       self: "https://test.atlassian.net/rest/api/3/customFieldOption/10353",
       value: "9",
       id: "10353",
@@ -252,7 +256,7 @@ const jiraIssue: any = {
     customfield_10323: null,
     customfield_10115: null,
     customfield_10313: null,
-    customfield_10116: "1|i03p27:",
+    customfield_10116: "1|i03p27:", // string field
     customfield_10314: null,
     customfield_10436: null,
     environment: null,
@@ -261,7 +265,7 @@ const jiraIssue: any = {
     customfield_10316: null,
     customfield_10317: null,
     customfield_10318: null,
-    customfield_10319: null,
+    customfield_10319: 1234, // number field
     duedate: null,
     progress: {
       progress: 0,
@@ -278,16 +282,31 @@ const jiraIssue: any = {
 test("createIssueEntity", () => {
   const fieldsById = {
     customfield_10428: {
-      name: "Risk Level",
+      name: "CVSS+CE",
     },
     customfield_10433: {
       name: "Residual Risk",
     },
+    customfield_10319: {
+      name: "Number-Field",
+    },
+    customfield_10116: {
+      name: "String field",
+    },
   };
-  const customFieldsToInclude = ["customfield_10428", "residualRisk"];
+
+  const customFieldsToInclude = buildCustomFields([
+    "cvssCe", // search by name -- customfield_10428
+    "10433", // search by id -- customfield_10433
+    "customfield_10319", // handles number values
+    "customfield_10116", // handles string values
+  ]);
+
   const customFields = {
-    riskLevel: 9,
+    cvssCe: 9,
     residualRisk: "there is none",
+    stringField: "1|i03p27:",
+    numberField: 1234,
   };
   const jiraIssueEntity = {
     _key: generateEntityKey("jira_issue", "47788"),
@@ -321,6 +340,7 @@ test("createIssueEntity", () => {
   expect(
     createIssueEntity(
       jiraIssue as any,
+      createTestLogger(),
       fieldsById as any,
       customFieldsToInclude,
     ),

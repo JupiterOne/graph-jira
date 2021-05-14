@@ -1,3 +1,4 @@
+import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 import camelCase from "lodash/camelCase";
 
 import {
@@ -10,10 +11,14 @@ import {
   RISK_ISSUE_ENTITY_CLASS,
   VULN_ISSUE_ENTITY_CLASS,
 } from "../entities";
-import { Field, Issue, TextContent } from "../jira";
+import { Field, Issue } from "../jira";
 import parseContent from "../jira/parseContent";
 import generateEntityKey from "../utils/generateEntityKey";
 import getTime from "../utils/getTime";
+import {
+  extractValueFromCustomField,
+  UNABLE_TO_PARSE_RESPONSE,
+} from "./extractValueFromCustomField";
 
 const DONE = [
   "done",
@@ -29,22 +34,9 @@ const DONE = [
   "transferred",
 ];
 
-function parseNumber(s: string | number): number | string {
-  if (typeof s !== "string") {
-    return s;
-  }
-  const NUM_REGEX = /^[\d,]*(\.[\d]*)?(e[\d]*)?$/;
-  const match = s.match(NUM_REGEX);
-  if (match) {
-    const numStr = s.replace(",", "");
-    return match[1] || match[2] ? parseFloat(numStr) : parseInt(numStr, 10);
-  } else {
-    return s;
-  }
-}
-
 export function createIssueEntity(
   issue: Issue,
+  logger: IntegrationLogger,
   fieldsById: { [id: string]: Field } = {},
   customFieldsToInclude: string[] = [],
 ): IssueEntity {
@@ -59,19 +51,11 @@ export function createIssueEntity(
         customFieldsToInclude.includes(key) ||
         customFieldsToInclude.includes(fieldName)
       ) {
-        if (typeof value === "string") {
-          customFields[fieldName] = value;
-        } else if (typeof value === "object") {
-          if (value.type === "doc" && value.content) {
-            customFields[fieldName] = parseContent(
-              value.content as TextContent[],
-            );
-          } else if (value.value) {
-            customFields[fieldName] =
-              typeof value.value === "object"
-                ? JSON.stringify(value.value)
-                : parseNumber(value.value);
-          }
+        const extractedValue = extractValueFromCustomField(value);
+        if (extractedValue === UNABLE_TO_PARSE_RESPONSE) {
+          logger.warn({ fieldName }, "Unable to parse custom field");
+        } else {
+          customFields[fieldName] = extractedValue;
         }
       }
     }
