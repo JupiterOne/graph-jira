@@ -15,7 +15,10 @@ import { Field, Issue } from "../jira";
 import parseContent from "../jira/parseContent";
 import generateEntityKey from "../utils/generateEntityKey";
 import getTime from "../utils/getTime";
-import { extractValueFromCustomField } from "./extractValueFromCustomField";
+import {
+  extractValueFromCustomField,
+  UNABLE_TO_PARSE_RESPONSE,
+} from "./extractValueFromCustomField";
 
 const DONE = [
   "done",
@@ -48,7 +51,12 @@ export function createIssueEntity(
         customFieldsToInclude.includes(key) ||
         customFieldsToInclude.includes(fieldName)
       ) {
-        customFields[fieldName] = extractValueFromCustomField(value, logger);
+        const extractedValue = extractValueFromCustomField(value);
+        if (extractedValue === UNABLE_TO_PARSE_RESPONSE) {
+          logger.warn(`Unable to parse custom field ${fieldName}`);
+        } else {
+          customFields[fieldName] = extractedValue;
+        }
       }
     }
   }

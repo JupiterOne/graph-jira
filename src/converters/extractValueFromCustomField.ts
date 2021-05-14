@@ -1,19 +1,17 @@
-import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
 import { isArray } from "util";
 import { TextContent } from "../jira";
 import parseContent, { parseNumber } from "../jira/parseContent";
 
+export const UNABLE_TO_PARSE_RESPONSE = "7e6e239c-b4ac-11eb-8529-0242ac130003";
+
 /**
  * There are several different custom field types Jira allows.
- * Each one stores information in a differnt way. This makes sure
+ * Each one stores information in a different way. This makes sure
  * we extract the most relevant data for each type.
  *
  * https://developer.atlassian.com/server/jira/platform/jira-rest-api-examples/#setting-custom-field-data-for-other-field-types
  */
-export function extractValueFromCustomField(
-  value: any,
-  logger: IntegrationLogger,
-): any {
+export function extractValueFromCustomField(value: any): any {
   /**
    * Handles:
    *   DatePickerFields
@@ -66,19 +64,11 @@ export function extractValueFromCustomField(
        *   Multi Select
        *   Multi User Picker
        */
-      return value.map(v => extractValueFromCustomField(v, logger)).join(",");
+      return value.map(extractValueFromCustomField).join(",");
     } else {
-      logger.warn(
-        { fieldValue: value },
-        "Unable to extract value from custom field",
-      );
-      return undefined;
+      return UNABLE_TO_PARSE_RESPONSE;
     }
   } else {
-    logger.warn(
-      { fieldValue: value },
-      "Unable to extract value from custom field",
-    );
-    return undefined;
+    return UNABLE_TO_PARSE_RESPONSE;
   }
 }
