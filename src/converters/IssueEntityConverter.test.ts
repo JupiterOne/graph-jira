@@ -279,70 +279,92 @@ const jiraIssue: any = {
   },
 };
 
-test("createIssueEntity", () => {
-  const fieldsById = {
-    customfield_10428: {
-      name: "CVSS+CE",
-    },
-    customfield_10433: {
-      name: "Residual Risk",
-    },
-    customfield_10319: {
-      name: "Number-Field",
-    },
-    customfield_10116: {
-      name: "String field",
-    },
-  };
+describe("createIssueEntity", () => {
+  test("ingests correctly", () => {
+    const fieldsById = {
+      customfield_10428: {
+        name: "CVSS+CE",
+      },
+      customfield_10433: {
+        name: "Residual Risk",
+      },
+      customfield_10319: {
+        name: "Number-Field",
+      },
+      customfield_10116: {
+        name: "String field",
+      },
+    };
 
-  const customFieldsToInclude = buildCustomFields([
-    "cvssCe", // search by name -- customfield_10428
-    "10433", // search by id -- customfield_10433
-    "customfield_10319", // handles number values
-    "customfield_10116", // handles string values
-  ]);
+    const customFieldsToInclude = buildCustomFields([
+      "cvssCe", // search by name -- customfield_10428
+      "10433", // search by id -- customfield_10433
+      "customfield_10319", // handles number values
+      "customfield_10116", // handles string values
+    ]);
 
-  const customFields = {
-    cvssCe: 9,
-    residualRisk: "there is none",
-    stringField: "1|i03p27:",
-    numberField: 1234,
-  };
-  const jiraIssueEntity = {
-    _key: generateEntityKey("jira_issue", "47788"),
-    _type: "jira_issue",
-    _class: ["Risk", "Record"],
-    _rawData: [{ name: "default", rawData: jiraIssue }],
-    ...customFields,
-    id: "47788",
-    key: "J1TEMP-112",
-    name: "J1TEMP-112",
-    displayName: "J1TEMP-112",
-    summary: "Test Custom Field",
-    description: "edit\n\nedit 2",
-    category: "issue",
-    webLink: `https://test.atlassian.net/browse/J1TEMP-112`,
-    status: "Open",
-    active: true,
-    issueType: "Risk",
-    reporter: "adamz@company.com",
-    assignee: null,
-    creator: "adamz@company.com",
-    createdOn: getTime(jiraIssue.fields.created),
-    updatedOn: getTime(jiraIssue.fields.updated),
-    resolvedOn: getTime(jiraIssue.fields.resolutiondate),
-    dueOn: getTime(jiraIssue.fields.duedate),
-    resolution: undefined,
-    labels: [],
-    components: [],
-    priority: "Medium",
-  };
-  expect(
-    createIssueEntity(
-      jiraIssue as any,
-      createTestLogger(),
-      fieldsById as any,
-      customFieldsToInclude,
-    ),
-  ).toEqual(jiraIssueEntity);
+    const customFields = {
+      cvssCe: 9,
+      residualRisk: "there is none",
+      stringField: "1|i03p27:",
+      numberField: 1234,
+    };
+    const jiraIssueEntity = {
+      _key: generateEntityKey("jira_issue", "47788"),
+      _type: "jira_issue",
+      _class: ["Risk", "Record"],
+      _rawData: [{ name: "default", rawData: jiraIssue }],
+      ...customFields,
+      id: "47788",
+      key: "J1TEMP-112",
+      name: "J1TEMP-112",
+      displayName: "J1TEMP-112",
+      summary: "Test Custom Field",
+      description: "edit\n\nedit 2",
+      category: "issue",
+      webLink: `https://test.atlassian.net/browse/J1TEMP-112`,
+      status: "Open",
+      active: true,
+      issueType: "Risk",
+      reporter: "adamz@company.com",
+      assignee: null,
+      creator: "adamz@company.com",
+      createdOn: getTime(jiraIssue.fields.created),
+      updatedOn: getTime(jiraIssue.fields.updated),
+      resolvedOn: getTime(jiraIssue.fields.resolutiondate),
+      dueOn: getTime(jiraIssue.fields.duedate),
+      resolution: undefined,
+      labels: [],
+      components: [],
+      priority: "Medium",
+    };
+    expect(
+      createIssueEntity({
+        issue: jiraIssue as any,
+        logger: createTestLogger(),
+        fieldsById: fieldsById as any,
+        customFieldsToInclude,
+      }),
+    ).toEqual(jiraIssueEntity);
+  });
+
+  test("handles exceptions correctly", () => {
+    jiraIssue.fields.issuetype.name = "Exception";
+    expect(
+      createIssueEntity({
+        issue: jiraIssue,
+        logger: createTestLogger(),
+      })._class,
+    ).toEqual(["Finding", "Record"]);
+  });
+
+  test("handles requested class correctly", () => {
+    expect(
+      createIssueEntity({
+        issue: jiraIssue,
+        logger: createTestLogger(),
+        requestedClass: "SomeClass",
+      })._class,
+    ).toEqual(["Record", "SomeClass"]);
+  });
 });

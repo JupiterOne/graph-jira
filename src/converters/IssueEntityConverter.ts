@@ -34,12 +34,22 @@ const DONE = [
   "transferred",
 ];
 
-export function createIssueEntity(
-  issue: Issue,
-  logger: IntegrationLogger,
-  fieldsById: { [id: string]: Field } = {},
-  customFieldsToInclude: string[] = [],
-): IssueEntity {
+export function createIssueEntity({
+  issue,
+  logger,
+  fieldsById,
+  customFieldsToInclude,
+  requestedClass,
+}: {
+  issue: Issue;
+  logger: IntegrationLogger;
+  fieldsById?: { [id: string]: Field };
+  customFieldsToInclude?: string[];
+  requestedClass?: string;
+}): IssueEntity {
+  fieldsById = fieldsById || {};
+  customFieldsToInclude = customFieldsToInclude || [];
+
   const status = issue.fields.status && issue.fields.status.name;
   const issueType = issue.fields.issuetype && issue.fields.issuetype.name;
   const customFields: { [key: string]: any } = {};
@@ -61,34 +71,53 @@ export function createIssueEntity(
     }
   }
 
+  if (!["string", "undefined"].includes(typeof requestedClass)) {
+    logger.warn(
+      { requestedClass },
+      "Invalid entity class. Reverting to default.",
+    );
+    requestedClass = undefined;
+  }
+
   let issueClass: string | string[];
-  switch ((issueType || "").toLowerCase()) {
-    case "change":
-      issueClass = CHANGE_ISSUE_ENTITY_CLASS;
-      break;
-    case "finding":
-      issueClass = FINDING_ISSUE_ENTITY_CLASS;
-      break;
-    case "incident":
-      issueClass = INCIDENT_ISSUE_ENTITY_CLASS;
-      break;
-    case "risk":
-      issueClass = RISK_ISSUE_ENTITY_CLASS;
-      break;
-    case "vulnerability":
-      issueClass = VULN_ISSUE_ENTITY_CLASS;
-      break;
-    default:
-      issueClass = issue.key.startsWith("PRODCM")
-        ? CHANGE_ISSUE_ENTITY_CLASS
-        : ISSUE_ENTITY_CLASS;
+
+  if (typeof requestedClass === "string") {
+    issueClass = ["Record", requestedClass];
+  } else {
+    switch ((issueType || "").toLowerCase()) {
+      case "change":
+        issueClass = CHANGE_ISSUE_ENTITY_CLASS;
+        break;
+      case "finding":
+      case "exception":
+        issueClass = FINDING_ISSUE_ENTITY_CLASS;
+        break;
+      case "incident":
+        issueClass = INCIDENT_ISSUE_ENTITY_CLASS;
+        break;
+      case "risk":
+        issueClass = RISK_ISSUE_ENTITY_CLASS;
+        break;
+      case "vulnerability":
+        issueClass = VULN_ISSUE_ENTITY_CLASS;
+        break;
+      default:
+        issueClass = issue.key.startsWith("PRODCM")
+          ? CHANGE_ISSUE_ENTITY_CLASS
+          : ISSUE_ENTITY_CLASS;
+    }
   }
 
   return {
     _key: generateEntityKey(ISSUE_ENTITY_TYPE, issue.id),
     _type: ISSUE_ENTITY_TYPE,
     _class: issueClass,
-    _rawData: [{ name: "default", rawData: issue }],
+    _rawData: [
+      {
+        name: "default",
+        rawData: Object.assign(issue, { requestedClass, issueClass }),
+      },
+    ],
     ...customFields,
     id: issue.id,
     key: issue.key,
