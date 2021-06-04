@@ -1,4 +1,6 @@
 import {
+  IntegrationActionName,
+  IntegrationCreateEntityAction,
   IntegrationExecutionContext,
   IntegrationExecutionResult,
   summarizePersisterOperationsResults,
@@ -40,12 +42,9 @@ export default async function executionHandler(
 async function createIssue(
   context: JiraIntegrationContext,
 ): Promise<IntegrationExecutionResult> {
-  const {
-    jira,
-    persister,
-    event: { action },
-  } = context;
+  const { jira, persister, event } = context;
 
+  const action = event.action as IntegrationCreateEntityAction;
   const issue = await createJiraIssue(jira, action);
 
   const issues = issue ? [issue] : [];
@@ -80,7 +79,7 @@ async function createIssue(
       ]),
     ),
     actionResult: {
-      name: "INGEST",
+      name: IntegrationActionName.INGEST,
       entities: issues,
     },
   };

@@ -1,3 +1,4 @@
+import { IntegrationCreateEntityAction } from "@jupiterone/jupiter-managed-integration-sdk";
 import { CreateIssueActionProperties } from "../types";
 import JiraClient from "./JiraClient";
 import { Issue } from "./types";
@@ -25,10 +26,7 @@ async function getProjectIdFromProvidedProject(
 
 export default async function createJiraIssue(
   client: JiraClient,
-  action: {
-    name: "CREATE_ENTITY";
-    properties: object;
-  }, // IntegrationCreateEntityAction
+  action: IntegrationCreateEntityAction,
 ): Promise<Issue> {
   const {
     summary,

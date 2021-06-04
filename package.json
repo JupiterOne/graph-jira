@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-jira",
-  "version": "1.10.1",
+  "version": "1.11.3",
   "description": "A JupiterOne managed integration for https://www.atlassian.com/software/jira.",
   "main": "dist/index.js",
   "repository": "https://github.com/JupiterOne/graph-jira",
@@ -31,7 +31,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@jupiterone/jupiter-managed-integration-sdk": "^36.0.1",
+    "@jupiterone/jupiter-managed-integration-sdk": "^36.2.1",
     "jira-client": "^6.16.0",
     "lodash.camelcase": "^4.3.0"
   },
@@ -73,10 +73,8 @@
     "ts-jest": "^24.0.0",
     "ts-node": "^8.1.0",
     "tslint": "^5.12.1",
-    "tslint-config-prettier": "^1.18.0"
-  },
-  "resolutions": {
-    "typescript": "3.6.x"
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "3.9.7"
   },
   "husky": {
     "hooks": {
