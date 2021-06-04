@@ -1,6 +1,7 @@
 {
   "include": ["src/**/*", "tools/**/*", "test/**/*"],
   "compilerOptions": {
+    "skipLibCheck": true,
     "outDir": "build",
     "noUnusedLocals": true,
     "allowSyntheticDefaultImports": true,

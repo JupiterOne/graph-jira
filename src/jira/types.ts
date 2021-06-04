@@ -69,6 +69,9 @@ export interface Component {
 
 export interface TextMark {
   type: string;
+  attrs?: {
+    href: string;
+  };
 }
 
 export interface TextContent {

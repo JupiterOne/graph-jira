@@ -73,10 +73,8 @@
     "ts-jest": "^24.0.0",
     "ts-node": "^8.1.0",
     "tslint": "^5.12.1",
-    "tslint-config-prettier": "^1.18.0"
-  },
-  "resolutions": {
-    "typescript": "3.6.x"
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "3.9.7"
   },
   "husky": {
     "hooks": {
