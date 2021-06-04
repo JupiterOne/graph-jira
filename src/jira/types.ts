@@ -106,7 +106,9 @@ export interface TextContent {
 export interface Issue extends Resource {
   self: string;
   id: string;
+  expand: string;
   fields: {
+    [k: string]: any;
     issuetype: IssueType;
     project: Project;
     created: string;

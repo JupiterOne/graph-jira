@@ -45,7 +45,7 @@ export function createIssueEntity({
   logger: IntegrationLogger;
   fieldsById?: { [id: string]: Field };
   customFieldsToInclude?: string[];
-  requestedClass?: string;
+  requestedClass?: unknown;
 }): IssueEntity {
   fieldsById = fieldsById || {};
   customFieldsToInclude = customFieldsToInclude || [];
@@ -81,8 +81,8 @@ export function createIssueEntity({
 
   let issueClass: string | string[];
 
-  if (typeof requestedClass === "string") {
-    issueClass = ["Record", requestedClass];
+  if (requestedClass) {
+    issueClass = ["Record", requestedClass as string];
   } else {
     switch ((issueType || "").toLowerCase()) {
       case "change":
@@ -108,14 +108,14 @@ export function createIssueEntity({
     }
   }
 
-  return {
+  const entity = {
     _key: generateEntityKey(ISSUE_ENTITY_TYPE, issue.id),
     _type: ISSUE_ENTITY_TYPE,
     _class: issueClass,
     _rawData: [
       {
         name: "default",
-        rawData: Object.assign(issue, { requestedClass, issueClass }),
+        rawData: issue as any,
       },
     ],
     ...customFields,
@@ -153,4 +153,11 @@ export function createIssueEntity({
       issue.fields.components && issue.fields.components.map(c => c.name),
     priority: issue.fields.priority && issue.fields.priority.name,
   };
+  if (requestedClass) {
+    entity._rawData.push({
+      name: "event",
+      rawData: { requestedClass },
+    });
+  }
+  return entity;
 }
