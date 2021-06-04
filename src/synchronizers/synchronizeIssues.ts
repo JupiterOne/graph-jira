@@ -51,12 +51,12 @@ export default async function(
   await issuesCache.forEach(e => {
     const issue: Issue = e.entry.data;
     newEntities.push(
-      createIssueEntity(
+      createIssueEntity({
         issue,
-        executionContext.logger,
+        logger: executionContext.logger,
         fieldsById,
         customFieldsToInclude,
-      ),
+      }),
     );
     projectIssueRelationships.push(
       createProjectIssueRelationship(issue.fields.project, issue),
