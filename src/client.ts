@@ -86,12 +86,12 @@ export class APIClient {
     iteratee: ResourceIteratee<User>,
   ): Promise<void> {
 
-    let pagesProcessed = 0;
-    let finished = false;
-    let startAt = 0;
     const PAGE_SIZE = Number(process.env.USERS_PAGE_SIZE) || 200;
     const PAGE_LIMIT = Number(process.env.USERS_PAGE_LIMIT) || 10;
-    const users: User[] = [];
+    let pagesProcessed = 0;
+    let finished: boolean = false;
+    let startAt: number = 0;
+    let users: User[] = [];
 
     while (pagesProcessed < PAGE_LIMIT) {
       const usersPage = await this.jira.fetchUsersPage({
@@ -103,11 +103,11 @@ export class APIClient {
         finished = true;
         break;
       } else {
-        users.concat(usersPage);
+        users = users.concat(usersPage);
       }
 
       this.logger.info(
-        { pagesProcessed, usersPageLength: usersPage.length, entryCount },
+        { pagesProcessed, usersPageLength: usersPage.length },
         "Fetched page of users",
       );
 
@@ -115,6 +115,7 @@ export class APIClient {
       pagesProcessed++;
     }
 
+    console.log(users);
     for (const user of users) {
       await iteratee(user);
     }
@@ -128,7 +129,7 @@ export class APIClient {
   public async iterateIssues(
     iteratee: ResourceIteratee<Issue>,
   ): Promise<void> {
-    const issues: Issue[] = await this.jira.getsomething();
+    const issues: Issue[] = await this.jira.getsomething(); //TODO : fill this out
     for (const issue of issues) {
       await iteratee(issue);
     }

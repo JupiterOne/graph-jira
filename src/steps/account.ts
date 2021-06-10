@@ -19,7 +19,7 @@ import {
     const config = instance.config;
     const apiClient = createAPIClient(config, logger);
     const accountEntity = await jobState.addEntity(
-      createAccountEntity(await apiClient.provider.fetchServerInfo()),
+      createAccountEntity(await apiClient.jira.fetchServerInfo()),
     );
   
     await jobState.setData(DATA_ACCOUNT_ENTITY, accountEntity);
