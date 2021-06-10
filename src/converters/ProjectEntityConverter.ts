@@ -7,8 +7,7 @@ import { Project } from "../jira";
 
 import generateEntityKey from "../utils/generateEntityKey";
 
-export function createProjectEntities(data: Project[]): ProjectEntity[] {
-  return data.map(project => {
+export function createProjectEntity(project: Project): ProjectEntity {
     const projectEntity: ProjectEntity = {
       _key: generateEntityKey(PROJECT_ENTITY_TYPE, project.id),
       _type: PROJECT_ENTITY_TYPE,
@@ -27,5 +26,4 @@ export function createProjectEntities(data: Project[]): ProjectEntity[] {
     };
 
     return projectEntity;
-  });
 }
