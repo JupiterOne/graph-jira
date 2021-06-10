@@ -1,12 +1,12 @@
 import {
-  EntityFromIntegration,
-  RelationshipFromIntegration,
-} from "@jupiterone/jupiter-managed-integration-sdk";
+  Entity,
+  ExplicitRelationship
+} from "@jupiterone/integration-sdk-core";
 
 export const ACCOUNT_ENTITY_TYPE = "jira_account";
 export const ACCOUNT_ENTITY_CLASS = "Account";
 
-export interface AccountEntity extends EntityFromIntegration {
+export interface AccountEntity extends Entity {
   baseUrl: string;
   version: string;
   buildNumber: number;
@@ -22,7 +22,7 @@ export const ACCOUNT_USER_RELATIONSHIP_TYPE = "jira_account_has_user";
 export const ACCOUNT_USER_RELATIONSHIP_CLASS = "HAS";
 
 export interface AccountProjectRelationship
-  extends RelationshipFromIntegration {
+  extends ExplicitRelationship {
   id?: string;
 }
 
@@ -34,7 +34,7 @@ export const INCIDENT_ISSUE_ENTITY_CLASS = ["Incident", "Record"];
 export const RISK_ISSUE_ENTITY_CLASS = ["Risk", "Record"];
 export const VULN_ISSUE_ENTITY_CLASS = ["Vulnerability", "Record"];
 
-export interface IssueEntity extends EntityFromIntegration {
+export interface IssueEntity extends Entity {
   id: string;
   key: string;
   name: string;
@@ -64,14 +64,14 @@ export const USER_CREATED_ISSUE_RELATIONSHIP_CLASS = "CREATED";
 export const USER_REPORTED_ISSUE_RELATIONSHIP_TYPE = "jira_user_reported_issue";
 export const USER_REPORTED_ISSUE_RELATIONSHIP_CLASS = "REPORTED";
 
-export interface UserIssueRelationship extends RelationshipFromIntegration {
+export interface UserIssueRelationship extends ExplicitRelationship {
   id?: string;
 }
 
 export const PROJECT_ENTITY_TYPE = "jira_project";
 export const PROJECT_ENTITY_CLASS = "Project";
 
-export interface ProjectEntity extends EntityFromIntegration {
+export interface ProjectEntity extends Entity {
   id: string;
   self: string;
   key: string;
@@ -85,14 +85,14 @@ export interface ProjectEntity extends EntityFromIntegration {
 export const PROJECT_ISSUE_RELATIONSHIP_TYPE = "jira_project_has_issue";
 export const PROJECT_ISSUE_RELATIONSHIP_CLASS = "HAS";
 
-export interface ProjectIssueRelationship extends RelationshipFromIntegration {
+export interface ProjectIssueRelationship extends ExplicitRelationship {
   id?: string;
 }
 
 export const USER_ENTITY_TYPE = "jira_user";
 export const USER_ENTITY_CLASS = "User";
 
-export interface UserEntity extends EntityFromIntegration {
+export interface UserEntity extends Entity {
   id: string;
   self: string;
   name: string;

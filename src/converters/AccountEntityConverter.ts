@@ -3,9 +3,11 @@ import {
   ACCOUNT_ENTITY_TYPE,
   AccountEntity,
 } from "../entities";
+import {
+  parseTimePropertyValue
+} from '@jupiterone/integration-sdk-core';
 import { ServerInfo } from "../jira";
 import generateEntityKey from "../utils/generateEntityKey";
-import getTime from "../utils/getTime";
 
 export function createAccountEntity(serverInfo: ServerInfo): AccountEntity {
   return {
@@ -16,7 +18,7 @@ export function createAccountEntity(serverInfo: ServerInfo): AccountEntity {
     baseUrl: serverInfo.baseUrl,
     version: serverInfo.version,
     buildNumber: serverInfo.buildNumber,
-    buildDate: getTime(serverInfo.buildDate)!,
+    buildDate: parseTimePropertyValue(serverInfo.buildDate)!,
     scmInfo: serverInfo.scmInfo,
     serverTitle: serverInfo.serverTitle,
   };
