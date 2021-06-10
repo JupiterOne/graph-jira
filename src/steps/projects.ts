@@ -2,7 +2,8 @@ import {
     IntegrationStep,
     IntegrationStepExecutionContext,
     RelationshipClass,
-    createDirectRelationship
+    createDirectRelationship,
+    IntegrationMissingKeyError
   } from '@jupiterone/integration-sdk-core';
   
   import { createAPIClient } from '../client';
@@ -26,14 +27,18 @@ export async function fetchProjects({
   const config = instance.config;
   const apiClient = createAPIClient(config, logger);
 
-  const accountEntity = (await jobState.getData(
-    DATA_ACCOUNT_ENTITY,
-  )) as AccountEntity;
+  const accountEntity = await jobState.getData<AccountEntity>(DATA_ACCOUNT_ENTITY);
+  if (!accountEntity) { throw new IntegrationMissingKeyError(`Expected to find Account entity in jobState`)};
+
+  //for use later in Issues
+  const projectEntities: ProjectEntity[] = [];
 
   await apiClient.iterateProjects(async (project) => {
     const projectEntity = (await jobState.addEntity(
       createProjectEntity(project),
     )) as ProjectEntity;
+  
+  projectEntities.push(projectEntity);
 
   await jobState.addRelationship(
     createDirectRelationship({
@@ -44,6 +49,8 @@ export async function fetchProjects({
   );
 
   });
+
+  await jobState.setData('PROJECT_ARRAY', projectEntities);
 }
 
 export const projectSteps: IntegrationStep<IntegrationConfig>[] = [

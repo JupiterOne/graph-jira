@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+//not sure how to avoid banning the ban here
+
 import JiraApi from "jira-client";
 import { Field, Issue, Project, ServerInfo, User } from "./types";
 

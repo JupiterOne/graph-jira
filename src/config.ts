@@ -63,7 +63,12 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
     /**
      * Projects, as an array of strings
      */
-        projects: string[] | string ;
+        projects: string[] | string;
+
+    /**
+     * Custom fields for inclusion in issues
+     */
+        customFields: string[];
 }
 
 export async function validateInvocation(
@@ -87,7 +92,7 @@ context: IntegrationExecutionContext<IntegrationConfig>,
         );
     }
     
-    const hostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/;
+    const hostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/;
     if (!config.jiraHost.match(hostnameRegex)) {
         throw new IntegrationValidationError(
             "config.jiraHost must be a valid hostname",

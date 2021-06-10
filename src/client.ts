@@ -16,6 +16,11 @@ import {
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
+const USERS_PAGE_SIZE = Number(process.env.USERS_PAGE_SIZE) || 200;
+const USERS_PAGE_LIMIT = Number(process.env.USERS_PAGE_LIMIT) || 10;
+const ISSUES_PAGE_SIZE = Number(process.env.USERS_PAGE_SIZE) || 200;
+const ISSUES_PAGE_LIMIT = Number(process.env.USERS_PAGE_LIMIT) || 10;
+
 /**
  * An APIClient maintains authentication state and provides an interface to
  * third party data APIs.
@@ -86,21 +91,17 @@ export class APIClient {
     iteratee: ResourceIteratee<User>,
   ): Promise<void> {
 
-    const PAGE_SIZE = Number(process.env.USERS_PAGE_SIZE) || 200;
-    const PAGE_LIMIT = Number(process.env.USERS_PAGE_LIMIT) || 10;
     let pagesProcessed = 0;
-    let finished: boolean = false;
     let startAt: number = 0;
     let users: User[] = [];
 
-    while (pagesProcessed < PAGE_LIMIT) {
+    while (pagesProcessed < USERS_PAGE_LIMIT) {
       const usersPage = await this.jira.fetchUsersPage({
         startAt,
-        pageSize: PAGE_SIZE,
+        pageSize: USERS_PAGE_SIZE,
       });
 
       if (usersPage.length === 0) {
-        finished = true;
         break;
       } else {
         users = users.concat(usersPage);
@@ -115,7 +116,6 @@ export class APIClient {
       pagesProcessed++;
     }
 
-    console.log(users);
     for (const user of users) {
       await iteratee(user);
     }
@@ -127,9 +127,38 @@ export class APIClient {
    * @param iteratee receives each resource to produce entities/relationships
    */
   public async iterateIssues(
+    projectKey: string,
+    lastJobTimestamp: number,
     iteratee: ResourceIteratee<Issue>,
   ): Promise<void> {
-    const issues: Issue[] = await this.jira.getsomething(); //TODO : fill this out
+
+    let pagesProcessed = 0;
+    let startAt: number = 0;
+    let issues: Issue[] = [];
+  
+    while (pagesProcessed < ISSUES_PAGE_LIMIT) {
+      const issuesPage = await this.jira.fetchIssuesPage({
+        project: projectKey,
+        sinceAtTimestamp: lastJobTimestamp,
+        startAt,
+        pageSize: ISSUES_PAGE_SIZE,
+      });
+  
+      if (issuesPage.length === 0) {
+        break;
+      } else {
+        issues = issues.concat(issuesPage);
+      }
+
+      this.logger.info(
+        { pagesProcessed, issuesPageLength: issuesPage.length },
+        "Fetched page of issues",
+      );
+
+      startAt += issuesPage.length;
+      pagesProcessed++;
+    }
+      
     for (const issue of issues) {
       await iteratee(issue);
     }

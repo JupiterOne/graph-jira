@@ -1730,10 +1730,10 @@
     jest-diff "^25.2.1"
     pretty-format "^25.2.1"
 
-"@types/jira-client@^6.13.1":
-  version "6.13.1"
-  resolved "https://registry.yarnpkg.com/@types/jira-client/-/jira-client-6.13.1.tgz#f76ea4c62fb0ffabae6190e757a8bf86a6f78998"
-  integrity sha512-VcJojFlOz7VhgZ5ee2k67P3y0MIAcweJAUVotBLZqQowiCVYVGWqLpZWQMlgcYewo1GKVDD9wOKe3sS+Z3U5vw==
+"@types/jira-client@^6.21.0":
+  version "6.21.0"
+  resolved "https://registry.yarnpkg.com/@types/jira-client/-/jira-client-6.21.0.tgz#807f062f70ed26aa9a73f4002bd1e3cc59e60f1c"
+  integrity sha512-yTEPxYWhHggwCU10Anw/2lYxLoOegPWd22TszqYk3GzqBS1oZ225HI8XNvUAKJKes/HPUFI/j/hSl81br3k5FA==
   dependencies:
     "@types/node" "*"
     "@types/request" "*"
@@ -2347,21 +2347,6 @@ aws-sdk@^2.184.0:
   version "2.925.0"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.925.0.tgz#a352f3adc8274120fb31fa4fc04527d44b6107cf"
   integrity sha512-dHXngzuSTZvIFWizWbU+ceZTAKmgodzEIi/AWbB+z0THKfxD3Iz/CJ7kZ7a9QyZv7X082L68vv3siMhXBMoTLA==
-  dependencies:
-    buffer "4.9.2"
-    events "1.1.1"
-    ieee754 "1.1.13"
-    jmespath "0.15.0"
-    querystring "0.2.0"
-    sax "1.2.1"
-    url "0.10.3"
-    uuid "3.3.2"
-    xml2js "0.4.19"
-
-aws-sdk@^2.828.0:
-  version "2.828.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.828.0.tgz#6aa599c3582f219568f41fb287eb65753e4a9234"
-  integrity sha512-JoDujGdncSIF9ka+XFZjop/7G+fNGucwPwYj7OHYMmFIOV5p7YmqomdbVmH/vIzd988YZz8oLOinWc4jM6vvhg==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -6181,10 +6166,10 @@ jest@^26.0.1:
     import-local "^3.0.2"
     jest-cli "^26.6.3"
 
-jira-client@^6.16.0:
-  version "6.16.0"
-  resolved "https://registry.yarnpkg.com/jira-client/-/jira-client-6.16.0.tgz#0f8cd7d3e8886c523f8d3b396fbc64699dd3c45c"
-  integrity sha512-jg9QH4Wd/tKiq9qHlQcTT124rXK0zsAV625x5ejdQNiWZoUcx2FNdHU6mr/318SUy3+p11yLcOar/q8SNzYIoA==
+jira-client@^6.21.1:
+  version "6.21.1"
+  resolved "https://registry.yarnpkg.com/jira-client/-/jira-client-6.21.1.tgz#34ad42ada04432e1490f2058c901ddd7e6dd3452"
+  integrity sha512-I9HyNNEOA7ZMJO7uLSyEZKk4oXkYct+kspy9/tbBOOvK9xsZI034p1GxGdTpyV6LyRB/Rd5IRJCS4IpDp6EzZw==
   dependencies:
     "@babel/runtime" "^7.6.0"
     request "^2.88.0"
