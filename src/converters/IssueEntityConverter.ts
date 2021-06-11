@@ -1,4 +1,7 @@
-import { IntegrationLogger } from "@jupiterone/jupiter-managed-integration-sdk";
+import { 
+  IntegrationLogger,
+  parseTimePropertyValue
+} from "@jupiterone/integration-sdk-core";
 import camelCase from "lodash/camelCase";
 
 import {
@@ -14,7 +17,6 @@ import {
 import { Field, Issue } from "../jira";
 import parseContent from "../jira/parseContent";
 import generateEntityKey from "../utils/generateEntityKey";
-import getTime from "../utils/getTime";
 import {
   extractValueFromCustomField,
   UNABLE_TO_PARSE_RESPONSE,
@@ -141,10 +143,10 @@ export function createIssueEntity({
     creator:
       issue.fields.creator &&
       (issue.fields.creator.emailAddress || issue.fields.creator.displayName),
-    createdOn: getTime(issue.fields.created),
-    updatedOn: getTime(issue.fields.updated),
-    resolvedOn: getTime(issue.fields.resolutiondate),
-    dueOn: getTime(issue.fields.duedate),
+    createdOn: parseTimePropertyValue(issue.fields.created),
+    updatedOn: parseTimePropertyValue(issue.fields.updated),
+    resolvedOn: parseTimePropertyValue(issue.fields.resolutiondate),
+    dueOn: parseTimePropertyValue(issue.fields.duedate),
     resolution: issue.fields.resolution
       ? issue.fields.resolution.name
       : undefined,

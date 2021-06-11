@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-jira",
-  "version": "1.11.3",
+  "version": "2.0.0",
   "description": "A JupiterOne managed integration for https://www.atlassian.com/software/jira.",
   "main": "dist/index.js",
   "repository": "https://github.com/JupiterOne/graph-jira",
@@ -13,29 +13,30 @@
     "access": "public"
   },
   "scripts": {
-    "start": "ts-node --require dotenv/config tools/execute.ts | bunyan",
-    "start:graph": "docker-compose up -d graph",
-    "stop:graph": "docker-compose down",
     "prebuild": "yarn test",
-    "build": "rm -rf dist/* && yarn build:types && yarn build:src && yarn build:docs",
-    "build:src": "babel src --extensions '.ts' --out-dir dist",
-    "build:docs": "ts-node tools/docs.ts",
-    "build:types": "tsc --project tsconfig.dist.json --declaration --emitDeclarationOnly",
-    "build:docs:model": "ts-node tools/entities-relationships-table-md.ts",
-    "prepack": "yarn build",
-    "lint": "yarn lint:ts && yarn lint:md",
+    "start": "j1-integration collect",
+    "graph": "j1-integration visualize",
+    "graph:types": "j1-integration visualize-types",
+    "lint": "eslint . --cache --fix --ext .ts,.tsx",
+    "format": "prettier --write '**/*.{ts,js,json,css,md,yml}'",
     "type-check": "tsc",
-    "lint:md": "remark .",
-    "lint:ts": "tslint --project .",
-    "format": "yarn prettier --write '**/*.{ts,js,json,md}'",
-    "test": "jest"
+    "test": "jest",
+    "test:env": "LOAD_ENV=1 yarn test",
+    "test:ci": "yarn lint && yarn type-check && yarn test",
+    "build": "tsc -p tsconfig.dist.json --declaration",
+    "prepush": "yarn lint && yarn type-check && jest --changedSince master",
+    "prepack": "yarn build"
   },
   "dependencies": {
-    "@jupiterone/jupiter-managed-integration-sdk": "^36.2.1",
-    "jira-client": "^6.16.0",
-    "lodash.camelcase": "^4.3.0"
+    "@jupiterone/integration-sdk-core": "^6.5.0",
+    "jira-client": "^6.21.1",
+    "lodash.camelcase": "^4.3.0",
+    "dotenv": "^10.0.0"
   },
   "devDependencies": {
+    "@jupiterone/integration-sdk-core": "^6.5.0",
+    "@jupiterone/integration-sdk-dev-tools": "^6.5.0",
+    "@jupiterone/integration-sdk-testing": "^6.5.0",
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.3.4",
@@ -46,14 +47,12 @@
     "@types/fs-extra": "^7.0.0",
     "@types/gremlin": "^3.4.2",
     "@types/jest": "^24.0.0",
-    "@types/jira-client": "^6.13.1",
+    "@types/jira-client": "^6.21.0",
     "@types/lodash.camelcase": "^4.3.6",
     "@types/lodash.merge": "^4.6.6",
     "@types/nock": "^10.0.3",
     "@types/node": "~8.10.0",
-    "aws-sdk": "^2.828.0",
     "bunyan": "^1.8.12",
-    "dotenv": "^8.0.0",
     "fs-extra": "^8.0.1",
     "husky": "^2.3.0",
     "jest": "^24.0.0",
@@ -75,29 +74,5 @@
     "tslint": "^5.12.1",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "3.9.7"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "linters": {
-      "*.md": [
-        "remark .",
-        "prettier --write",
-        "git add"
-      ],
-      "*.ts": [
-        "tslint --project .",
-        "prettier --write",
-        "git add"
-      ],
-      "*.{js,json}": [
-        "prettier --write",
-        "git add"
-      ]
-    },
-    "ignore": []
   }
 }
