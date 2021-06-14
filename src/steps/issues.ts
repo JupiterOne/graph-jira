@@ -1,14 +1,14 @@
 import {
-    IntegrationStep,
-    IntegrationStepExecutionContext,
-    RelationshipClass,
-    createDirectRelationship,
-    IntegrationMissingKeyError
+  IntegrationStep,
+  IntegrationStepExecutionContext,
+  RelationshipClass,
+  createDirectRelationship,
+  IntegrationMissingKeyError,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
-import { createIssueEntity } from "../converters";
+import { createIssueEntity } from '../converters/IssueEntityConverter';
 import {
   PROJECT_ISSUE_RELATIONSHIP_TYPE,
   PROJECT_ENTITY_TYPE,
@@ -19,22 +19,23 @@ import {
   USER_ENTITY_TYPE,
   USER_CREATED_ISSUE_RELATIONSHIP_TYPE,
   USER_REPORTED_ISSUE_RELATIONSHIP_TYPE,
-  UserEntity
-} from "../entities";
+  UserEntity,
+} from '../entities';
 import { Field } from '../jira';
 import { buildCustomFields } from '../utils/builders';
-
 
 export async function fetchIssues({
   instance,
   logger,
   jobState,
-  executionHistory
+  executionHistory,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
   const config = instance.config;
   const apiClient = createAPIClient(config, logger);
 
-  const projectEntities = await jobState.getData<ProjectEntity[]>('PROJECT_ARRAY');
+  const projectEntities = await jobState.getData<ProjectEntity[]>(
+    'PROJECT_ARRAY',
+  );
   if (!projectEntities) {
     throw new IntegrationMissingKeyError(
       `Expected to find projectEntities in jobState.`,
@@ -55,27 +56,32 @@ export async function fetchIssues({
 
   const lastJobTimestamp = executionHistory.lastSuccessful?.startedOn || 0;
   for (const projectEntity of projectEntities) {
-
-    //do not confuse projectEntity._key with projectEntity.key. They are different here. 
-    await apiClient.iterateIssues(projectEntity.key, lastJobTimestamp, async (issue) => {
-      const issueEntity = (await jobState.addEntity(
-        createIssueEntity({ issue, logger, fieldsById, customFieldsToInclude }),
-      )) as IssueEntity;
-
-      await jobState.addRelationship(
-          createDirectRelationship({
-              _class: RelationshipClass.HAS,
-              from: projectEntity,
-              to: issueEntity,
+    //do not confuse projectEntity._key with projectEntity.key. They are different here.
+    await apiClient.iterateIssues(
+      projectEntity.key,
+      lastJobTimestamp,
+      async (issue) => {
+        const issueEntity = (await jobState.addEntity(
+          createIssueEntity({
+            issue,
+            logger,
+            fieldsById,
+            customFieldsToInclude,
           }),
-      );
+        )) as IssueEntity;
 
-      //TODO: add CREATED and REPORTED issue relationships with users
+        await jobState.addRelationship(
+          createDirectRelationship({
+            _class: RelationshipClass.HAS,
+            from: projectEntity,
+            to: issueEntity,
+          }),
+        );
 
-    });
-
+        //TODO: add CREATED and REPORTED issue relationships with users
+      },
+    );
   }
-
 }
 
 export const issueSteps: IntegrationStep<IntegrationConfig>[] = [
@@ -102,12 +108,12 @@ export const issueSteps: IntegrationStep<IntegrationConfig>[] = [
         sourceType: USER_ENTITY_TYPE,
         targetType: ISSUE_ENTITY_TYPE,
       },
-      /*{
+      {
         _type: USER_REPORTED_ISSUE_RELATIONSHIP_TYPE,
         _class: RelationshipClass.REPORTED,
         sourceType: USER_ENTITY_TYPE,
         targetType: ISSUE_ENTITY_TYPE,
-      }*/ //uncomment once .REPORTED is supported
+      },
     ],
     dependsOn: ['fetch-projects', 'fetch-users'],
     executionHandler: fetchIssues,
