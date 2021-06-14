@@ -12,10 +12,15 @@ import { User, Project, Issue } from './jira/types';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
-const USERS_PAGE_SIZE = Number(process.env.USERS_PAGE_SIZE) || 200;
-const USERS_PAGE_LIMIT = Number(process.env.USERS_PAGE_LIMIT) || 10;
-const ISSUES_PAGE_SIZE = Number(process.env.USERS_PAGE_SIZE) || 200;
-const ISSUES_PAGE_LIMIT = Number(process.env.USERS_PAGE_LIMIT) || 10;
+//Jira documentation seems to indicate that max 100 replies will be returned per page
+//However, since this has not been experimentally confirmed,
+//we can leave USERS_PAGE_SIZE and ISSUES_PAGE_SIZE at the values in the old code
+const USERS_PAGE_SIZE = 200;
+const ISSUES_PAGE_SIZE = 200;
+
+//As for xxx_PAGE_LIMIT, these are a guard against infinite loops in case of system errors
+const USERS_PAGE_LIMIT = 10;
+const ISSUES_PAGE_LIMIT = 10;
 
 export class APIClient {
   jira: JiraClient;
@@ -70,6 +75,8 @@ export class APIClient {
 
   /**
    * Iterates each user resource in Jira.
+   * Note that the current code processes a maximum of USERS_PAGE_SIZE * USERS_PAGE_LIMIT users
+   * There may be further limitations on page size by the REST API itself
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
@@ -106,6 +113,8 @@ export class APIClient {
 
   /**
    * Iterates each issue (Record) resource in Jira.
+   * Note that the current code processes a maximum of ISSUES_PAGE_SIZE * ISSUES_PAGE_LIMIT issues
+   * There may be further limitations on page size by the REST API itself
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
