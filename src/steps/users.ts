@@ -1,15 +1,15 @@
 import {
-    IntegrationStep,
-    IntegrationStepExecutionContext,
-    RelationshipClass,
-    createDirectRelationship,
-    IntegrationMissingKeyError
+  IntegrationStep,
+  IntegrationStepExecutionContext,
+  RelationshipClass,
+  createDirectRelationship,
+  IntegrationMissingKeyError,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
 import { DATA_ACCOUNT_ENTITY } from './account';
-import { createUserEntity } from "../converters";
+import { createUserEntity } from '../converters';
 import {
   ACCOUNT_ENTITY_TYPE,
   ACCOUNT_USER_RELATIONSHIP_TYPE,
@@ -17,8 +17,7 @@ import {
   USER_ENTITY_TYPE,
   USER_ENTITY_CLASS,
   UserEntity,
-} from "../entities";
-
+} from '../entities';
 
 export async function fetchUsers({
   instance,
@@ -28,22 +27,27 @@ export async function fetchUsers({
   const config = instance.config;
   const apiClient = createAPIClient(config, logger);
 
-  const accountEntity = await jobState.getData<AccountEntity>(DATA_ACCOUNT_ENTITY);
-  if (!accountEntity) { throw new IntegrationMissingKeyError(`Expected to find Account entity in jobState`)};
+  const accountEntity = await jobState.getData<AccountEntity>(
+    DATA_ACCOUNT_ENTITY,
+  );
+  if (!accountEntity) {
+    throw new IntegrationMissingKeyError(
+      `Expected to find Account entity in jobState`,
+    );
+  }
 
   await apiClient.iterateUsers(async (user) => {
     const userEntity = (await jobState.addEntity(
       createUserEntity(user),
     )) as UserEntity;
 
-  await jobState.addRelationship(
+    await jobState.addRelationship(
       createDirectRelationship({
-          _class: RelationshipClass.HAS,
-          from: accountEntity,
-          to: userEntity,
+        _class: RelationshipClass.HAS,
+        from: accountEntity,
+        to: userEntity,
       }),
-  );
-
+    );
   });
 }
 
@@ -64,7 +68,7 @@ export const userSteps: IntegrationStep<IntegrationConfig>[] = [
         _class: RelationshipClass.HAS,
         sourceType: ACCOUNT_ENTITY_TYPE,
         targetType: USER_ENTITY_TYPE,
-      }
+      },
     ],
     dependsOn: ['fetch-account'],
     executionHandler: fetchUsers,
