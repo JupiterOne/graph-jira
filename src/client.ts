@@ -106,6 +106,13 @@ export class APIClient {
       pagesProcessed++;
     }
 
+    if (pagesProcessed === USERS_PAGE_LIMIT) {
+      this.logger.warn(
+        { pagesProcessed, USERS_PAGE_LIMIT },
+        'Reached maximum pages; may not have pulled all users. Consider increasing USERS_PAGE_LIMIT',
+      );
+    }
+
     for (const user of users) {
       await iteratee(user);
     }
@@ -115,6 +122,7 @@ export class APIClient {
    * Iterates each issue (Record) resource in Jira.
    * Note that the current code processes a maximum of ISSUES_PAGE_SIZE * ISSUES_PAGE_LIMIT issues
    * There may be further limitations on page size by the REST API itself
+   * But this limit is per project, and is called "since last execution time"
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
@@ -148,6 +156,13 @@ export class APIClient {
 
       startAt += issuesPage.length;
       pagesProcessed++;
+    }
+
+    if (pagesProcessed === ISSUES_PAGE_LIMIT) {
+      this.logger.warn(
+        { pagesProcessed, ISSUES_PAGE_LIMIT },
+        'Reached maximum pages; may not have pulled all issues. Consider increasing ISSUES_PAGE_LIMIT',
+      );
     }
 
     for (const issue of issues) {
