@@ -23,6 +23,7 @@ import {
 } from '../entities';
 import { Field } from '../jira';
 import { buildCustomFields } from '../utils/builders';
+import generateEntityKey from '../utils/generateEntityKey';
 
 export async function fetchIssues({
   instance,
@@ -78,7 +79,53 @@ export async function fetchIssues({
           }),
         );
 
-        //TODO: add CREATED and REPORTED issue relationships with users
+        if (issue.fields.creator && issue.fields.creator.accountId) {
+          const creatorUserKey = generateEntityKey(
+            USER_ENTITY_TYPE,
+            issue.fields.creator.accountId,
+          );
+          const creatorEntity = (await jobState.findEntity(
+            creatorUserKey,
+          )) as UserEntity;
+
+          if (!creatorEntity) {
+            throw new IntegrationMissingKeyError(
+              `Expected user with key to exist (key=${creatorUserKey})`,
+            );
+          }
+
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.CREATED,
+              from: creatorEntity,
+              to: issueEntity,
+            }),
+          );
+        }
+
+        if (issue.fields.reporter && issue.fields.reporter.accountId) {
+          const reporterUserKey = generateEntityKey(
+            USER_ENTITY_TYPE,
+            issue.fields.reporter.accountId,
+          );
+          const reporterEntity = (await jobState.findEntity(
+            reporterUserKey,
+          )) as UserEntity;
+
+          if (!reporterEntity) {
+            throw new IntegrationMissingKeyError(
+              `Expected user with key to exist (key=${reporterUserKey})`,
+            );
+          }
+
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.REPORTED,
+              from: reporterEntity,
+              to: issueEntity,
+            }),
+          );
+        }
       },
     );
   }

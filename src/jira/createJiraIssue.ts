@@ -1,3 +1,5 @@
+/* How we gonna deal with this in the new SDK? IntegrationCreateEntityAction is not a thing
+
 import { IntegrationCreateEntityAction } from '@jupiterone/integration-sdk-core';
 import { CreateIssueActionProperties } from '../types';
 import JiraClient from './JiraClient';
@@ -41,3 +43,5 @@ export default async function createJiraIssue(
 
   return client.findIssue(newIssue.key);
 }
+
+*/
