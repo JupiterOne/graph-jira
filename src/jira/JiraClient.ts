@@ -1,28 +1,11 @@
 import JiraApi from 'jira-client';
+import {
+  IssuesOptions,
+  IssueTypeName,
+  JiraParams,
+  PaginationOptions,
+} from '../types';
 import { Field, Issue, Project, ServerInfo, User } from './types';
-
-interface JiraParams {
-  host: string;
-  password: string;
-  username: string;
-}
-
-interface PaginationOptions {
-  startAt?: number;
-  pageSize?: number;
-}
-
-interface IssuesOptions extends PaginationOptions {
-  project: string;
-  sinceAtTimestamp?: number;
-}
-
-type IssueTypeName =
-  | 'Epic'
-  | 'Improvement'
-  | 'Task'
-  | 'Sub-task'
-  | 'New Feature';
 
 export default class JiraClient {
   private client: JiraApi;

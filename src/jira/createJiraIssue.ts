@@ -1,6 +1,3 @@
-/* How we gonna deal with this in the new SDK? IntegrationCreateEntityAction is not a thing
-
-import { IntegrationCreateEntityAction } from '@jupiterone/integration-sdk-core';
 import { CreateIssueActionProperties } from '../types';
 import JiraClient from './JiraClient';
 import { Issue } from './types';
@@ -28,20 +25,18 @@ async function getProjectIdFromProvidedProject(
 
 export default async function createJiraIssue(
   client: JiraClient,
-  action: IntegrationCreateEntityAction,
+  action: { properties: CreateIssueActionProperties; [k: string]: any },
 ): Promise<Issue> {
   const { summary, classification, project, additionalFields } =
-    action.properties as CreateIssueActionProperties;
+    action.properties;
 
   const projectId = await getProjectIdFromProvidedProject(client, project);
   const newIssue = await client.addNewIssue(
     summary,
     projectId,
-    classification as any,
+    classification,
     additionalFields,
   );
 
   return client.findIssue(newIssue.key);
 }
-
-*/
