@@ -28,15 +28,15 @@
     "prepack": "yarn build"
   },
   "dependencies": {
-    "@jupiterone/integration-sdk-core": "^6.6.0",
+    "@jupiterone/integration-sdk-core": "^6.10.0",
     "jira-client": "^6.21.1",
     "lodash.camelcase": "^4.3.0",
     "dotenv": "^10.0.0"
   },
   "devDependencies": {
-    "@jupiterone/integration-sdk-core": "^6.6.0",
-    "@jupiterone/integration-sdk-dev-tools": "^6.6.0",
-    "@jupiterone/integration-sdk-testing": "^6.6.0",
+    "@jupiterone/integration-sdk-core": "^6.10.0",
+    "@jupiterone/integration-sdk-dev-tools": "^6.10.0",
+    "@jupiterone/integration-sdk-testing": "^6.10.0",
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.3.4",
