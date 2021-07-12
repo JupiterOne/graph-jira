@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-//not sure how to avoid banning the ban here
-
-import JiraApi from "jira-client";
-import { Field, Issue, Project, ServerInfo, User } from "./types";
+import JiraApi from 'jira-client';
+import { Field, Issue, Project, ServerInfo, User } from './types';
 
 interface JiraParams {
   host: string;
@@ -21,11 +18,11 @@ interface IssuesOptions extends PaginationOptions {
 }
 
 type IssueTypeName =
-  | "Epic"
-  | "Improvement"
-  | "Task"
-  | "Sub-task"
-  | "New Feature";
+  | 'Epic'
+  | 'Improvement'
+  | 'Task'
+  | 'Sub-task'
+  | 'New Feature';
 
 export default class JiraClient {
   private client: JiraApi;
@@ -33,11 +30,11 @@ export default class JiraClient {
   constructor(params: JiraParams) {
     const { host, username, password } = params;
     this.client = new JiraApi({
-      protocol: "https",
+      protocol: 'https',
       host,
       username,
       password,
-      apiVersion: "3",
+      apiVersion: '3',
       strictSSL: true,
     });
   }
@@ -79,7 +76,6 @@ export default class JiraClient {
   }
 
   public async fetchServerInfo(): Promise<ServerInfo> {
-    // @ts-ignore: calling private method
     const info: ServerInfo = (await this.client.getServerInfo()) as ServerInfo;
     return info;
   }
@@ -96,7 +92,7 @@ export default class JiraClient {
     const projectQuery = `project='${project}'`;
     const sinceAtFilter = sinceAtTimestamp
       ? ` AND updated>=${sinceAtTimestamp}`
-      : "";
+      : '';
     const searchString = `${projectQuery}${sinceAtFilter}`;
 
     const response = await this.client.searchJira(searchString, {

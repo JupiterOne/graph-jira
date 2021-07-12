@@ -1,7 +1,9 @@
-import { IntegrationCreateEntityAction } from "@jupiterone/jupiter-managed-integration-sdk";
-import { CreateIssueActionProperties } from "../types";
-import JiraClient from "./JiraClient";
-import { Issue } from "./types";
+/* How we gonna deal with this in the new SDK? IntegrationCreateEntityAction is not a thing
+
+import { IntegrationCreateEntityAction } from '@jupiterone/integration-sdk-core';
+import { CreateIssueActionProperties } from '../types';
+import JiraClient from './JiraClient';
+import { Issue } from './types';
 
 async function getProjectIdFromProvidedProject(
   client: JiraClient,
@@ -10,7 +12,7 @@ async function getProjectIdFromProvidedProject(
   const projectId = Number(project);
 
   if (!isNaN(projectId)) {
-    if (project.includes(".")) {
+    if (project.includes('.')) {
       throw new Error(`Invalid project id provided (projectId=${project})`);
     }
 
@@ -28,12 +30,8 @@ export default async function createJiraIssue(
   client: JiraClient,
   action: IntegrationCreateEntityAction,
 ): Promise<Issue> {
-  const {
-    summary,
-    classification,
-    project,
-    additionalFields,
-  } = action.properties as CreateIssueActionProperties;
+  const { summary, classification, project, additionalFields } =
+    action.properties as CreateIssueActionProperties;
 
   const projectId = await getProjectIdFromProvidedProject(client, project);
   const newIssue = await client.addNewIssue(
@@ -45,3 +43,5 @@ export default async function createJiraIssue(
 
   return client.findIssue(newIssue.key);
 }
+
+*/
