@@ -28,7 +28,7 @@ export interface ProjectEntity extends Entity {
 export const PROJECT_ENTITY_TYPE = 'jira_project';
 export const PROJECT_ENTITY_CLASS = ['Project'];
 export const PROJECT_ISSUE_RELATIONSHIP_TYPE = 'jira_project_has_issue';
-
+export const PROJECT_ISSUE_RELATIONSHIP_CLASS = 'HAS';
 export interface UserEntity extends Entity {
   id: string;
   self: string;
@@ -42,7 +42,9 @@ export interface UserEntity extends Entity {
 export const USER_ENTITY_TYPE = 'jira_user';
 export const USER_ENTITY_CLASS = ['User'];
 export const USER_CREATED_ISSUE_RELATIONSHIP_TYPE = 'jira_user_created_issue';
+export const USER_CREATED_ISSUE_RELATIONSHIP_CLASS = 'CREATED';
 export const USER_REPORTED_ISSUE_RELATIONSHIP_TYPE = 'jira_user_reported_issue';
+export const USER_REPORTED_ISSUE_RELATIONSHIP_CLASS = 'REPORTED';
 
 export interface IssueEntity extends Entity {
   id: string;
