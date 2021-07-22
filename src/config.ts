@@ -95,10 +95,10 @@ export async function validateInvocation(
   //this regex matches 'localhost', 'example.com', 'subdomain.example.com'
   //but cannot contain any chars other than letters, numbers, '-' and '.'
   const hostnameRegex =
-    /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/;
+    /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9/][A-Za-z0-9-/]*[A-Za-z0-9])$/;
   if (!config.jiraHost.match(hostnameRegex)) {
     throw new IntegrationValidationError(
-      'config.jiraHost must be a valid hostname. (ex: localhost, test.com, sub.test.com)',
+      'config.jiraHost must be a valid hostname. (ex: localhost, test.com, sub.test.com, test.com/jira)',
     );
   }
 
