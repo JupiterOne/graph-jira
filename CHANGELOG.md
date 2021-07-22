@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased](https://github.com/JuptiterOne/graph-jira/compare/v1.9.8...HEAD)
 
+### Changed
+
+- Loosened the hostname validating regex to allow example.atlassian.net/jira
+
 ## [1.11.0] - 2021-06-04
 
 - Add the functionality to create an issue with a specific class.

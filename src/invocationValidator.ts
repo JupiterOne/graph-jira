@@ -35,7 +35,7 @@ export default async function invocationValidator(
     );
   }
 
-  const hostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/;
+  const hostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9/][A-Za-z0-9-/]*[A-Za-z0-9])$/;
   if (!config.jiraHost.match(hostnameRegex)) {
     throw new IntegrationInstanceConfigError(
       "config.jiraHost must be a valid hostname",
