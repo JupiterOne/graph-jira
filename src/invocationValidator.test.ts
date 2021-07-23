@@ -82,11 +82,10 @@ describe("invocationValidator errors", () => {
         config: {
           jiraHost: "test.com/subdir",
           jiraUsername: "testLogin",
-          jiraPassword: "fakePassword",
+          jiraPassword: "testPassword",
         },
       },
     };
-    expect.assertions(1);
     expect(await invocationValidator(context as any)).toReturn;
   });
 });
