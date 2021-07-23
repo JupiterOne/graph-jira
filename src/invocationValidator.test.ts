@@ -76,7 +76,7 @@ describe("invocationValidator errors", () => {
     }
   });
 
-  test("should not throw exception if jiraHost has a subdir", async () => {
+  test("should throw auth error not instanceConfigError if jiraHost has a subdir", async () => {
     const context = {
       instance: {
         config: {
@@ -86,7 +86,11 @@ describe("invocationValidator errors", () => {
         },
       },
     };
-    expect(await invocationValidator(context as any)).toReturn;
+    try {
+      await invocationValidator(context as any);
+    } catch (e) {
+      expect(e instanceof IntegrationInstanceAuthenticationError).toBe(true);
+    }
   });
 });
 
