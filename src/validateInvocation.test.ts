@@ -39,6 +39,28 @@ it('auth error', async () => {
   );
 });
 
+test('should throw exception if jiraHost has invalid chars', async () => {
+  const testConfig = integrationConfig;
+  testConfig.jiraHost = 'test.com?somequeryparms';
+  const executionContext = createMockExecutionContext({
+    instanceConfig: testConfig,
+  });
+  await expect(validateInvocation(executionContext)).rejects.toThrow(
+    IntegrationValidationError,
+  );
+});
+
+test('should throw auth error not validation error if jiraHost has a subdir', async () => {
+  const testConfig = integrationConfig;
+  testConfig.jiraHost = 'test.com/dir';
+  const executionContext = createMockExecutionContext({
+    instanceConfig: testConfig,
+  });
+  await expect(validateInvocation(executionContext)).rejects.toThrow(
+    IntegrationProviderAuthenticationError,
+  );
+});
+
 describe('projects', () => {
   beforeAll(() => {
     nock.back.fixtures = `${__dirname}/../test/fixtures/`;
