@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased](https://github.com/JuptiterOne/graph-jira/compare/v1.9.8...HEAD)
 
+## [1.11.4] - 2021-07-027
+
 ### Changed
 
 - Loosened the hostname validating regex to allow example.atlassian.net/jira
