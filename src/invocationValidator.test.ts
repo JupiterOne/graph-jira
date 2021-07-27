@@ -57,6 +57,41 @@ describe("invocationValidator errors", () => {
       expect(e instanceof IntegrationInstanceAuthenticationError).toBe(true);
     }
   });
+
+  test("should throw exception if jiraHost has invalid chars", async () => {
+    const context = {
+      instance: {
+        config: {
+          jiraHost: "test.com?somequeryparms",
+          jiraUsername: "testLogin",
+          jiraPassword: "testPassword",
+        },
+      },
+    };
+    expect.assertions(1);
+    try {
+      await invocationValidator(context as any);
+    } catch (err) {
+      expect(err instanceof IntegrationInstanceConfigError).toBeTruthy();
+    }
+  });
+
+  test("should throw auth error not instanceConfigError if jiraHost has a subdir", async () => {
+    const context = {
+      instance: {
+        config: {
+          jiraHost: "test.com/subdir",
+          jiraUsername: "testLogin",
+          jiraPassword: "testPassword",
+        },
+      },
+    };
+    try {
+      await invocationValidator(context as any);
+    } catch (e) {
+      expect(e instanceof IntegrationInstanceAuthenticationError).toBe(true);
+    }
+  });
 });
 
 describe("projects", () => {
