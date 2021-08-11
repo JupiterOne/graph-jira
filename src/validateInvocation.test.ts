@@ -20,6 +20,42 @@ it('requires valid config', async () => {
   );
 });
 
+
+test("should throw exception if jiraHost has invalid chars", async () => {
+  const context = {
+    instance: {
+      config: {
+        jiraHost: "test.com?somequeryparms",
+        jiraUsername: "testLogin",
+        jiraPassword: "testPassword",
+      },
+    },
+  };
+  expect.assertions(1);
+  try {
+    await validateInvocation(context as any);
+  } catch (err) {
+    expect(err instanceof IntegrationValidationError).toBeTruthy();
+  }
+});
+
+test("should throw auth error not instanceConfigError if jiraHost has a subdir", async () => {
+  const context = {
+    instance: {
+      config: {
+        jiraHost: "test.com/subdir",
+        jiraUsername: "testLogin",
+        jiraPassword: "testPassword",
+      },
+    },
+  };
+  try {
+    await validateInvocation(context as any);
+  } catch (e) {
+    expect(e instanceof IntegrationProviderAuthenticationError).toBe(true);
+  }
+});
+
 it('auth error', async () => {
   const recording = setupRecording({
     directory: '__recordings__',
