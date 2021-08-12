@@ -10,7 +10,7 @@ if (process.env.LOAD_ENV) {
 export const DEFAULT_JIRA_HOST = 'kei-institute.atlassian.net'; //the recordings are under this
 const DEFAULT_JIRA_USERNAME = 'fakename';
 const DEFAULT_JIRA_PASSWORD = 'fakekey';
-const DEFAULT_PROJECTS = 'fakeproject';
+const DEFAULT_PROJECTS = ['TPN'];
 
 export const integrationConfig: IntegrationConfig = {
   jiraHost: process.env.JIRA_HOST || DEFAULT_JIRA_HOST,

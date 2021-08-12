@@ -8,6 +8,7 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
+import { DATA_CONFIG_PROJECT_ENTITY_ARRAY } from '../constants';
 import { createIssueEntity } from '../converters/IssueEntityConverter';
 import {
   PROJECT_ISSUE_RELATIONSHIP_TYPE,
@@ -22,7 +23,7 @@ import {
   UserEntity,
 } from '../entities';
 import { Field } from '../jira';
-import { buildCustomFields } from '../utils/builders';
+import { buildCustomFields, buildProjectConfigs } from '../utils/builders';
 import generateEntityKey from '../utils/generateEntityKey';
 
 export async function fetchIssues({
@@ -34,8 +35,10 @@ export async function fetchIssues({
   const config = instance.config;
   const apiClient = createAPIClient(config, logger);
 
+  const projectConfigs = buildProjectConfigs(instance.config.projects);
+
   const projectEntities = await jobState.getData<ProjectEntity[]>(
-    'PROJECT_ARRAY',
+    DATA_CONFIG_PROJECT_ENTITY_ARRAY,
   );
   if (!projectEntities) {
     throw new IntegrationMissingKeyError(
@@ -56,10 +59,10 @@ export async function fetchIssues({
   );
 
   const lastJobTimestamp = executionHistory.lastSuccessful?.startedOn || 0;
-  for (const projectEntity of projectEntities) {
+  for (const projectConfig of projectConfigs) {
     //do not confuse projectEntity._key with projectEntity.key. They are different here.
     await apiClient.iterateIssues(
-      projectEntity.key,
+      projectConfig.key,
       lastJobTimestamp,
       async (issue) => {
         const issueEntity = (await jobState.addEntity(
@@ -71,13 +74,23 @@ export async function fetchIssues({
           }),
         )) as IssueEntity;
 
-        await jobState.addRelationship(
-          createDirectRelationship({
-            _class: RelationshipClass.HAS,
-            from: projectEntity,
-            to: issueEntity,
-          }),
+        const projectEntity = projectEntities?.find(
+          (project) => project.key === projectConfig.key,
         );
+        if (projectEntity) {
+          await jobState.addRelationship(
+            createDirectRelationship({
+              _class: RelationshipClass.HAS,
+              from: projectEntity,
+              to: issueEntity,
+            }),
+          );
+        } else {
+          logger.warn(
+            { projectKey: projectConfig.key },
+            'Unable to create issue -> project relationship because the project was not in the job state',
+          );
+        }
 
         if (issue.fields.creator && issue.fields.creator.accountId) {
           const creatorUserKey = generateEntityKey(
