@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased](https://github.com/JuptiterOne/graph-jira/compare/v1.9.8...HEAD)
 
+## [2.1.2] - 2021-08-12
+
+### Added
+
+- an `IntegrationProviderAuthorizationError` will be thrown on 403 responses to
+  the `getUsers` endpoint.
+
 ## [2.1.1] - 2021-08-12
 
 ### Fixed
