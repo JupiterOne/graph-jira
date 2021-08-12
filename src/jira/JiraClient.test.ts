@@ -119,7 +119,7 @@ describe("JiraClient fetch ok data", () => {
   });
 });
 
-describe.only("JiraClient recordings", () => {
+describe("JiraClient recordings", () => {
   let recording: Recording;
 
   afterEach(async () => {
@@ -131,16 +131,30 @@ describe.only("JiraClient recordings", () => {
       directory: __dirname,
       name: 'steps',
       options: {
-        recordFailedRequests: true
+        recordFailedRequests: true,
+        matchRequestsBy: {
+          method: true,
+          headers: false,
+          body: false,
+          order: true,
+          url: {
+            username: false,
+            password: false,
+            hostname: false,
+            port: false,
+            pathname: true,
+            query: true,
+            hash: false,
+          }
+        }
       }
-    });
+    })
   
     const context = createMockStepExecutionContext<IntegrationConfig>({
       instanceConfig: integrationConfig,
     });
 
     const apiClient = createAPIClient(context.instance.config, context.logger);
-    // const issues = await apiClient.iterateIssues('key', 100000, () => undefined);
     await expect(apiClient.iterateIssues('key', 100000, () => undefined)).resolves.not.toThrow()
   })
 })

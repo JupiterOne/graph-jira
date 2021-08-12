@@ -148,7 +148,7 @@ export class APIClient {
         if (err?.message.includes(`The value '${projectKey}' does not exist for the field 'project'.`)) {
           this.logger.info(
             { projectKey },
-            'Project key does not exist.',
+            'Project key does not exist or you do not have access to pull down issues from this project.',
           );
           break
           // This error is fine, just break from the loop

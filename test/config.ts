@@ -7,7 +7,7 @@ if (process.env.LOAD_ENV) {
     path: path.join(__dirname, '../.env'),
   });
 }
-const DEFAULT_JIRA_HOST = 'kei-institute.atlassian.net'; //the recordings are under this
+export const DEFAULT_JIRA_HOST = 'kei-institute.atlassian.net'; //the recordings are under this
 const DEFAULT_JIRA_USERNAME = 'fakename';
 const DEFAULT_JIRA_PASSWORD = 'fakekey';
 const DEFAULT_PROJECTS = 'fakeproject';
