@@ -8,13 +8,20 @@ and this project adheres to
 
 ## [Unreleased](https://github.com/JuptiterOne/graph-jira/compare/v1.9.8...HEAD)
 
-## [2.1.0] - 2021-06-10
+## [2.1.1] - 2021-08-12
+
+### Fixed
+
+- Do not throw an error when a issue creator or reporter user is no longer in
+  this Jira instance.
+
+## [2.1.0] - 2021-08-12
 
 ### Fixed
 
 - Only ingest `issues` from projects specified in the integration config.
 
-## [2.0.0] - 2021-06-10
+## [2.0.0] - 2021-08-11
 
 ### Changed
 
