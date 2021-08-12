@@ -2,6 +2,7 @@ import {
   IntegrationLogger,
   IntegrationValidationError,
   IntegrationProviderAuthenticationError,
+  IntegrationProviderAuthorizationError,
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationConfig } from './config';
@@ -86,10 +87,22 @@ export class APIClient {
     let users: User[] = [];
 
     while (pagesProcessed < USERS_PAGE_LIMIT) {
-      const usersPage = await this.jira.fetchUsersPage({
-        startAt,
-        pageSize: USERS_PAGE_SIZE,
-      });
+      let usersPage: User[] = []
+      try {
+        usersPage = await this.jira.fetchUsersPage({
+          startAt,
+          pageSize: USERS_PAGE_SIZE,
+        });
+      } catch (err: any) {
+        if (err?.statusCode === 403) {
+          throw new IntegrationProviderAuthorizationError({
+            cause: err,
+            status: err.statusCode,
+            statusText: err.name,
+            endpoint: 'fetchUsersPage'
+          })
+        }
+      }
 
       if (usersPage.length === 0) {
         break;
