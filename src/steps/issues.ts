@@ -101,19 +101,20 @@ export async function fetchIssues({
             creatorUserKey,
           )) as UserEntity;
 
-          if (!creatorEntity) {
-            throw new IntegrationMissingKeyError(
-              `Expected user with key to exist (key=${creatorUserKey})`,
+          if (creatorEntity) {
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.CREATED,
+                from: creatorEntity,
+                to: issueEntity,
+              }),
+            );
+          } else {
+            logger.warn(
+              { creatorUserKey, issueName: issueEntity.name },
+              'Created user is no longer in this Jira instance. Not creating user_created_issue relationship.',
             );
           }
-
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.CREATED,
-              from: creatorEntity,
-              to: issueEntity,
-            }),
-          );
         }
 
         if (issue.fields.reporter && issue.fields.reporter.accountId) {
@@ -125,19 +126,20 @@ export async function fetchIssues({
             reporterUserKey,
           )) as UserEntity;
 
-          if (!reporterEntity) {
-            throw new IntegrationMissingKeyError(
-              `Expected user with key to exist (key=${reporterUserKey})`,
+          if (reporterEntity) {
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.REPORTED,
+                from: reporterEntity,
+                to: issueEntity,
+              }),
+            );
+          } else {
+            logger.warn(
+              { reporterUserKey, issueName: issueEntity.name },
+              'Reported user is no longer in this Jira instance. Not creating user_reported_issue relationship.',
             );
           }
-
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.REPORTED,
-              from: reporterEntity,
-              to: issueEntity,
-            }),
-          );
         }
       },
     );
