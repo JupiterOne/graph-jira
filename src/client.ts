@@ -136,12 +136,26 @@ export class APIClient {
     let issues: Issue[] = [];
 
     while (pagesProcessed < ISSUES_PAGE_LIMIT) {
-      const issuesPage = await this.jira.fetchIssuesPage({
-        project: projectKey,
-        sinceAtTimestamp: lastJobTimestamp,
-        startAt,
-        pageSize: ISSUES_PAGE_SIZE,
-      });
+      let issuesPage: Issue[] = []
+      try {
+        issuesPage = await this.jira.fetchIssuesPage({
+          project: projectKey,
+          sinceAtTimestamp: lastJobTimestamp,
+          startAt,
+          pageSize: ISSUES_PAGE_SIZE,
+        });
+      } catch (err: any) {
+        if (err?.message.includes(`The value '${projectKey}' does not exist for the field 'project'.`)) {
+          this.logger.info(
+            { projectKey },
+            'Project key does not exist.',
+          );
+          break
+          // This error is fine, just break from the loop
+        } else {
+          throw err
+        }
+      }
 
       if (issuesPage.length === 0) {
         break;

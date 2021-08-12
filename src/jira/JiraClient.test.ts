@@ -1,5 +1,10 @@
+import { createMockStepExecutionContext, Recording } from "@jupiterone/integration-sdk-testing";
 import "jest-extended";
 import nock from "nock";
+import { integrationConfig } from "../../test/config";
+import { setupJiraRecording } from "../../test/recording";
+import { createAPIClient } from "../client";
+import { IntegrationConfig } from "../config";
 import JiraClient from "./JiraClient";
 
 const JIRA_LOCAL_EXECUTION_HOST =
@@ -113,6 +118,32 @@ describe("JiraClient fetch ok data", () => {
     nock.restore();
   });
 });
+
+describe.only("JiraClient recordings", () => {
+  let recording: Recording;
+
+  afterEach(async () => {
+    await recording.stop();
+  });
+  
+  it('should not error when the project does not exist anymore', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'steps',
+      options: {
+        recordFailedRequests: true
+      }
+    });
+  
+    const context = createMockStepExecutionContext<IntegrationConfig>({
+      instanceConfig: integrationConfig,
+    });
+
+    const apiClient = createAPIClient(context.instance.config, context.logger);
+    // const issues = await apiClient.iterateIssues('key', 100000, () => undefined);
+    await expect(apiClient.iterateIssues('key', 100000, () => undefined)).resolves.not.toThrow()
+  })
+})
 
 describe("JiraClient bad credentials", () => {
   beforeAll(() => {
