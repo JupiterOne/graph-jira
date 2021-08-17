@@ -77,13 +77,12 @@ test('should collect data', async () => {
         _type: { const: 'jira_user' },
         name: { type: 'string' },
         displayName: { type: 'string' },
-        email: { type: 'string' },
         _rawData: {
           type: 'array',
           items: { type: 'object' },
         },
       },
-      required: ['name', 'displayName', 'email'],
+      required: ['name', 'displayName'],
     },
   });
 

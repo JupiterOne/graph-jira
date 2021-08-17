@@ -12,7 +12,7 @@ export function createUserEntity(user: User): UserEntity {
     displayName: user.displayName,
     self: user.self,
     name: user.name || user.displayName,
-    email: user.emailAddress || 'donotemail@example.com', //some system users in Jira don't have emails, but SDK requires it
+    email: user.emailAddress,
     timeZone: user.timeZone,
     active: user.active,
     accountType: user.accountType,
