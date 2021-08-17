@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased](https://github.com/JuptiterOne/graph-jira/compare/v1.9.8...HEAD)
 
+## [2.1.3] - 2021-08-17
+
 ### Removed
 
 - Removed default `jira_user.email` property of `donotemail@example.com`
