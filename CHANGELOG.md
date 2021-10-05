@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased](https://github.com/JuptiterOne/graph-jira/compare/v1.9.8...HEAD)
 
+### Added
+
+- Added Issue class to `jira_issue` entities
+
 ## [2.1.3] - 2021-08-17
 
 ### Removed
