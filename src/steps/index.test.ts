@@ -32,9 +32,7 @@ test('should collect data', async () => {
   // Simulates dependency graph execution.
   // See https://github.com/JupiterOne/sdk/issues/262.
   await fetchAccountDetails(context);
-  console.log('got accts');
   await fetchProjects(context);
-  console.log('gotporhs');
   await fetchUsers(context);
   await fetchIssues(context);
 

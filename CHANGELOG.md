@@ -12,6 +12,10 @@ and this project adheres to
 
 - Added Issue class to `jira_issue` entities
 
+### Changed
+
+- Package updates
+
 ## [2.1.3] - 2021-08-17
 
 ### Removed
