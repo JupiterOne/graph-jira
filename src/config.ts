@@ -76,16 +76,6 @@ export async function validateInvocation(
 ) {
   const { config } = context.instance;
 
-  let parsedProjects: string[] = [];
-  if (typeof config.projects === 'string') {
-    try {
-      parsedProjects = JSON.parse(config.projects);
-      config.projects = parsedProjects;
-    } catch (err) {
-      //if the JSON parsing failed, just leave config.projects alone
-    }
-  }
-
   if (!config.jiraHost || !config.jiraPassword || !config.jiraUsername) {
     throw new IntegrationValidationError(
       'config.jiraHost and config.jiraPassword and config.jiraUsername must be provided by the user',
