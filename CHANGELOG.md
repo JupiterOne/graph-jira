@@ -14,7 +14,7 @@ and this project adheres to
 
 ### Changed
 
-- Package updates
+- Package and test updates
 
 ## [2.1.3] - 2021-08-17
 

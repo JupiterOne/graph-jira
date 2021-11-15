@@ -54,7 +54,7 @@ export default class JiraClient {
   }
 
   public async fetchProjects(): Promise<Project[]> {
-    const projects: Project[] = (await this.client.listProjects()) as Project[];
+    const projects = (await this.client.listProjects()) as Project[];
     return projects;
   }
 

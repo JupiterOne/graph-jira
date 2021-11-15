@@ -38,12 +38,11 @@ test('should throw exception if jiraHost has invalid chars', async () => {
   }
 });
 
-/*
 test('should throw auth error not instanceConfigError if jiraHost has a subdir', async () => {
   const context = {
     instance: {
       config: {
-        jiraHost: 'test.com/subdir',
+        jiraHost: 'fake-hostname.atlassian.net/subdir',
         jiraUsername: 'testLogin',
         jiraPassword: 'testPassword',
       },
@@ -55,8 +54,6 @@ test('should throw auth error not instanceConfigError if jiraHost has a subdir',
     expect(e instanceof IntegrationProviderAuthenticationError).toBe(true);
   }
 });
-
-*/
 
 it('auth error', async () => {
   const recording = setupRecording({
