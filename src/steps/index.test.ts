@@ -11,6 +11,8 @@ import { fetchIssues } from './issues';
 import { fetchProjects } from './projects';
 import { setupJiraRecording } from '../../test/recording';
 
+jest.setTimeout(10000);
+
 let recording: Recording;
 
 afterEach(async () => {
@@ -30,7 +32,9 @@ test('should collect data', async () => {
   // Simulates dependency graph execution.
   // See https://github.com/JupiterOne/sdk/issues/262.
   await fetchAccountDetails(context);
+  console.log('got accts');
   await fetchProjects(context);
+  console.log('gotporhs');
   await fetchUsers(context);
   await fetchIssues(context);
 

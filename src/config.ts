@@ -93,7 +93,9 @@ export async function validateInvocation(
   }
 
   //this regex matches 'localhost', 'example.com', 'subdomain.example.com'
-  //but cannot contain any chars other than letters, numbers, '-' and '.'
+  //but cannot contain any chars other than letters, numbers, '-', '/' and '.'
+  //the '/' cannot appear at the beginning or end of the string - it's meant to
+  //represent the format 'test.com/jirasubdir'
   const hostnameRegex =
     /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9/][A-Za-z0-9-/]*[A-Za-z0-9])$/;
   if (!config.jiraHost.match(hostnameRegex)) {

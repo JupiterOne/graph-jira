@@ -10,6 +10,8 @@ import { integrationConfig } from '../test/config';
 import { IntegrationConfig, validateInvocation } from './config';
 import nock from 'nock';
 
+jest.setTimeout(10000);
+
 it('requires valid config', async () => {
   const executionContext = createMockExecutionContext<IntegrationConfig>({
     instanceConfig: {} as IntegrationConfig,
@@ -20,14 +22,13 @@ it('requires valid config', async () => {
   );
 });
 
-
-test("should throw exception if jiraHost has invalid chars", async () => {
+test('should throw exception if jiraHost has invalid chars', async () => {
   const context = {
     instance: {
       config: {
-        jiraHost: "test.com?somequeryparms",
-        jiraUsername: "testLogin",
-        jiraPassword: "testPassword",
+        jiraHost: 'test.com?somequeryparms',
+        jiraUsername: 'testLogin',
+        jiraPassword: 'testPassword',
       },
     },
   };
@@ -39,13 +40,13 @@ test("should throw exception if jiraHost has invalid chars", async () => {
   }
 });
 
-test("should throw auth error not instanceConfigError if jiraHost has a subdir", async () => {
+test('should throw auth error not instanceConfigError if jiraHost has a subdir', async () => {
   const context = {
     instance: {
       config: {
-        jiraHost: "test.com/subdir",
-        jiraUsername: "testLogin",
-        jiraPassword: "testPassword",
+        jiraHost: 'test.com/subdir',
+        jiraUsername: 'testLogin',
+        jiraPassword: 'testPassword',
       },
     },
   };
