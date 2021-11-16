@@ -11,10 +11,19 @@ and this project adheres to
 ### Added
 
 - Added Issue class to `jira_issue` entities
+- Error handling for Issue ingestion to avoid one bad Issue causing the step to
+  fail
+- Retry functionality that respects Jira rate limit responses
 
 ### Changed
 
+- Ingestion of Issues and Users on a per-page basis, rather than fetching all
+  before processing
 - Package and test updates
+
+### Fixed
+
+- Counting Issues properly to respect MAX_ISSUES_TO_INGEST where applicable
 
 ## [2.1.3] - 2021-08-17
 

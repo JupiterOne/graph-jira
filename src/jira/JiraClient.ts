@@ -6,11 +6,14 @@ import {
   PaginationOptions,
 } from '../types';
 import { Field, Issue, Project, ServerInfo, User } from './types';
+import { retry, AttemptContext, sleep } from '@lifeomic/attempt';
+import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
 export default class JiraClient {
   private client: JiraApi;
+  private logger: IntegrationLogger;
 
-  constructor(params: JiraParams) {
+  constructor(params: JiraParams, logger: IntegrationLogger) {
     const { host, username, password } = params;
     this.client = new JiraApi({
       protocol: 'https',
@@ -20,6 +23,7 @@ export default class JiraClient {
       apiVersion: '3',
       strictSSL: true,
     });
+    this.logger = logger;
   }
 
   public async addNewIssue(
@@ -76,24 +80,29 @@ export default class JiraClient {
     const sinceAtFilter = sinceAtTimestamp
       ? ` AND updated>=${sinceAtTimestamp}`
       : '';
-    //'ORDER BY created DESC' is default behavior for Issues
+    //'ORDER BY updated DESC' is default behavior for Issues
     //if we ever want to change it, one can order by other fields or sort ASC, just as in SQL
     const searchString = `${projectQuery}${sinceAtFilter}`;
 
-    const response = await this.client.searchJira(searchString, {
-      startAt: startAt || 0,
-    });
-
-    return response.issues as Promise<Issue[]>;
+    const functionToRetry = async () => {
+      const response = await this.client.searchJira(searchString, {
+        startAt: startAt || 0,
+      });
+      return response.issues as Promise<Issue[]>;
+    };
+    return rateAwareRetry(functionToRetry, this.logger) as Promise<Issue[]>;
   }
 
   public async fetchUsersPage(
     options: PaginationOptions = {},
   ): Promise<User[]> {
-    return (this.client as any).getUsers(
-      options.startAt || 0,
-      options.pageSize,
-    ) as Promise<User[]>;
+    const functionToRetry = async () => {
+      return this.client.getUsers(
+        options.startAt || 0,
+        options.pageSize,
+      ) as Promise<User[]>;
+    };
+    return rateAwareRetry(functionToRetry, this.logger) as Promise<User[]>;
   }
 
   /**
@@ -107,4 +116,51 @@ export default class JiraClient {
     )) as Project;
     return Number(project.id);
   }
+}
+
+async function rateAwareRetry(func, logger) {
+  // Check https://github.com/lifeomic/attempt for options on retry
+  return await retry(func, {
+    maxAttempts: 5,
+    delay: 5, //in msec
+    jitter: true, // activates a random delay between minDelay and calculated exponential backoff
+    minDelay: 5, // in msec
+    factor: 2, //exponential backoff factor
+    async handleError(error: any, attemptContext: AttemptContext) {
+      /* retry will keep trying to the limits of retryOptions
+       * but it lets you intervene in this function - if you throw an error from in here,
+       * it stops retrying. Otherwise you can just log the attempts.
+       *
+       * Jira has rate limits, but they are not per tenant
+       * Instead, they issue a rate limit response to all clients when their servers are getting overloaded
+       * therefore, there is no way to know when this might occur
+       * Per https://developer.atlassian.com/cloud/jira/platform/rate-limiting/,
+       * they try to provide a `Retry-After` header (in sec) in such cases
+       * They might also provide a `Retry-After` in 5xx errors
+       */
+
+      // don't keep trying if it's not going to get better
+      if (
+        error.retryable === false ||
+        error.status === 401 ||
+        error.status === 403
+      ) {
+        logger.warn(
+          { attemptContext, error },
+          `Hit an unrecoverable error ${error.status} in Jira API. Aborting.`,
+        );
+        attemptContext.abort();
+        throw error;
+      }
+
+      logger.warn(
+        { attemptContext, error },
+        `Hit a possibly recoverable error ${error.status} on Jira API. Waiting before trying again.`,
+      );
+
+      if (error.retryAfter) {
+        await sleep(error.retryAfter * 1000); // sleep expects msec ; retryAfter denoted in sec
+      }
+    },
+  });
 }

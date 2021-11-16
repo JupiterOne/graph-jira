@@ -28,7 +28,7 @@ export class APIClient {
     readonly config: IntegrationConfig,
     readonly logger: IntegrationLogger,
   ) {
-    this.jira = createJiraClient(config);
+    this.jira = createJiraClient(config, logger);
   }
 
   public async verifyAuthentication(): Promise<void> {
@@ -75,8 +75,6 @@ export class APIClient {
 
   /**
    * Iterates each user resource in Jira.
-   * Note that the current code processes a maximum of USERS_PAGE_SIZE * USERS_PAGE_LIMIT users
-   * There may be further limitations on page size by the REST API itself
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
@@ -123,9 +121,8 @@ export class APIClient {
 
   /**
    * Iterates each issue (Record) resource in Jira.
-   * Note that the current code processes a maximum of ISSUES_PAGE_SIZE * ISSUES_PAGE_LIMIT issues
-   * There may be further limitations on page size by the REST API itself
-   * But this limit is per project, and is called "since last execution time"
+   * Note that the integration processes MAX_ISSUES_TO_INGEST issues
+   * since last execution time
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
