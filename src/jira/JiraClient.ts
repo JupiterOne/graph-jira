@@ -76,6 +76,8 @@ export default class JiraClient {
     const sinceAtFilter = sinceAtTimestamp
       ? ` AND updated>=${sinceAtTimestamp}`
       : '';
+    //'ORDER BY created DESC' is default behavior for Issues
+    //if we ever want to change it, one can order by other fields or sort ASC, just as in SQL
     const searchString = `${projectQuery}${sinceAtFilter}`;
 
     const response = await this.client.searchJira(searchString, {

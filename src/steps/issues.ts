@@ -65,81 +65,86 @@ export async function fetchIssues({
       projectConfig.key,
       lastJobTimestamp,
       async (issue) => {
-        const issueEntity = (await jobState.addEntity(
-          createIssueEntity({
-            issue,
-            logger,
-            fieldsById,
-            customFieldsToInclude,
-          }),
-        )) as IssueEntity;
-
-        const projectEntity = projectEntities?.find(
-          (project) => project.key === projectConfig.key,
-        );
-        if (projectEntity) {
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.HAS,
-              from: projectEntity,
-              to: issueEntity,
+        try {
+          const issueEntity = (await jobState.addEntity(
+            createIssueEntity({
+              issue,
+              logger,
+              fieldsById,
+              customFieldsToInclude,
             }),
-          );
-        } else {
-          logger.warn(
-            { projectKey: projectConfig.key },
-            'Unable to create issue -> project relationship because the project was not in the job state',
-          );
-        }
+          )) as IssueEntity;
 
-        if (issue.fields.creator && issue.fields.creator.accountId) {
-          const creatorUserKey = generateEntityKey(
-            USER_ENTITY_TYPE,
-            issue.fields.creator.accountId,
+          const projectEntity = projectEntities?.find(
+            (project) => project.key === projectConfig.key,
           );
-          const creatorEntity = (await jobState.findEntity(
-            creatorUserKey,
-          )) as UserEntity;
-
-          if (creatorEntity) {
+          if (projectEntity) {
             await jobState.addRelationship(
               createDirectRelationship({
-                _class: RelationshipClass.CREATED,
-                from: creatorEntity,
+                _class: RelationshipClass.HAS,
+                from: projectEntity,
                 to: issueEntity,
               }),
             );
           } else {
             logger.warn(
-              { creatorUserKey, issueName: issueEntity.name },
-              'Created user is no longer in this Jira instance. Not creating user_created_issue relationship.',
+              { projectKey: projectConfig.key },
+              'Unable to create issue -> project relationship because the project was not in the job state',
             );
           }
-        }
 
-        if (issue.fields.reporter && issue.fields.reporter.accountId) {
-          const reporterUserKey = generateEntityKey(
-            USER_ENTITY_TYPE,
-            issue.fields.reporter.accountId,
-          );
-          const reporterEntity = (await jobState.findEntity(
-            reporterUserKey,
-          )) as UserEntity;
+          if (issue.fields.creator && issue.fields.creator.accountId) {
+            const creatorUserKey = generateEntityKey(
+              USER_ENTITY_TYPE,
+              issue.fields.creator.accountId,
+            );
+            const creatorEntity = (await jobState.findEntity(
+              creatorUserKey,
+            )) as UserEntity;
 
-          if (reporterEntity) {
-            await jobState.addRelationship(
-              createDirectRelationship({
-                _class: RelationshipClass.REPORTED,
-                from: reporterEntity,
-                to: issueEntity,
-              }),
-            );
-          } else {
-            logger.warn(
-              { reporterUserKey, issueName: issueEntity.name },
-              'Reported user is no longer in this Jira instance. Not creating user_reported_issue relationship.',
-            );
+            if (creatorEntity) {
+              await jobState.addRelationship(
+                createDirectRelationship({
+                  _class: RelationshipClass.CREATED,
+                  from: creatorEntity,
+                  to: issueEntity,
+                }),
+              );
+            } else {
+              logger.warn(
+                { creatorUserKey, issueName: issueEntity.name },
+                'Created user is no longer in this Jira instance. Not creating user_created_issue relationship.',
+              );
+            }
           }
+
+          if (issue.fields.reporter && issue.fields.reporter.accountId) {
+            const reporterUserKey = generateEntityKey(
+              USER_ENTITY_TYPE,
+              issue.fields.reporter.accountId,
+            );
+            const reporterEntity = (await jobState.findEntity(
+              reporterUserKey,
+            )) as UserEntity;
+
+            if (reporterEntity) {
+              await jobState.addRelationship(
+                createDirectRelationship({
+                  _class: RelationshipClass.REPORTED,
+                  from: reporterEntity,
+                  to: issueEntity,
+                }),
+              );
+            } else {
+              logger.warn(
+                { reporterUserKey, issueName: issueEntity.name },
+                'Reported user is no longer in this Jira instance. Not creating user_reported_issue relationship.',
+              );
+            }
+          }
+        } catch (err) {
+          //if a single issue has an error in processing, just log it and continue 'cause we got a lotta things to do
+          logger.warn(err, `Error encountered on issue ${issue.id}`);
         }
       },
     );
