@@ -20,7 +20,7 @@ export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 const USERS_PAGE_SIZE = 200;
 const ISSUES_PAGE_SIZE = 200;
 
-const MAX_ISSUES_TO_INGEST = 2000;
+const MAX_ISSUES_TO_INGEST = 2000; // may be overridden by config.bulkIngest boolean
 
 export class APIClient {
   jira: JiraClient;
@@ -136,7 +136,10 @@ export class APIClient {
     let startAt: number = 0;
     let morePages: boolean = true;
 
-    while (morePages && issuesProcessed < MAX_ISSUES_TO_INGEST) {
+    while (
+      morePages &&
+      (this.config.bulkIngest || issuesProcessed < MAX_ISSUES_TO_INGEST)
+    ) {
       let issuesPage: Issue[] = [];
       try {
         issuesPage = await this.jira.fetchIssuesPage({

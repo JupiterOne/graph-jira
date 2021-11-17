@@ -69,6 +69,11 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
    * Custom fields for inclusion in issues
    */
   customFields?: string[];
+
+  /**
+   * Whether to turn on bulk ingestion, which attempts to ingest all Issues
+   */
+  bulkIngest?: boolean;
 }
 
 export async function validateInvocation(

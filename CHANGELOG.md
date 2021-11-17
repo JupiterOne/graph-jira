@@ -10,6 +10,9 @@ and this project adheres to
 
 ### Added
 
+- Optional bulk ingestion feature that removes 2000 Issue limit and attempts to
+  ingest all Issues. Activate via config option. Note that timeouts are possible
+  if the step runs for more than 24 hours.
 - Added Issue class to `jira_issue` entities
 - Error handling for Issue ingestion to avoid one bad Issue causing the step to
   fail
