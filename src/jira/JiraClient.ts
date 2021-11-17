@@ -122,7 +122,7 @@ async function rateAwareRetry(func, logger) {
   // Check https://github.com/lifeomic/attempt for options on retry
   return await retry(func, {
     maxAttempts: 5,
-    delay: 5, //in msec
+    delay: 100, //in msec
     jitter: true, // activates a random delay between minDelay and calculated exponential backoff
     minDelay: 5, // in msec
     factor: 2, //exponential backoff factor
@@ -140,10 +140,12 @@ async function rateAwareRetry(func, logger) {
        */
 
       // don't keep trying if it's not going to get better
+      const statusCode = error.statusCode;
       if (
         error.retryable === false ||
-        error.status === 401 ||
-        error.status === 403
+        statusCode === 401 ||
+        statusCode === 403 ||
+        statusCode === 404
       ) {
         logger.warn(
           { attemptContext, error },

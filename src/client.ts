@@ -147,7 +147,7 @@ export class APIClient {
         });
       } catch (err: any) {
         if (
-          err?.message.includes(
+          JSON.stringify(err).includes(
             `The value '${projectKey}' does not exist for the field 'project'.`,
           )
         ) {
