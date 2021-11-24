@@ -122,11 +122,11 @@ async function rateAwareRetry(func, logger) {
   // Check https://github.com/lifeomic/attempt for options on retry
   return await retry(func, {
     maxAttempts: 5,
-    delay: 100, //in msec
+    delay: 500, //in msec
     jitter: true, // activates a random delay between minDelay and calculated exponential backoff
     minDelay: 5, // in msec
     factor: 2, //exponential backoff factor
-    async handleError(error: any, attemptContext: AttemptContext) {
+    async handleError(err: any, attemptContext: AttemptContext) {
       /* retry will keep trying to the limits of retryOptions
        * but it lets you intervene in this function - if you throw an error from in here,
        * it stops retrying. Otherwise you can just log the attempts.
@@ -140,28 +140,28 @@ async function rateAwareRetry(func, logger) {
        */
 
       // don't keep trying if it's not going to get better
-      const statusCode = error.statusCode;
+      const statusCode = err.statusCode;
       if (
-        error.retryable === false ||
+        err.retryable === false ||
         statusCode === 401 ||
         statusCode === 403 ||
-        statusCode === 404
+        statusCode === 404 ||
+        statusCode === 400
       ) {
-        logger.warn(
-          { attemptContext, error },
-          `Hit an unrecoverable error ${error.status} in Jira API. Aborting.`,
-        );
         attemptContext.abort();
-        throw error;
+        logger.warn(
+          { statusCode, attemptContext, err },
+          `Hit an unrecoverable error in Jira API. Aborting.`,
+        );
+      } else {
+        logger.warn(
+          { statusCode: err.statusCode, attemptContext, err },
+          `Hit a possibly recoverable error on Jira API. Waiting before trying again.`,
+        );
       }
 
-      logger.warn(
-        { attemptContext, error },
-        `Hit a possibly recoverable error ${error.status} on Jira API. Waiting before trying again.`,
-      );
-
-      if (error.retryAfter) {
-        await sleep(error.retryAfter * 1000); // sleep expects msec ; retryAfter denoted in sec
+      if (err.retryAfter) {
+        await sleep(err.retryAfter * 1000); // sleep expects msec ; retryAfter denoted in sec
       }
     },
   });

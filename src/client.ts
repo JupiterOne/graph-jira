@@ -149,12 +149,8 @@ export class APIClient {
           pageSize: ISSUES_PAGE_SIZE,
         });
       } catch (err: any) {
-        if (
-          JSON.stringify(err).includes(
-            `The value '${projectKey}' does not exist for the field 'project'.`,
-          )
-        ) {
-          this.logger.info(
+        if (err.message.includes(`does not exist for the field 'project'.`)) {
+          this.logger.warn(
             { projectKey },
             'Project key does not exist or you do not have access to pull down issues from this project.',
           );

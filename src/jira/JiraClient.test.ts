@@ -10,6 +10,8 @@ import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
 import JiraClient from './JiraClient';
 
+jest.setTimeout(10000);
+
 const JIRA_LOCAL_EXECUTION_HOST =
   process.env.JIRA_LOCAL_EXECUTION_HOST || 'example.atlassian.com';
 
