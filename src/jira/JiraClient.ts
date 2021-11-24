@@ -160,8 +160,17 @@ async function rateAwareRetry(func, logger) {
         );
       }
 
-      if (err.retryAfter) {
-        await sleep(err.retryAfter * 1000); // sleep expects msec ; retryAfter denoted in sec
+      const headers = err.response?.headers;
+      const retryAfter = headers ? headers['retry-after]'] : undefined;
+      if (Number.isInteger(retryAfter)) {
+        if (retryAfter > 0 && retryAfter < 3600) {
+          await sleep(retryAfter * 1000); // sleep expects msec ; retryAfter denoted in sec
+        } else {
+          logger.warn(
+            retryAfter,
+            'Retry-After header received with unreasonable value',
+          );
+        }
       }
     },
   });
