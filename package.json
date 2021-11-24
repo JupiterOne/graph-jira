@@ -28,9 +28,9 @@
     "prepack": "yarn build"
   },
   "dependencies": {
-    "@jupiterone/integration-sdk-core": "^6.10.0",
+    "@jupiterone/integration-sdk-core": "^6.22.1",
     "dotenv": "^10.0.0",
-    "jira-client": "^6.21.1"
+    "jira-client": "^6.22.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -39,8 +39,8 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.1.0",
-    "@jupiterone/integration-sdk-dev-tools": "^6.10.0",
-    "@jupiterone/integration-sdk-testing": "^6.10.0",
+    "@jupiterone/integration-sdk-dev-tools": "^6.22.1",
+    "@jupiterone/integration-sdk-testing": "^6.22.1",
     "@types/bunyan": "^1.8.5",
     "@types/fs-extra": "^7.0.0",
     "@types/gremlin": "^3.4.2",

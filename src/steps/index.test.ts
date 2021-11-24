@@ -115,7 +115,7 @@ test('should collect data', async () => {
   );
   expect(issues.length).toBeGreaterThan(0);
   expect(issues).toMatchGraphObjectSchema({
-    _class: ['Record'], //this could actually have multiples in some cases
+    _class: ['Record', 'Issue'], //this could actually have more classes in some cases
     schema: {
       additionalProperties: true,
       properties: {
