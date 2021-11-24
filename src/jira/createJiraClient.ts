@@ -2,7 +2,11 @@ import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 import JiraClient from './JiraClient';
 
 export default function createJiraClient(
-  config: any,
+  config: {
+    jiraHost: string;
+    jiraUsername: string;
+    jiraPassword: string;
+  },
   logger: IntegrationLogger,
 ) {
   return new JiraClient(

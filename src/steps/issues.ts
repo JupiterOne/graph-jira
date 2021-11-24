@@ -93,7 +93,7 @@ export async function fetchIssues({
             );
           }
 
-          if (issue.fields.creator && issue.fields.creator.accountId) {
+          if (issue.fields.creator?.accountId) {
             const creatorUserKey = generateEntityKey(
               USER_ENTITY_TYPE,
               issue.fields.creator.accountId,
@@ -111,14 +111,14 @@ export async function fetchIssues({
                 }),
               );
             } else {
-              logger.warn(
+              logger.info(
                 { creatorUserKey, issueName: issueEntity.name },
-                'Created user is no longer in this Jira instance. Not creating user_created_issue relationship.',
+                '[SKIP] user_created_issue relationship, issue creator not found',
               );
             }
           }
 
-          if (issue.fields.reporter && issue.fields.reporter.accountId) {
+          if (issue.fields.reporter?.accountId) {
             const reporterUserKey = generateEntityKey(
               USER_ENTITY_TYPE,
               issue.fields.reporter.accountId,
@@ -136,15 +136,18 @@ export async function fetchIssues({
                 }),
               );
             } else {
-              logger.warn(
+              logger.info(
                 { reporterUserKey, issueName: issueEntity.name },
-                'Reported user is no longer in this Jira instance. Not creating user_reported_issue relationship.',
+                '[SKIP] user_reported_issue relationship, issue reporter not found',
               );
             }
           }
         } catch (err) {
           //if a single issue has an error in processing, just log it and continue 'cause we got a lotta things to do
-          logger.warn(err, `Error encountered on issue ${issue.id}`);
+          logger.warn(
+            { err, issueId: issue.id },
+            `Error encountered processing issue`,
+          );
         }
       },
     );
