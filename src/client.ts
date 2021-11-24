@@ -179,7 +179,7 @@ export class APIClient {
       pagesProcessed++;
     }
 
-    if (issuesProcessed >= MAX_ISSUES_TO_INGEST) {
+    if (!this.config.bulkIngest && issuesProcessed >= MAX_ISSUES_TO_INGEST) {
       this.logger.warn(
         { pagesProcessed, MAX_ISSUES_TO_INGEST },
         'Reached maximum number of issues; may not have pulled all issues since last execution.',
