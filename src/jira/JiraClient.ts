@@ -126,6 +126,7 @@ async function rateAwareRetry(func, logger) {
     jitter: true, // activates a random delay between minDelay and calculated exponential backoff
     minDelay: 5, // in msec
     factor: 2, //exponential backoff factor
+    timeout: 120_000, // just in case the network process hangs
     async handleError(err: any, attemptContext: AttemptContext) {
       /* retry will keep trying to the limits of retryOptions
        * but it lets you intervene in this function - if you throw an error from in here,
