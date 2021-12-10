@@ -84,7 +84,7 @@ export function createIssueEntity({
   let issueClass: string | string[];
 
   if (requestedClass) {
-    issueClass = ['Record', requestedClass as string];
+    issueClass = ['Record', 'Issue', requestedClass as string];
   } else {
     switch ((issueType || '').toLowerCase()) {
       case 'change':
