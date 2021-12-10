@@ -451,6 +451,7 @@ Object {
     Object {
       "_class": Array [
         "Record",
+        "Issue",
       ],
       "_key": "jira_issue_10001",
       "_rawData": Array [
@@ -641,6 +642,7 @@ Object {
     Object {
       "_class": Array [
         "Record",
+        "Issue",
       ],
       "_key": "jira_issue_10000",
       "_rawData": Array [
