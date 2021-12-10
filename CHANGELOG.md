@@ -10,7 +10,28 @@ and this project adheres to
 
 ### Added
 
+- Added optional bulk ingestion feature that bypasses 2000 Issue ingestion limit
+  and attempts to ingest all Issues since the last integration execution. If the
+  integration is executing for the first time, this means that it will attempt
+  to ingest all Issues in the account. Activate by setting config option
+  `bulkIngest` to `true`. Note that Issue ingestion always starts with "most
+  recent" and works backward, regardless of whether it is in `bulkIngest` mode.
 - Added Issue class to `jira_issue` entities
+- Added error handling for Issue ingestion to avoid one bad Issue causing the
+  step to fail
+- Added retry functionality that respects Jira rate limit responses
+
+### Changed
+
+- Made ingestion of Issues and Users occur on a per-page basis, rather than
+  fetching all before processing
+- Updated packages and tests
+
+### Fixed
+
+- Fixed bug where Issues were not counted properly against the ingestion limit.
+  This meant that the real limit was effectively 500. It is now properly
+  restored to 2000 (except when overridden via `bulkIngest`).
 
 ## [2.1.3] - 2021-08-17
 

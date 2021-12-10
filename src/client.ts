@@ -14,14 +14,13 @@ import { User, Project, Issue } from './jira/types';
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
 //Jira documentation seems to indicate that max 100 replies will be returned per page
-//However, since this has not been experimentally confirmed,
-//we can leave USERS_PAGE_SIZE and ISSUES_PAGE_SIZE at the values in the old code
+//Also, the number of replies per page is dynamically adjusted by Jira depending on how many
+//fields are requested. Experiments show us getting 50 max per page in reality.
+//However, we can always ask for more, and maybe they'll give them to us someday
 const USERS_PAGE_SIZE = 200;
 const ISSUES_PAGE_SIZE = 200;
 
-//As for xxx_PAGE_LIMIT, these are a guard against infinite loops in case of system errors
-const USERS_PAGE_LIMIT = 10;
-const ISSUES_PAGE_LIMIT = 10;
+const MAX_ISSUES_TO_INGEST = 2000; // may be overridden by config.bulkIngest boolean
 
 export class APIClient {
   jira: JiraClient;
@@ -29,7 +28,7 @@ export class APIClient {
     readonly config: IntegrationConfig,
     readonly logger: IntegrationLogger,
   ) {
-    this.jira = createJiraClient(config);
+    this.jira = createJiraClient(config, logger);
   }
 
   public async verifyAuthentication(): Promise<void> {
@@ -76,18 +75,16 @@ export class APIClient {
 
   /**
    * Iterates each user resource in Jira.
-   * Note that the current code processes a maximum of USERS_PAGE_SIZE * USERS_PAGE_LIMIT users
-   * There may be further limitations on page size by the REST API itself
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
   public async iterateUsers(iteratee: ResourceIteratee<User>): Promise<void> {
     let pagesProcessed = 0;
     let startAt: number = 0;
-    let users: User[] = [];
+    let morePages: boolean = true;
 
-    while (pagesProcessed < USERS_PAGE_LIMIT) {
-      let usersPage: User[] = []
+    while (morePages) {
+      let usersPage: User[] = [];
       try {
         usersPage = await this.jira.fetchUsersPage({
           startAt,
@@ -99,43 +96,33 @@ export class APIClient {
             cause: err,
             status: err.statusCode,
             statusText: err.name,
-            endpoint: 'fetchUsersPage'
-          })
+            endpoint: 'fetchUsersPage',
+          });
         }
       }
 
       if (usersPage.length === 0) {
-        break;
+        morePages = false;
       } else {
-        users = users.concat(usersPage);
+        for (const user of usersPage) {
+          await iteratee(user);
+        }
       }
 
       this.logger.info(
         { pagesProcessed, usersPageLength: usersPage.length },
-        'Fetched page of users',
+        'Fetched and processed page of users',
       );
 
       startAt += usersPage.length;
       pagesProcessed++;
     }
-
-    if (pagesProcessed === USERS_PAGE_LIMIT) {
-      this.logger.warn(
-        { pagesProcessed, USERS_PAGE_LIMIT },
-        'Reached maximum pages; may not have pulled all users. Consider increasing USERS_PAGE_LIMIT',
-      );
-    }
-
-    for (const user of users) {
-      await iteratee(user);
-    }
   }
 
   /**
    * Iterates each issue (Record) resource in Jira.
-   * Note that the current code processes a maximum of ISSUES_PAGE_SIZE * ISSUES_PAGE_LIMIT issues
-   * There may be further limitations on page size by the REST API itself
-   * But this limit is per project, and is called "since last execution time"
+   * Note that the integration processes MAX_ISSUES_TO_INGEST issues
+   * since last execution time
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
@@ -145,11 +132,15 @@ export class APIClient {
     iteratee: ResourceIteratee<Issue>,
   ): Promise<void> {
     let pagesProcessed = 0;
+    let issuesProcessed = 0;
     let startAt: number = 0;
-    let issues: Issue[] = [];
+    let morePages: boolean = true;
 
-    while (pagesProcessed < ISSUES_PAGE_LIMIT) {
-      let issuesPage: Issue[] = []
+    while (
+      morePages &&
+      (this.config.bulkIngest || issuesProcessed < MAX_ISSUES_TO_INGEST)
+    ) {
+      let issuesPage: Issue[] = [];
       try {
         issuesPage = await this.jira.fetchIssuesPage({
           project: projectKey,
@@ -158,42 +149,41 @@ export class APIClient {
           pageSize: ISSUES_PAGE_SIZE,
         });
       } catch (err: any) {
-        if (err?.message.includes(`The value '${projectKey}' does not exist for the field 'project'.`)) {
-          this.logger.info(
+        if (err.message.includes(`does not exist for the field 'project'.`)) {
+          this.logger.warn(
             { projectKey },
             'Project key does not exist or you do not have access to pull down issues from this project.',
           );
-          break
+          break;
           // This error is fine, just break from the loop
         } else {
-          throw err
+          throw err;
         }
       }
 
       if (issuesPage.length === 0) {
-        break;
+        morePages = false;
       } else {
-        issues = issues.concat(issuesPage);
+        issuesProcessed = issuesProcessed + issuesPage.length;
+        for (const issue of issuesPage) {
+          await iteratee(issue);
+        }
       }
 
       this.logger.info(
         { pagesProcessed, issuesPageLength: issuesPage.length },
-        'Fetched page of issues',
+        'Fetched and processed page of issues',
       );
 
       startAt += issuesPage.length;
       pagesProcessed++;
     }
 
-    if (pagesProcessed === ISSUES_PAGE_LIMIT) {
+    if (!this.config.bulkIngest && issuesProcessed >= MAX_ISSUES_TO_INGEST) {
       this.logger.warn(
-        { pagesProcessed, ISSUES_PAGE_LIMIT },
-        'Reached maximum pages; may not have pulled all issues. Consider increasing ISSUES_PAGE_LIMIT',
+        { pagesProcessed, MAX_ISSUES_TO_INGEST },
+        'Reached maximum number of issues; may not have pulled all issues since last execution.',
       );
-    }
-
-    for (const issue of issues) {
-      await iteratee(issue);
     }
   }
 }

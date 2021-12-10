@@ -69,22 +69,17 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
    * Custom fields for inclusion in issues
    */
   customFields?: string[];
+
+  /**
+   * Whether to turn on bulk ingestion, which attempts to ingest all Issues
+   */
+  bulkIngest?: boolean;
 }
 
 export async function validateInvocation(
   context: IntegrationExecutionContext<IntegrationConfig>,
 ) {
   const { config } = context.instance;
-
-  let parsedProjects: string[] = [];
-  if (typeof config.projects === 'string') {
-    try {
-      parsedProjects = JSON.parse(config.projects);
-      config.projects = parsedProjects;
-    } catch (err) {
-      //if the JSON parsing failed, just leave config.projects alone
-    }
-  }
 
   if (!config.jiraHost || !config.jiraPassword || !config.jiraUsername) {
     throw new IntegrationValidationError(
@@ -93,7 +88,9 @@ export async function validateInvocation(
   }
 
   //this regex matches 'localhost', 'example.com', 'subdomain.example.com'
-  //but cannot contain any chars other than letters, numbers, '-' and '.'
+  //but cannot contain any chars other than letters, numbers, '-', '/' and '.'
+  //the '/' cannot appear at the beginning or end of the string - it's meant to
+  //represent the format 'test.com/jirasubdir'
   const hostnameRegex =
     /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9/][A-Za-z0-9-/]*[A-Za-z0-9])$/;
   if (!config.jiraHost.match(hostnameRegex)) {

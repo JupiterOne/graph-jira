@@ -28,3 +28,6 @@ If we passed this oauth object instead of the username and password params, it
 should use the OAuth flow. However, this would require migrating existing
 customers to OAuth, or writing code that checks the customer config and
 configures which authen to use.
+
+With the basic username/password authentication currently in place, there
+appears to be no timeout on the credentials.

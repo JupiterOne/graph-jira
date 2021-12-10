@@ -11,6 +11,8 @@ import { fetchIssues } from './issues';
 import { fetchProjects } from './projects';
 import { setupJiraRecording } from '../../test/recording';
 
+jest.setTimeout(10000);
+
 let recording: Recording;
 
 afterEach(async () => {
