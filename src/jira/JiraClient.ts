@@ -81,6 +81,7 @@ export class JiraClient {
     project,
     sinceAtTimestamp,
     startAt,
+    pageSize,
   }: IssuesOptions): Promise<Issue[]> {
     const projectQuery = `project='${project}'`;
     const sinceAtFilter = sinceAtTimestamp
@@ -92,17 +93,16 @@ export class JiraClient {
 
     return retry(this.logger, async () => {
       const response = await this.client.searchJira(searchString, {
-        startAt: startAt || 0,
+        startAt: startAt,
+        maxResults: pageSize,
       });
       return response.issues as Promise<Issue[]>;
     });
   }
 
-  public async fetchUsersPage(
-    options: PaginationOptions = {},
-  ): Promise<User[]> {
+  public async fetchUsersPage(options?: PaginationOptions): Promise<User[]> {
     return retry(this.logger, async () =>
-      this.client.getUsers(options.startAt || 0, options.pageSize),
+      this.client.getUsers(options?.startAt, options?.pageSize),
     ) as Promise<User[]>;
   }
 

@@ -18,12 +18,15 @@ import { buildProjectConfigs } from './utils/builders';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
-//Jira documentation seems to indicate that max 100 replies will be returned per page
-//Also, the number of replies per page is dynamically adjusted by Jira depending on how many
-//fields are requested. Experiments show us getting 50 max per page in reality.
-//However, we can always ask for more, and maybe they'll give them to us someday
-const USERS_PAGE_SIZE = 200;
-const ISSUES_PAGE_SIZE = 200;
+/**
+ * Number of users to fetch per page, set to maximum currently allowed.
+ */
+const USERS_PAGE_SIZE = 100;
+
+/**
+ * Number of issues to fetch per page, set to maximum currently allowed.
+ */
+const ISSUES_PAGE_SIZE = 100;
 
 export class APIClient {
   jira: JiraClient;
