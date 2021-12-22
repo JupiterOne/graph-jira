@@ -1,14 +1,17 @@
+import 'jest-extended';
+
+import nock from 'nock';
+
 import {
   createMockStepExecutionContext,
   Recording,
 } from '@jupiterone/integration-sdk-testing';
-import 'jest-extended';
-import nock from 'nock';
+
 import { integrationConfig } from '../../test/config';
 import { setupJiraRecording } from '../../test/recording';
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
-import JiraClient from './JiraClient';
+import { JiraClient } from './JiraClient';
 
 jest.setTimeout(10000);
 
@@ -117,16 +120,6 @@ describe('JiraClient fetch ok data', () => {
     nockDone();
   });
 
-  test('fetch issues with empty param project ok', async () => {
-    const { nockDone } = await nock.back('issues-empty-param-ok.json', {
-      before: prepareScope,
-    });
-    const client = getAuthenticatedClient();
-    const issues = await client.fetchIssuesPage({ project: '' });
-    expect(issues).toEqual([]);
-    nockDone();
-  });
-
   afterAll(() => {
     nock.restore();
   });
@@ -165,7 +158,7 @@ describe('JiraClient recordings', () => {
 
     const apiClient = createAPIClient(context.instance.config, logger);
     await expect(
-      apiClient.iterateIssues('key', 100000, () => undefined),
+      apiClient.iterateIssues('key', 100000, 10, () => undefined),
     ).resolves.not.toThrow();
   });
 });

@@ -8,14 +8,18 @@ import {
 } from '@lifeomic/attempt';
 
 import {
+  Field,
+  Issue,
   IssuesOptions,
   IssueTypeName,
   JiraParams,
   PaginationOptions,
-} from '../types';
-import { Field, Issue, Project, ServerInfo, User } from './types';
+  Project,
+  ServerInfo,
+  User,
+} from './types';
 
-export default class JiraClient {
+export class JiraClient {
   private client: JiraApi;
   private logger: IntegrationLogger;
 

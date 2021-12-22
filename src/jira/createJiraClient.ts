@@ -1,5 +1,6 @@
 import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
-import JiraClient from './JiraClient';
+
+import { JiraClient } from './JiraClient';
 
 export default function createJiraClient(
   config: {

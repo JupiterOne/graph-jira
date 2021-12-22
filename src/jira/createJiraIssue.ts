@@ -1,6 +1,5 @@
-import { CreateIssueActionProperties } from '../types';
-import JiraClient from './JiraClient';
-import { Issue } from './types';
+import { JiraClient } from './JiraClient';
+import { CreateIssueActionProperties, Issue } from './types';
 
 async function getProjectIdFromProvidedProject(
   client: JiraClient,

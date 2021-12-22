@@ -1,3 +1,36 @@
+export interface CreateIssueActionProperties {
+  /**
+   * The key of the issue project.
+   */
+  project: string;
+  summary: string;
+  classification: IssueTypeName;
+  additionalFields?: object;
+}
+
+export type IssueTypeName =
+  | 'Epic'
+  | 'Improvement'
+  | 'Task'
+  | 'Sub-task'
+  | 'New Feature';
+
+export interface JiraParams {
+  host: string;
+  password: string;
+  username: string;
+}
+
+export interface PaginationOptions {
+  startAt?: number;
+  pageSize?: number;
+}
+
+export interface IssuesOptions extends PaginationOptions {
+  project: string;
+  sinceAtTimestamp?: number;
+}
+
 export interface ServerInfo {
   baseUrl: string;
   version: string;
@@ -76,21 +109,21 @@ export interface TextMark {
 
 export interface TextContent {
   type:
-    | "doc"
-    | "codeBlock"
-    | "text"
-    | "paragraph"
-    | "mention"
-    | "inlineCard"
-    | "hardBreak"
-    | "blockquote"
-    | "panel"
-    | "emoji"
-    | "bulletList"
-    | "listItem"
-    | "table"
-    | "tableRow"
-    | "tableCell";
+    | 'doc'
+    | 'codeBlock'
+    | 'text'
+    | 'paragraph'
+    | 'mention'
+    | 'inlineCard'
+    | 'hardBreak'
+    | 'blockquote'
+    | 'panel'
+    | 'emoji'
+    | 'bulletList'
+    | 'listItem'
+    | 'table'
+    | 'tableRow'
+    | 'tableCell';
   attrs?: {
     id?: string;
     text?: string;
