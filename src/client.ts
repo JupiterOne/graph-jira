@@ -150,9 +150,9 @@ export class APIClient {
         });
       } catch (err: any) {
         if (err.message.includes(`does not exist for the field 'project'.`)) {
-          this.logger.warn(
+          this.logger.info(
             { projectKey },
-            'Project key does not exist or you do not have access to pull down issues from this project.',
+            'Project key does not exist or permissions do not allow access to issues.',
           );
           break;
           // This error is fine, just break from the loop
@@ -180,7 +180,7 @@ export class APIClient {
     }
 
     if (!this.config.bulkIngest && issuesProcessed >= MAX_ISSUES_TO_INGEST) {
-      this.logger.warn(
+      this.logger.info(
         { pagesProcessed, MAX_ISSUES_TO_INGEST },
         'Reached maximum number of issues; may not have pulled all issues since last execution.',
       );
