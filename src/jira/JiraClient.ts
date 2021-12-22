@@ -72,10 +72,6 @@ export default class JiraClient {
     sinceAtTimestamp,
     startAt,
   }: IssuesOptions): Promise<Issue[]> {
-    if (!project) {
-      return [] as Issue[];
-    }
-
     const projectQuery = `project='${project}'`;
     const sinceAtFilter = sinceAtTimestamp
       ? ` AND updated>=${sinceAtTimestamp}`
