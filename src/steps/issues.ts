@@ -71,6 +71,10 @@ export async function fetchIssues({
     const projectIssueProcessor = async (issue: Issue) =>
       issueProcessor(projectConfig, issue);
     if (config.bulkIngest) {
+      logger.info(
+        { projectConfig, bulkIngest: config.bulkIngest },
+        'Bulk issue ingestion is enabled',
+      );
       await apiClient.iterateAllIssues(
         projectConfig.key,
         projectIssueProcessor,
