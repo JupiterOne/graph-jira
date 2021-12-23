@@ -29,7 +29,14 @@ import { ProjectConfig } from '../types';
 import { buildCustomFields, buildProjectConfigs } from '../utils/builders';
 import generateEntityKey from '../utils/generateEntityKey';
 
-const INCREMENTAL_INGESTION_MAX_ISSUES = 2000;
+/**
+ * Maximum number of issues to ingest per project. This limit can be removed by
+ * providing `instance.config.bulkIngest: true`.
+ *
+ * Important: A change to the value of this constant must be reflected in
+ * `docs/jupiterone.md`.
+ */
+const INGESTION_MAX_ISSUES_PER_PROJECT = 2000;
 
 export async function fetchIssues({
   instance,
@@ -83,7 +90,7 @@ export async function fetchIssues({
       await apiClient.iterateIssues(
         projectConfig.key,
         lastJobTimestamp,
-        INCREMENTAL_INGESTION_MAX_ISSUES,
+        INGESTION_MAX_ISSUES_PER_PROJECT,
         projectIssueProcessor,
       );
     }
