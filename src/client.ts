@@ -1,26 +1,32 @@
 import {
   IntegrationLogger,
-  IntegrationValidationError,
   IntegrationProviderAuthenticationError,
   IntegrationProviderAuthorizationError,
+  IntegrationValidationError,
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationConfig } from './config';
-import { createJiraClient } from './jira';
-import JiraClient from './jira/JiraClient';
+import {
+  createJiraClient,
+  Issue,
+  IssuesOptions,
+  JiraClient,
+  Project,
+  User,
+} from './jira';
 import { buildProjectConfigs } from './utils/builders';
-import { User, Project, Issue } from './jira/types';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
-//Jira documentation seems to indicate that max 100 replies will be returned per page
-//Also, the number of replies per page is dynamically adjusted by Jira depending on how many
-//fields are requested. Experiments show us getting 50 max per page in reality.
-//However, we can always ask for more, and maybe they'll give them to us someday
-const USERS_PAGE_SIZE = 200;
-const ISSUES_PAGE_SIZE = 200;
+/**
+ * Number of users to fetch per page, set to maximum currently allowed.
+ */
+const USERS_PAGE_SIZE = 100;
 
-const MAX_ISSUES_TO_INGEST = 2000; // may be overridden by config.bulkIngest boolean
+/**
+ * Number of issues to fetch per page, set to maximum currently allowed.
+ */
+const ISSUES_PAGE_SIZE = 100;
 
 export class APIClient {
   jira: JiraClient;
@@ -120,42 +126,95 @@ export class APIClient {
   }
 
   /**
-   * Iterates each issue (Record) resource in Jira.
-   * Note that the integration processes MAX_ISSUES_TO_INGEST issues
-   * since last execution time
+   * Iterates a limited number of issues in a Jira project. This can be used for
+   * periodic processing to follow changes over time. Use `iterateAllIssues` to
+   * process everything.
    *
-   * @param iteratee receives each resource to produce entities/relationships
+   * @param project the Jira project key to fetch issues from
+   * @param sinceAtTimestamp limits ingestion to issues updated since this time;
+   * `0` will fetch most recently modified first (descending time order)
+   * @param maxIssues limits ingestion to a maximum number of issues,
+   * particularly necessary for `sinceAtTimestamp: 0`
+   * @param iteratee receives each issue to produce entities/relationships
    */
   public async iterateIssues(
-    projectKey: string,
-    lastJobTimestamp: number,
+    project: string,
+    sinceAtTimestamp: number,
+    maxIssues: number,
     iteratee: ResourceIteratee<Issue>,
+  ): Promise<void> {
+    let issuesProcessed = 0;
+
+    await this.paginateIssues(
+      {
+        project,
+        sinceAtTimestamp,
+      },
+      async (issues) => {
+        for (const issue of issues) {
+          await iteratee(issue);
+        }
+        issuesProcessed += issues.length;
+        return issuesProcessed < maxIssues;
+      },
+    );
+
+    if (issuesProcessed >= maxIssues) {
+      this.logger.info(
+        { issuesProcessed, maxIssues, sinceAtTimestamp },
+        'Reached maximum number of issues; may not have pulled all issues modified since timestamp.',
+      );
+    }
+  }
+
+  /**
+   * Iterates each and every issue in a Jira project. This can be used for bulk
+   * processing. Use `iterateIssues` to limit processing.
+   *
+   * @param project the Jira project key to fetch issues from
+   * @param iteratee receives each issue to produce entities/relationships
+   */
+  public async iterateAllIssues(
+    project: string,
+    iteratee: ResourceIteratee<Issue>,
+  ): Promise<void> {
+    await this.paginateIssues(
+      {
+        project,
+      },
+      async (issues) => {
+        for (const issue of issues) {
+          await iteratee(issue);
+        }
+      },
+    );
+  }
+
+  private async paginateIssues(
+    issuesOptions: IssuesOptions,
+    iteratee: (issues: Issue[]) => Promise<boolean | void>,
   ): Promise<void> {
     let pagesProcessed = 0;
     let issuesProcessed = 0;
-    let startAt: number = 0;
-    let morePages: boolean = true;
+    let startAt = 0;
+    let morePages = true;
+    let continueProcessing = true;
 
-    while (
-      morePages &&
-      (this.config.bulkIngest || issuesProcessed < MAX_ISSUES_TO_INGEST)
-    ) {
+    while (morePages && continueProcessing) {
       let issuesPage: Issue[] = [];
       try {
         issuesPage = await this.jira.fetchIssuesPage({
-          project: projectKey,
-          sinceAtTimestamp: lastJobTimestamp,
+          ...issuesOptions,
           startAt,
           pageSize: ISSUES_PAGE_SIZE,
         });
       } catch (err: any) {
         if (err.message.includes(`does not exist for the field 'project'.`)) {
-          this.logger.warn(
-            { projectKey },
-            'Project key does not exist or you do not have access to pull down issues from this project.',
+          this.logger.info(
+            { project: issuesOptions.project },
+            'Project key does not exist or permissions do not allow access to issues.',
           );
           break;
-          // This error is fine, just break from the loop
         } else {
           throw err;
         }
@@ -164,25 +223,22 @@ export class APIClient {
       if (issuesPage.length === 0) {
         morePages = false;
       } else {
+        continueProcessing = (await iteratee(issuesPage)) !== false;
         issuesProcessed = issuesProcessed + issuesPage.length;
-        for (const issue of issuesPage) {
-          await iteratee(issue);
-        }
       }
 
-      this.logger.info(
-        { pagesProcessed, issuesPageLength: issuesPage.length },
-        'Fetched and processed page of issues',
-      );
-
-      startAt += issuesPage.length;
       pagesProcessed++;
-    }
+      startAt += issuesPage.length;
 
-    if (!this.config.bulkIngest && issuesProcessed >= MAX_ISSUES_TO_INGEST) {
-      this.logger.warn(
-        { pagesProcessed, MAX_ISSUES_TO_INGEST },
-        'Reached maximum number of issues; may not have pulled all issues since last execution.',
+      this.logger.info(
+        {
+          pageLength: issuesPage.length,
+          pagesProcessed,
+          issuesProcessed,
+          morePages,
+          continueProcessing,
+        },
+        'Fetched and processed page of issues',
       );
     }
   }

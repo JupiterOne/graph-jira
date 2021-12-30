@@ -1,15 +1,25 @@
 import JiraApi from 'jira-client';
+
+import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 import {
+  AttemptContext,
+  retry as attemptRetry,
+  sleep,
+} from '@lifeomic/attempt';
+
+import {
+  Field,
+  Issue,
   IssuesOptions,
   IssueTypeName,
   JiraParams,
   PaginationOptions,
-} from '../types';
-import { Field, Issue, Project, ServerInfo, User } from './types';
-import { retry, AttemptContext, sleep } from '@lifeomic/attempt';
-import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
+  Project,
+  ServerInfo,
+  User,
+} from './types';
 
-export default class JiraClient {
+export class JiraClient {
   private client: JiraApi;
   private logger: IntegrationLogger;
 
@@ -71,11 +81,8 @@ export default class JiraClient {
     project,
     sinceAtTimestamp,
     startAt,
+    pageSize,
   }: IssuesOptions): Promise<Issue[]> {
-    if (!project) {
-      return [] as Issue[];
-    }
-
     const projectQuery = `project='${project}'`;
     const sinceAtFilter = sinceAtTimestamp
       ? ` AND updated>=${sinceAtTimestamp}`
@@ -84,25 +91,19 @@ export default class JiraClient {
     //if we ever want to change it, one can order by other fields or sort ASC, just as in SQL
     const searchString = `${projectQuery}${sinceAtFilter}`;
 
-    const functionToRetry = async () => {
+    return retry(this.logger, async () => {
       const response = await this.client.searchJira(searchString, {
-        startAt: startAt || 0,
+        startAt: startAt,
+        maxResults: pageSize,
       });
       return response.issues as Promise<Issue[]>;
-    };
-    return rateAwareRetry(functionToRetry, this.logger) as Promise<Issue[]>;
+    });
   }
 
-  public async fetchUsersPage(
-    options: PaginationOptions = {},
-  ): Promise<User[]> {
-    const functionToRetry = async () => {
-      return this.client.getUsers(
-        options.startAt || 0,
-        options.pageSize,
-      ) as Promise<User[]>;
-    };
-    return rateAwareRetry(functionToRetry, this.logger) as Promise<User[]>;
+  public async fetchUsersPage(options?: PaginationOptions): Promise<User[]> {
+    return retry(this.logger, async () =>
+      this.client.getUsers(options?.startAt, options?.pageSize),
+    ) as Promise<User[]>;
   }
 
   /**
@@ -118,59 +119,59 @@ export default class JiraClient {
   }
 }
 
-async function rateAwareRetry(func, logger) {
-  // Check https://github.com/lifeomic/attempt for options on retry
-  return await retry(func, {
+/**
+ * Retry request functions when HTTP responses (status codes and retry/rate
+ * limit response headers) indicate another attempt may succeed.
+ *
+ * Jira APIs have dynamic rate limits communicated as response headers. In cases
+ * where the error is not known to be fatal and a `Retry-After` header is
+ * provided, the function will sleep so the next request is delayed.
+ *
+ * @see https://developer.atlassian.com/cloud/jira/platform/rate-limiting/
+ */
+async function retry<T>(logger: IntegrationLogger, func: () => Promise<T[]>) {
+  return await attemptRetry(func, {
     maxAttempts: 5,
-    delay: 500, //in msec
-    jitter: true, // activates a random delay between minDelay and calculated exponential backoff
-    minDelay: 5, // in msec
-    factor: 2, //exponential backoff factor
-    timeout: 120_000, // just in case the network process hangs
-    async handleError(err: any, attemptContext: AttemptContext) {
-      /* retry will keep trying to the limits of retryOptions
-       * but it lets you intervene in this function - if you throw an error from in here,
-       * it stops retrying. Otherwise you can just log the attempts.
-       *
-       * Jira has rate limits, but they are not per tenant
-       * Instead, they issue a rate limit response to all clients when their servers are getting overloaded
-       * therefore, there is no way to know when this might occur
-       * Per https://developer.atlassian.com/cloud/jira/platform/rate-limiting/,
-       * they try to provide a `Retry-After` header (in sec) in such cases
-       * They might also provide a `Retry-After` in 5xx errors
-       */
+    delay: 500,
+    jitter: true,
+    minDelay: 5,
+    factor: 2,
 
-      // don't keep trying if it's not going to get better
+    // Prevent eternal hanging bug in lifeomic/attempt, see
+    // https://github.com/lifeomic/attempt/blob/4d493ab628984fde1452983d2a121c7ef255986d/src/index.ts#L193
+    timeout: 120_000,
+
+    async handleError(err: any, attemptContext: AttemptContext) {
       const statusCode = err.statusCode;
       if (
-        err.retryable === false ||
+        err.retryable === false || // TODO: what sets this property on err?
         statusCode === 401 ||
         statusCode === 403 ||
         statusCode === 404 ||
         statusCode === 400
       ) {
         attemptContext.abort();
-        logger.warn(
+        logger.info(
           { statusCode, attemptContext, err },
-          `Hit an unrecoverable error in Jira API. Aborting.`,
-        );
-      } else {
-        logger.warn(
-          { statusCode: err.statusCode, attemptContext, err },
-          `Hit a possibly recoverable error on Jira API. Waiting before trying again.`,
+          'Request error appears to be fatal, aborting retries...',
         );
       }
 
-      const headers = err.response?.headers;
-      const retryAfter = headers ? headers['retry-after]'] : undefined;
-      if (Number.isInteger(retryAfter)) {
-        if (retryAfter > 0 && retryAfter < 3600) {
-          await sleep(retryAfter * 1000); // sleep expects msec ; retryAfter denoted in sec
-        } else {
-          logger.warn(
-            retryAfter,
-            'Retry-After header received with unreasonable value',
-          );
+      if (attemptContext.attemptsRemaining > 0) {
+        const retryAfterSeconds = err.response?.headers?.['retry-after'];
+        if (Number.isInteger(retryAfterSeconds)) {
+          if (retryAfterSeconds > 0 && retryAfterSeconds < 3600) {
+            logger.info(
+              {
+                statusCode,
+                attemptContext,
+                err,
+                retryAfterSeconds,
+              },
+              'Request error appears to be temporary, waiting to retry...',
+            );
+            await sleep(retryAfterSeconds * 1000);
+          }
         }
       }
     },

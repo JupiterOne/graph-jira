@@ -4,8 +4,7 @@
     "method": "POST",
     "path": "/rest/api/3/search",
     "body": {
-      "jql": "project='First Project' AND updated>=1554727910417",
-      "startAt": 0
+      "jql": "project='First Project' AND updated>=1554727910417"
     },
     "status": 200,
     "response": {

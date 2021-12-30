@@ -35,7 +35,11 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     mask: true,
   },
   projects: {
-    type: 'string', //we wish it were an array. since it can't be, we expect a JSON array as a string
+    type: 'string',
+    mask: false,
+  },
+  bulkIngest: {
+    type: 'boolean',
     mask: false,
   },
 };
