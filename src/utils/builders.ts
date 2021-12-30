@@ -1,20 +1,17 @@
 import camelCase from 'lodash/camelCase';
+
 import { ProjectConfig } from '../types';
 
-export function buildCustomFields(fields: any): string[] {
-  const customFields: string[] = [];
-  if (fields) {
-    for (const f of Array.isArray(fields) ? fields : [fields]) {
-      if (f.startsWith('customfield_')) {
-        customFields.push(f);
-      } else if (f.match(/\d{5}/)) {
-        customFields.push(`customfield_${f}`);
-      } else {
-        customFields.push(camelCase(f));
-      }
+export function normalizeCustomFieldIdentifiers(fields: string[]): string[] {
+  return fields.map((f) => {
+    if (f.startsWith('customfield_')) {
+      return f;
+    } else if (f.match(/\d{5}/)) {
+      return `customfield_${f}`;
+    } else {
+      return camelCase(f);
     }
-  }
-  return customFields;
+  });
 }
 
 // goal: give this function an array of strings, a string, or a string which is a

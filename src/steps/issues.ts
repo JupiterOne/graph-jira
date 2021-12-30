@@ -26,7 +26,10 @@ import {
 } from '../entities';
 import { Field, Issue } from '../jira';
 import { ProjectConfig } from '../types';
-import { buildCustomFields, buildProjectConfigs } from '../utils/builders';
+import {
+  buildProjectConfigs,
+  normalizeCustomFieldIdentifiers,
+} from '../utils/builders';
 import generateEntityKey from '../utils/generateEntityKey';
 
 /**
@@ -56,7 +59,9 @@ export async function fetchIssues({
   const config = instance.config;
   const lastJobTimestamp = executionHistory.lastSuccessful?.startedOn || 0;
   const projectConfigs = buildProjectConfigs(instance.config.projects);
-  const customFieldsToInclude = buildCustomFields(instance.config.customFields);
+  const customFieldsToInclude = normalizeCustomFieldIdentifiers(
+    config.customFields || [],
+  );
 
   const apiClient = createAPIClient(config, logger);
   const fieldsById = await fetchJiraFields(apiClient);
