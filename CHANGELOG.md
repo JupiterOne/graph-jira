@@ -12,7 +12,7 @@ and this project adheres to
 
 - Added optional bulk ingestion feature to allow for collecting every single
   Issue in a Jira project. This is activated by setting
-  `config.bulkIngest: true`.
+  `config.bulkIngestIssues: true`.
 - Added `Issue` class to `jira_issue` entities
 - Added error handling for Issue ingestion to avoid one bad Issue causing the
   step to fail
@@ -26,7 +26,6 @@ and this project adheres to
 
 - Fix bug limiting per-project issue ingestion to 500 issues
 - Fix bug limiting issues page size to 50
-- Fix failure to load bulkIngest from .env
 
 ## [2.1.3] - 2021-08-17
 

@@ -39,7 +39,7 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     type: 'string',
     mask: false,
   },
-  bulkIngest: {
+  bulkIngestIssues: {
     type: 'boolean',
     mask: false,
   },
@@ -72,9 +72,9 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
   customFields?: string[];
 
   /**
-   * Whether to turn on bulk ingestion, which attempts to ingest all Issues
+   * Enable bulk ingestion of all Jira issues in the specified projects.
    */
-  bulkIngest?: boolean;
+  bulkIngestIssues?: boolean;
 }
 
 export async function validateInvocation(
