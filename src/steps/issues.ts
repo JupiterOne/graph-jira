@@ -26,12 +26,15 @@ import {
 } from '../entities';
 import { Field, Issue } from '../jira';
 import { ProjectConfig } from '../types';
-import { buildCustomFields, buildProjectConfigs } from '../utils/builders';
+import {
+  buildProjectConfigs,
+  normalizeCustomFieldIdentifiers,
+} from '../utils/builders';
 import generateEntityKey from '../utils/generateEntityKey';
 
 /**
  * Maximum number of issues to ingest per project. This limit can be removed by
- * providing `instance.config.bulkIngest: true`.
+ * providing `instance.config.bulkIngestIssues: true`.
  *
  * Important: A change to the value of this constant must be reflected in
  * `docs/jupiterone.md`.
@@ -56,7 +59,9 @@ export async function fetchIssues({
   const config = instance.config;
   const lastJobTimestamp = executionHistory.lastSuccessful?.startedOn || 0;
   const projectConfigs = buildProjectConfigs(instance.config.projects);
-  const customFieldsToInclude = buildCustomFields(instance.config.customFields);
+  const customFieldsToInclude = normalizeCustomFieldIdentifiers(
+    config.customFields || [],
+  );
 
   const apiClient = createAPIClient(config, logger);
   const fieldsById = await fetchJiraFields(apiClient);
@@ -77,9 +82,9 @@ export async function fetchIssues({
   for (const projectConfig of projectConfigs) {
     const projectIssueProcessor = async (issue: Issue) =>
       issueProcessor(projectConfig, issue);
-    if (config.bulkIngest) {
+    if (config.bulkIngestIssues) {
       logger.info(
-        { projectConfig, bulkIngest: config.bulkIngest },
+        { projectConfig, bulkIngestIssues: config.bulkIngestIssues },
         'Bulk issue ingestion is enabled',
       );
       await apiClient.iterateAllIssues(

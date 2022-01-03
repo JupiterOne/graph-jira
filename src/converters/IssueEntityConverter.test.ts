@@ -1,10 +1,12 @@
-import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
-import { createIssueEntity } from '.';
-import { buildCustomFields } from '../utils/builders';
-import { Issue } from '../jira';
-import generateEntityKey from '../utils/generateEntityKey';
-import merge from 'lodash.merge';
+import merge from 'lodash/merge';
+
 import { parseTimePropertyValue } from '@jupiterone/integration-sdk-core';
+import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
+
+import { Issue } from '../jira';
+import { normalizeCustomFieldIdentifiers } from '../utils/builders';
+import generateEntityKey from '../utils/generateEntityKey';
+import { createIssueEntity } from './';
 
 function getJiraIssue(overrides: object = {}): Issue {
   return merge<Issue, any>(
@@ -303,25 +305,25 @@ describe('createIssueEntity', () => {
       },
     };
 
-    const customFieldsToInclude = buildCustomFields([
+    const customFieldsToInclude = normalizeCustomFieldIdentifiers([
       'cvssCe', // search by name -- customfield_10428
       '10433', // search by id -- customfield_10433
       'customfield_10319', // handles number values
       'customfield_10116', // handles string values
     ]);
 
-    const customFields = {
+    const expectedCustomFieldProperties = {
       cvssCe: 9,
       residualRisk: 'there is none',
       stringField: '1|i03p27:',
       numberField: 1234,
     };
-    const jiraIssueEntity = {
+    const expectedIssueEntity = {
       _key: generateEntityKey('jira_issue', '47788'),
       _type: 'jira_issue',
       _class: ['Risk', 'Record', 'Issue'],
       _rawData: [{ name: 'default', rawData: jiraIssue }],
-      ...customFields,
+      ...expectedCustomFieldProperties,
       id: '47788',
       key: 'J1TEMP-112',
       name: 'J1TEMP-112',
@@ -352,7 +354,7 @@ describe('createIssueEntity', () => {
         fieldsById: fieldsById as any,
         customFieldsToInclude,
       }),
-    ).toEqual(jiraIssueEntity);
+    ).toEqual(expectedIssueEntity);
   });
 
   test('handles exceptions correctly', () => {

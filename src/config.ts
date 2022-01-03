@@ -1,9 +1,10 @@
 import {
   IntegrationExecutionContext,
-  IntegrationValidationError,
-  IntegrationInstanceConfigFieldMap,
   IntegrationInstanceConfig,
+  IntegrationInstanceConfigFieldMap,
+  IntegrationValidationError,
 } from '@jupiterone/integration-sdk-core';
+
 import { createAPIClient } from './client';
 
 /**
@@ -38,7 +39,7 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     type: 'string',
     mask: false,
   },
-  bulkIngest: {
+  bulkIngestIssues: {
     type: 'boolean',
     mask: false,
   },
@@ -49,35 +50,31 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
  * same properties defined by `instanceConfigFields`. See note above.
  */
 export interface IntegrationConfig extends IntegrationInstanceConfig {
-  /**
-   * The Jira host
-   */
   jiraHost: string;
-
-  /**
-   * The Jira username
-   */
   jiraUsername: string;
-
-  /**
-   * The Jira password
-   */
   jiraPassword: string;
 
   /**
-   * Projects, as an array of strings
+   * An array of Jira project keys to target for ingestion.
    */
   projects: string[] | string;
 
   /**
-   * Custom fields for inclusion in issues
+   * An optional array of Jira Custom Field identifiers, indicating which custom
+   * fields to transfer to `Issue` entity properties. The entity property names
+   * will be `camelCase(field.name)`.
+   *
+   * - `"customfield_Whatever"` - a fully qualified identifier
+   * - `"32918"` - normalized to `"customfield_32918"`
+   * - `"my Field Yo"`, `"My Field yo"`, `"myFieldYo"` - normalized to
+   *   `"myFieldYo" and matched to `camelCase(field.name)`
    */
   customFields?: string[];
 
   /**
-   * Whether to turn on bulk ingestion, which attempts to ingest all Issues
+   * Enable bulk ingestion of all Jira issues in the specified projects.
    */
-  bulkIngest?: boolean;
+  bulkIngestIssues?: boolean;
 }
 
 export async function validateInvocation(
