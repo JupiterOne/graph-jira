@@ -3,7 +3,8 @@ build/
 coverage/
 dist/
 yarn-error.log
-.env
+.env*
+!.env.example
 docker-compose.yml
 .j1-integration/
 .eslintcache

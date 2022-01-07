@@ -8,7 +8,7 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
-import { APIClient, createAPIClient } from '../client';
+import { APIClient } from '../client';
 import { IntegrationConfig } from '../config';
 import { DATA_CONFIG_PROJECT_ENTITY_ARRAY } from '../constants';
 import { createIssueEntity } from '../converters/IssueEntityConverter';
@@ -63,7 +63,7 @@ export async function fetchIssues({
     config.customFields || [],
   );
 
-  const apiClient = createAPIClient(config, logger);
+  const apiClient = new APIClient(logger, config);
   const fieldsById = await fetchJiraFields(apiClient);
 
   const issueProcessor = async (projectConfig: ProjectConfig, issue: Issue) =>
@@ -113,7 +113,7 @@ type ProcessIssueContext = {
 };
 
 async function fetchJiraFields(apiClient: APIClient) {
-  const fields = await apiClient.jira.fetchFields();
+  const fields = await apiClient.fetchFields();
   const fieldsById: IdFieldMap = {};
   for (const field of fields) {
     fieldsById[field.id] = field;

@@ -1,6 +1,10 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import { IntegrationConfig } from '../src/config';
+
+import {
+  JiraIntegrationInstanceConfig,
+  buildNormalizedInstanceConfig,
+} from '../src/config';
 
 if (process.env.LOAD_ENV) {
   dotenv.config({
@@ -12,9 +16,13 @@ const DEFAULT_JIRA_USERNAME = 'fakename';
 const DEFAULT_JIRA_PASSWORD = 'fakekey';
 const DEFAULT_PROJECTS = ['TPN'];
 
-export const integrationConfig: IntegrationConfig = {
+export const integrationInstanceConfig: JiraIntegrationInstanceConfig = {
   jiraHost: process.env.JIRA_HOST || DEFAULT_JIRA_HOST,
   jiraUsername: process.env.JIRA_USERNAME || DEFAULT_JIRA_USERNAME,
   jiraPassword: process.env.JIRA_PASSWORD || DEFAULT_JIRA_PASSWORD,
   projects: process.env.PROJECTS || DEFAULT_PROJECTS,
 };
+
+export const normalizedInstanceConfig = buildNormalizedInstanceConfig(
+  integrationInstanceConfig,
+);

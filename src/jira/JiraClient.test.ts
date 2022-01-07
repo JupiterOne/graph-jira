@@ -1,16 +1,10 @@
 import 'jest-extended';
 
+import JiraApi, { JiraApiOptions } from 'jira-client';
 import nock from 'nock';
 
-import {
-  createMockStepExecutionContext,
-  Recording,
-} from '@jupiterone/integration-sdk-testing';
+import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 
-import { integrationConfig } from '../../test/config';
-import { setupJiraRecording } from '../../test/recording';
-import { createAPIClient } from '../client';
-import { IntegrationConfig } from '../config';
 import { JiraClient } from './JiraClient';
 
 jest.setTimeout(10000);
@@ -18,13 +12,25 @@ jest.setTimeout(10000);
 const JIRA_LOCAL_EXECUTION_HOST =
   process.env.JIRA_LOCAL_EXECUTION_HOST || 'example.atlassian.com';
 
-const context = createMockStepExecutionContext<IntegrationConfig>({
-  instanceConfig: integrationConfig,
-});
-const logger = context.logger;
+const logger = createMockIntegrationLogger();
 
 function prepareScope(def: nock.NockDefinition) {
   def.scope = `https://${JIRA_LOCAL_EXECUTION_HOST}:443`;
+}
+
+function buildJiraApiOptions(
+  overrides?: Partial<JiraApiOptions>,
+): JiraApiOptions {
+  return {
+    protocol: 'https',
+    host: JIRA_LOCAL_EXECUTION_HOST,
+    port: '443',
+    username:
+      overrides?.username || process.env.JIRA_LOCAL_EXECUTION_USERNAME || '',
+    password:
+      overrides?.password || process.env.JIRA_LOCAL_EXECUTION_PASSWORD || '',
+    apiVersion: '3',
+  };
 }
 
 describe('JiraClient fetch ok data', () => {
@@ -36,14 +42,7 @@ describe('JiraClient fetch ok data', () => {
   });
 
   function getAuthenticatedClient() {
-    const client = new JiraClient(
-      {
-        host: JIRA_LOCAL_EXECUTION_HOST,
-        username: process.env.JIRA_LOCAL_EXECUTION_USERNAME || '',
-        password: process.env.JIRA_LOCAL_EXECUTION_PASSWORD || '',
-      },
-      logger,
-    );
+    const client = new JiraClient(logger, new JiraApi(buildJiraApiOptions()));
 
     return client;
   }
@@ -125,44 +124,6 @@ describe('JiraClient fetch ok data', () => {
   });
 });
 
-describe('JiraClient recordings', () => {
-  let recording: Recording;
-
-  afterEach(async () => {
-    await recording.stop();
-  });
-
-  it('should not error when the project does not exist anymore', async () => {
-    recording = setupJiraRecording({
-      directory: __dirname,
-      name: 'steps',
-      options: {
-        recordFailedRequests: true,
-        matchRequestsBy: {
-          method: true,
-          headers: false,
-          body: false,
-          order: true,
-          url: {
-            username: false,
-            password: false,
-            hostname: false,
-            port: false,
-            pathname: true,
-            query: true,
-            hash: false,
-          },
-        },
-      },
-    });
-
-    const apiClient = createAPIClient(context.instance.config, logger);
-    await expect(
-      apiClient.iterateIssues('key', 100000, 10, () => undefined),
-    ).resolves.not.toThrow();
-  });
-});
-
 describe('JiraClient bad credentials', () => {
   beforeAll(() => {
     nock.back.fixtures = `${__dirname}/../../test/fixtures/`;
@@ -171,12 +132,13 @@ describe('JiraClient bad credentials', () => {
 
   function getAuthenticatedClient() {
     const client = new JiraClient(
-      {
-        host: JIRA_LOCAL_EXECUTION_HOST,
-        username: 'fakeUser',
-        password: 'fakePassword',
-      },
       logger,
+      new JiraApi(
+        buildJiraApiOptions({
+          username: 'fakeUser',
+          password: 'fakePassword',
+        }),
+      ),
     );
 
     return client;
@@ -205,14 +167,7 @@ describe('JiraClient creating data', () => {
   });
 
   function getAuthenticatedClient() {
-    const client = new JiraClient(
-      {
-        host: JIRA_LOCAL_EXECUTION_HOST,
-        username: process.env.JIRA_LOCAL_EXECUTION_USERNAME || '',
-        password: process.env.JIRA_LOCAL_EXECUTION_PASSWORD || '',
-      },
-      logger,
-    );
+    const client = new JiraClient(logger, new JiraApi(buildJiraApiOptions()));
 
     return client;
   }

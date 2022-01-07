@@ -10,6 +10,9 @@ and this project adheres to
 
 ### Added
 
+- Added support for Jira API Version 2 (Jira Data Center)
+- Added support for specifying the port in the `jiraHost` configuration value
+  (i.e. `example.com:8080`)
 - Added optional bulk ingestion feature to allow for collecting every single
   Issue in a Jira project. This is activated by setting
   `config.bulkIngestIssues: true`.

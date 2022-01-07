@@ -15,11 +15,7 @@ export type IssueTypeName =
   | 'Sub-task'
   | 'New Feature';
 
-export interface JiraParams {
-  host: string;
-  password: string;
-  username: string;
-}
+export type JiraApiVersion = '2' | '3';
 
 export interface PaginationOptions {
   startAt?: number;

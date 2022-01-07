@@ -7,8 +7,11 @@ This integration uses a wrapper for Jira API maintained
 
 ## Provider account setup
 
-You can get a free account on
+You can get a free Jira Cloud account on
 [Jira's website](https://www.atlassian.com/software/jira/free).
+
+[Jira Data Center](https://www.atlassian.com/software/jira/download-journey)
+(self-hosted) can be downloaded.
 
 ## Authentication
 

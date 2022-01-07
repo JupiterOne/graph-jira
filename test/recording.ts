@@ -1,10 +1,11 @@
 import {
-  setupRecording,
-  Recording,
-  SetupRecordingInput,
   mutations,
+  Recording,
+  setupRecording,
+  SetupRecordingInput,
 } from '@jupiterone/integration-sdk-testing';
-import { DEFAULT_JIRA_HOST, integrationConfig } from './config';
+
+import { DEFAULT_JIRA_HOST, integrationInstanceConfig } from './config';
 
 export { Recording };
 
@@ -48,7 +49,7 @@ function redact(entry: any): void {
   }
 
   entry.request.url = entry.request.url.replace(
-    integrationConfig.jiraHost,
+    integrationInstanceConfig.jiraHost,
     DEFAULT_JIRA_HOST,
   );
 }

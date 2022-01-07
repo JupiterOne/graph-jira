@@ -1,25 +1,25 @@
 import {
+  createDirectRelationship,
+  IntegrationMissingKeyError,
   IntegrationStep,
   IntegrationStepExecutionContext,
   RelationshipClass,
-  createDirectRelationship,
-  IntegrationMissingKeyError,
 } from '@jupiterone/integration-sdk-core';
 
-import { createAPIClient } from '../client';
+import { APIClient } from '../client';
 import { IntegrationConfig } from '../config';
-import { DATA_ACCOUNT_ENTITY } from './account';
+import { DATA_CONFIG_PROJECT_ENTITY_ARRAY } from '../constants';
+import { createProjectEntity } from '../converters/ProjectEntityConverter';
 import {
   ACCOUNT_ENTITY_TYPE,
   ACCOUNT_PROJECT_RELATIONSHIP_TYPE,
   AccountEntity,
-  PROJECT_ENTITY_TYPE,
   PROJECT_ENTITY_CLASS,
+  PROJECT_ENTITY_TYPE,
   ProjectEntity,
 } from '../entities';
-import { createProjectEntity } from '../converters/ProjectEntityConverter';
 import { buildProjectConfigs } from '../utils/builders';
-import { DATA_CONFIG_PROJECT_ENTITY_ARRAY } from '../constants';
+import { DATA_ACCOUNT_ENTITY } from './account';
 
 export async function fetchProjects({
   instance,
@@ -27,7 +27,7 @@ export async function fetchProjects({
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
   const config = instance.config;
-  const apiClient = createAPIClient(config, logger);
+  const apiClient = new APIClient(logger, config);
 
   const accountEntity = await jobState.getData<AccountEntity>(
     DATA_ACCOUNT_ENTITY,
