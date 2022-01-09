@@ -1,36 +1,33 @@
-import nock from 'nock';
-
 import {
   IntegrationProviderAuthenticationError,
   IntegrationValidationError,
 } from '@jupiterone/integration-sdk-core';
 import {
   createMockExecutionContext,
-  setupRecording,
+  Recording,
 } from '@jupiterone/integration-sdk-testing';
 
-import { integrationInstanceConfig } from '../test/config';
 import {
-  buildNormalizedInstanceConfig,
-  IntegrationConfig,
+  integrationInstanceConfig,
+  localServerInstanceConfig,
+  normalizedInstanceConfig,
+} from '../test/config';
+import { setupJiraRecording } from '../test/recording';
+import {
+  buildJiraHostConfig,
   isValidJiraHost,
+  JiraHostConfig,
   JiraIntegrationInstanceConfig,
   validateInvocation,
 } from './config';
 
-function buildInstanceConfig(
-  overrides?: Partial<JiraIntegrationInstanceConfig>,
-): JiraIntegrationInstanceConfig {
-  return {
-    jiraHost: 'example.com',
-    jiraUsername: 'testLogin',
-    jiraPassword: 'testPassword',
-    projects: [],
-    ...overrides,
-  };
-}
-
 describe(validateInvocation, () => {
+  let recording: Recording;
+
+  afterEach(async () => {
+    if (recording) await recording.stop();
+  });
+
   test('empty instance config', async () => {
     const executionContext = createMockExecutionContext({
       instanceConfig: {} as JiraIntegrationInstanceConfig,
@@ -38,6 +35,123 @@ describe(validateInvocation, () => {
 
     await expect(validateInvocation(executionContext)).rejects.toThrow(
       IntegrationValidationError,
+    );
+  });
+
+  test('invalid jiraHost', async () => {
+    const context = {
+      instance: {
+        config: {
+          jiraHost: 'test.com?somequeryparms',
+          jiraUsername: 'testLogin',
+          jiraPassword: 'testPassword',
+        },
+      },
+    };
+    await expect(validateInvocation(context as any)).rejects.toThrow(
+      IntegrationValidationError,
+    );
+  });
+
+  test('invalid credentials (cloud server)', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'validateInvocationCloudInvalidPassword',
+      options: {
+        recordFailedRequests: true,
+      },
+    });
+
+    const executionContext =
+      createMockExecutionContext<JiraIntegrationInstanceConfig>({
+        instanceConfig: {
+          ...integrationInstanceConfig,
+          jiraPassword: 'invalid',
+        },
+      });
+
+    await expect(validateInvocation(executionContext)).rejects.toThrow(
+      IntegrationProviderAuthenticationError,
+    );
+  });
+
+  test('valid credentials (cloud server)', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'validateInvocationCloud',
+    });
+
+    const executionContext =
+      createMockExecutionContext<JiraIntegrationInstanceConfig>({
+        instanceConfig: integrationInstanceConfig,
+      });
+
+    await expect(validateInvocation(executionContext)).resolves.not.toThrow();
+  });
+
+  test('invalid credentials (local server)', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'validateInvocationLocalInvalidPassword',
+      options: {
+        recordFailedRequests: true,
+      },
+    });
+
+    const executionContext = createMockExecutionContext({
+      instanceConfig: { ...localServerInstanceConfig, jiraUsername: 'invalid' },
+    });
+
+    await expect(validateInvocation(executionContext)).rejects.toThrow(
+      IntegrationProviderAuthenticationError,
+    );
+  });
+
+  test('valid credentials (local server)', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'validateInvocationLocal',
+      options: {
+        recordFailedRequests: true,
+      },
+    });
+
+    const executionContext = createMockExecutionContext({
+      instanceConfig: localServerInstanceConfig,
+    });
+
+    await expect(validateInvocation(executionContext)).resolves.not.toThrow();
+  });
+
+  test('mutates instance.config to normalized values', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'validateInvocation',
+    });
+
+    const executionContext =
+      createMockExecutionContext<JiraIntegrationInstanceConfig>({
+        instanceConfig: integrationInstanceConfig,
+      });
+
+    await expect(validateInvocation(executionContext)).resolves.not.toThrow();
+
+    expect(executionContext.instance.config).toEqual(normalizedInstanceConfig);
+  });
+
+  test('invalid projects', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'validateInvocationInvalidProject',
+    });
+
+    const executionContext =
+      createMockExecutionContext<JiraIntegrationInstanceConfig>({
+        instanceConfig: { ...integrationInstanceConfig, projects: ['INVALID'] },
+      });
+
+    await expect(validateInvocation(executionContext)).rejects.toThrow(
+      'The following project key(s) are invalid: ["INVALID"]. Ensure the authenticated user has access to this project.',
     );
   });
 });
@@ -55,172 +169,61 @@ describe(isValidJiraHost, () => {
     expect(isValidJiraHost('test.com?somequeryparms')).toBe(false);
   });
 
-  test('single node path', () => {
+  test('single node base', () => {
     expect(isValidJiraHost('fake-hostname.atlassian.net/subdir')).toBe(true);
   });
 
-  test('multiple node path', () => {
+  // TODO: Verify this cannot be multiple nodes
+  test('multiple node base', () => {
     expect(
       isValidJiraHost('fake-hostname.atlassian.net/subdir/anothaone'),
     ).toBe(false);
   });
 });
 
-describe(buildNormalizedInstanceConfig, () => {
+describe(buildJiraHostConfig, () => {
   test('localhost', () => {
-    expect(
-      buildNormalizedInstanceConfig(
-        buildInstanceConfig({ jiraHost: 'localhost' }),
-      ),
-    ).toMatchObject({
-      hostProtocol: 'https',
-      hostName: 'localhost',
-      hostPort: 443,
-      urlBase: undefined,
-    });
+    expect(buildJiraHostConfig('localhost')).toMatchObject({
+      protocol: 'https',
+      host: 'localhost',
+      port: '443',
+      base: undefined,
+    } as JiraHostConfig);
   });
 
   test('localhost/something', () => {
-    expect(
-      buildNormalizedInstanceConfig(
-        buildInstanceConfig({ jiraHost: 'localhost/something' }),
-      ),
-    ).toMatchObject({
-      hostProtocol: 'https',
-      hostName: 'localhost',
-      hostPort: 443,
-      urlBase: 'something',
-    });
+    expect(buildJiraHostConfig('localhost/something')).toMatchObject({
+      protocol: 'https',
+      host: 'localhost',
+      port: '443',
+      base: 'something',
+    } as JiraHostConfig);
   });
 
   test('localhost:8080', () => {
-    expect(
-      buildNormalizedInstanceConfig(
-        buildInstanceConfig({ jiraHost: 'localhost:8080' }),
-      ),
-    ).toMatchObject({
-      hostProtocol: 'https',
-      hostName: 'localhost',
-      hostPort: 8080,
-      urlBase: undefined,
-    });
-  });
-});
-
-test('should throw exception if jiraHost is invalid', async () => {
-  const context = {
-    instance: {
-      config: {
-        jiraHost: 'test.com?somequeryparms',
-        jiraUsername: 'testLogin',
-        jiraPassword: 'testPassword',
-      },
-    },
-  };
-  await expect(validateInvocation(context as any)).rejects.toThrow(
-    IntegrationValidationError,
-  );
-});
-
-it('auth error', async () => {
-  const recording = setupRecording({
-    directory: '__recordings__',
-    name: 'client-auth-error',
+    expect(buildJiraHostConfig('localhost:8080')).toMatchObject({
+      protocol: 'https',
+      host: 'localhost',
+      port: '8080',
+      base: undefined,
+    } as JiraHostConfig);
   });
 
-  recording.server.any().intercept((req, res) => {
-    res.status(401);
+  test('http://localhost:8080', () => {
+    expect(buildJiraHostConfig('http://localhost:8080')).toMatchObject({
+      protocol: 'http',
+      host: 'localhost',
+      port: '8080',
+      base: undefined,
+    } as JiraHostConfig);
   });
 
-  const executionContext = createMockExecutionContext({
-    instanceConfig: integrationInstanceConfig,
-  });
-
-  await expect(validateInvocation(executionContext)).rejects.toThrow(
-    IntegrationProviderAuthenticationError,
-  );
-});
-
-describe(validateInvocation, () => {
-  beforeAll(() => {
-    nock.back.fixtures = `${__dirname}/../test/fixtures/`;
-    process.env.CI
-      ? nock.back.setMode('lockdown')
-      : nock.back.setMode('record');
-  });
-
-  test('mutates instance.config to normalized values', async () => {
-    const { nockDone } = await nock.back('invocation-projects.json');
-
-    const instanceConfig: JiraIntegrationInstanceConfig = {
-      jiraHost: 'fake-hostname.atlassian.net',
-      jiraUsername: 'fakeLogin',
-      jiraPassword: 'fakePassword',
-      projects: ['IR'],
-    };
-
-    const executionContext = {
-      instance: {
-        config: instanceConfig,
-      },
-    };
-
-    await validateInvocation(executionContext as any);
-
-    const normalizedConfig: IntegrationConfig = {
-      ...instanceConfig,
-      hostProtocol: 'https',
-      hostName: 'fake-hostname.atlassian.net',
-      hostPort: 443,
-      urlBase: undefined,
-    };
-
-    expect(executionContext.instance.config).toEqual(normalizedConfig);
-
-    nockDone();
-  });
-
-  test('valid projects', async () => {
-    const { nockDone } = await nock.back('invocation-projects.json');
-
-    const executionContext = {
-      instance: {
-        config: {
-          jiraHost: 'fake-hostname.atlassian.net',
-          jiraUsername: 'fakeLogin',
-          jiraPassword: 'fakePassword',
-          projects: ['IR'],
-        },
-      },
-    };
-
-    const result = await validateInvocation(executionContext as any);
-
-    expect(result).toBeUndefined();
-    nockDone();
-  });
-
-  test('invalid projects', async () => {
-    const { nockDone } = await nock.back('invocation-projects.json');
-
-    const executionContext = {
-      instance: {
-        config: {
-          jiraHost: 'fake-hostname.atlassian.net',
-          jiraUsername: 'fakeLogin',
-          jiraPassword: 'fakePassword',
-          projects: ['INVALID_PROJECT'],
-        },
-      },
-    };
-
-    try {
-      await validateInvocation(executionContext as any);
-    } catch (e) {
-      expect(e.message).toMatch(
-        'The following project key(s) are invalid: ["INVALID_PROJECT"]. Ensure the authenticated user has access to this project.',
-      );
-    }
-    nockDone();
+  test('http://localhost:8080/base', () => {
+    expect(buildJiraHostConfig('http://localhost:8080')).toMatchObject({
+      protocol: 'http',
+      host: 'localhost',
+      port: '8080',
+      base: undefined,
+    } as JiraHostConfig);
   });
 });

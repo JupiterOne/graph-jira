@@ -3,9 +3,9 @@ import {
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
-import { APIClient } from '../client';
 import { IntegrationConfig } from '../config';
 import { createAccountEntity } from '../converters';
+import { createApiClient } from '../utils';
 
 export const DATA_ACCOUNT_ENTITY = 'DATA_ACCOUNT_ENTITY';
 
@@ -15,7 +15,7 @@ export async function fetchAccountDetails({
   logger,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
   const config = instance.config;
-  const apiClient = new APIClient(logger, config);
+  const apiClient = createApiClient(logger, config);
   const accountEntity = await jobState.addEntity(
     createAccountEntity(await apiClient.fetchServerInfo()),
   );

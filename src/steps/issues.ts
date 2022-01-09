@@ -28,9 +28,10 @@ import { Field, Issue } from '../jira';
 import { ProjectConfig } from '../types';
 import {
   buildProjectConfigs,
+  createApiClient,
+  generateEntityKey,
   normalizeCustomFieldIdentifiers,
-} from '../utils/builders';
-import generateEntityKey from '../utils/generateEntityKey';
+} from '../utils';
 
 /**
  * Maximum number of issues to ingest per project. This limit can be removed by
@@ -63,7 +64,7 @@ export async function fetchIssues({
     config.customFields || [],
   );
 
-  const apiClient = new APIClient(logger, config);
+  const apiClient = createApiClient(logger, config);
   const fieldsById = await fetchJiraFields(apiClient);
 
   const issueProcessor = async (projectConfig: ProjectConfig, issue: Issue) =>

@@ -11,7 +11,13 @@ You can get a free Jira Cloud account on
 [Jira's website](https://www.atlassian.com/software/jira/free).
 
 [Jira Data Center](https://www.atlassian.com/software/jira/download-journey)
-(self-hosted) can be downloaded.
+(self-hosted) can be downloaded and executed locally. After you have
+successfully bootstrapped the local Jira server:
+
+1. During setup, allow the onboarding wizard to create a populated project
+   having the name `SP`.
+2. Create a new user `jupiterone-dev` with the password `tA_WFXarmbnhh6Xkfrx`.
+3. `cp .env.example .env` and vefify configuration values.
 
 ## Authentication
 

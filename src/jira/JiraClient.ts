@@ -42,6 +42,10 @@ export class JiraClient {
     return issue;
   }
 
+  public async getCurrentUser(): Promise<any> {
+    return await this.client.getCurrentUser();
+  }
+
   public async findIssue(issueIdOrKey: string): Promise<Issue> {
     return (await this.client.findIssue(issueIdOrKey)) as Issue;
   }

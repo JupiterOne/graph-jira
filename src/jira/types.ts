@@ -16,6 +16,7 @@ export type IssueTypeName =
   | 'New Feature';
 
 export type JiraApiVersion = '2' | '3';
+export const KNOWN_JIRA_API_VERSIONS: JiraApiVersion[] = ['3', '2'];
 
 export interface PaginationOptions {
   startAt?: number;
@@ -33,6 +34,7 @@ export interface ServerInfo {
   versionNumbers: number[];
   buildNumber: number;
   buildDate: string;
+  deploymentType: 'Cloud' | 'Server';
   serverTime: string;
   scmInfo: string;
   serverTitle: string;

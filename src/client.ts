@@ -2,12 +2,9 @@ import {
   IntegrationLogger,
   IntegrationProviderAuthenticationError,
   IntegrationProviderAuthorizationError,
-  IntegrationValidationError,
 } from '@jupiterone/integration-sdk-core';
 
-import { IntegrationConfig } from './config';
 import {
-  createJiraClient,
   Field,
   Issue,
   IssuesOptions,
@@ -16,7 +13,6 @@ import {
   ServerInfo,
   User,
 } from './jira';
-import { buildProjectConfigs } from './utils/builders';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
@@ -31,57 +27,29 @@ const USERS_PAGE_SIZE = 100;
 const ISSUES_PAGE_SIZE = 100;
 
 export class APIClient {
-  private _jira: JiraClient;
-
-  constructor(
-    readonly logger: IntegrationLogger,
-    readonly config: IntegrationConfig,
-  ) {}
-
-  protected async getClient(): Promise<JiraClient> {
-    if (!this._jira) {
-      this._jira = await createJiraClient(this.logger, this.config);
-    }
-    return this._jira;
-  }
+  constructor(readonly logger: IntegrationLogger, readonly jira: JiraClient) {}
 
   public async fetchServerInfo(): Promise<ServerInfo> {
-    const client = await this.getClient();
-    return client.fetchServerInfo();
+    return this.jira.fetchServerInfo();
   }
 
   public async fetchFields(): Promise<Field[]> {
-    const client = await this.getClient();
-    return client.fetchFields();
+    return this.jira.fetchFields();
   }
 
+  /**
+   * Verifies authentication by making a call to `getCurrentUser()`.
+   */
   public async verifyAuthentication(): Promise<void> {
-    const client = await this.getClient();
-
-    // the most light-weight request possible to validate
-    // authentication works with the provided credentials, throw an err if
-    // authentication fails
-    let fetchedProjectKeys: string[];
     try {
-      const fetchedProjects = await client.fetchProjects();
-      fetchedProjectKeys = fetchedProjects.map((p) => p.key);
+      await this.jira.getCurrentUser();
     } catch (err) {
-      throw new IntegrationProviderAuthenticationError(err);
-    }
-
-    const configProjectKeys = buildProjectConfigs(this.config.projects).map(
-      (p) => p.key,
-    );
-
-    const invalidConfigProjectKeys = configProjectKeys.filter(
-      (k) => !fetchedProjectKeys.includes(k),
-    );
-    if (invalidConfigProjectKeys.length) {
-      throw new IntegrationValidationError(
-        `The following project key(s) are invalid: ${JSON.stringify(
-          invalidConfigProjectKeys,
-        )}. Ensure the authenticated user has access to this project.`,
-      );
+      throw new IntegrationProviderAuthenticationError({
+        endpoint: err.options.uri,
+        status: err.statusCode,
+        statusText: err.error.message,
+        cause: err,
+      });
     }
   }
 
@@ -93,8 +61,7 @@ export class APIClient {
   public async iterateProjects(
     iteratee: ResourceIteratee<Project>,
   ): Promise<void> {
-    const client = await this.getClient();
-    const projects: Project[] = await client.fetchProjects();
+    const projects: Project[] = await this.jira.fetchProjects();
     for (const project of projects) {
       await iteratee(project);
     }
@@ -106,8 +73,6 @@ export class APIClient {
    * @param iteratee receives each resource to produce entities/relationships
    */
   public async iterateUsers(iteratee: ResourceIteratee<User>): Promise<void> {
-    const client = await this.getClient();
-
     let pagesProcessed = 0;
     let startAt: number = 0;
     let morePages: boolean = true;
@@ -115,7 +80,7 @@ export class APIClient {
     while (morePages) {
       let usersPage: User[] = [];
       try {
-        usersPage = await client.fetchUsersPage({
+        usersPage = await this.jira.fetchUsersPage({
           startAt,
           pageSize: USERS_PAGE_SIZE,
         });
@@ -217,8 +182,6 @@ export class APIClient {
     issuesOptions: IssuesOptions,
     iteratee: (issues: Issue[]) => Promise<boolean | void>,
   ): Promise<void> {
-    const client = await this.getClient();
-
     let pagesProcessed = 0;
     let issuesProcessed = 0;
     let startAt = 0;
@@ -228,7 +191,7 @@ export class APIClient {
     while (morePages && continueProcessing) {
       let issuesPage: Issue[] = [];
       try {
-        issuesPage = await client.fetchIssuesPage({
+        issuesPage = await this.jira.fetchIssuesPage({
           ...issuesOptions,
           startAt,
           pageSize: ISSUES_PAGE_SIZE,

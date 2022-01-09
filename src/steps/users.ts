@@ -6,7 +6,6 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
-import { APIClient } from '../client';
 import { IntegrationConfig } from '../config';
 import { createUserEntity } from '../converters';
 import {
@@ -17,6 +16,7 @@ import {
   USER_ENTITY_TYPE,
   UserEntity,
 } from '../entities';
+import { createApiClient } from '../utils';
 import { DATA_ACCOUNT_ENTITY } from './account';
 
 export async function fetchUsers({
@@ -25,7 +25,7 @@ export async function fetchUsers({
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
   const config = instance.config;
-  const apiClient = new APIClient(logger, config);
+  const apiClient = createApiClient(logger, config);
 
   const accountEntity = await jobState.getData<AccountEntity>(
     DATA_ACCOUNT_ENTITY,

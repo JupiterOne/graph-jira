@@ -37,5 +37,5 @@ export default async function createJiraIssue(
     additionalFields,
   );
 
-  return client.findIssue(newIssue.key);
+  return client.findIssue(newIssue.id);
 }

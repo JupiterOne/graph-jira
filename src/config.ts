@@ -1,12 +1,18 @@
+import JiraApi, { JiraApiOptions } from 'jira-client';
+
 import {
+  IntegrationError,
   IntegrationExecutionContext,
   IntegrationInstanceConfig,
   IntegrationInstanceConfigFieldMap,
+  IntegrationProviderAPIError,
   IntegrationValidationError,
 } from '@jupiterone/integration-sdk-core';
 
 import { APIClient } from './client';
-import { JiraApiVersion } from './jira';
+import { JiraApiVersion, JiraClient } from './jira';
+import { detectApiVersion } from './jira/detectApiVersion';
+import { buildProjectConfigs } from './utils';
 
 /**
  * A type describing the configuration fields required to execute the
@@ -24,10 +30,6 @@ import { JiraApiVersion } from './jira';
  *
  */
 export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
-  jiraProtocol: {
-    type: 'string',
-    mask: false,
-  },
   jiraHost: {
     type: 'string',
     mask: false,
@@ -67,7 +69,7 @@ export interface JiraIntegrationInstanceConfig
    * - `"localhost"`
    * - `"localhost:8080"`
    * - `"localhost/urlBase"`
-   * - `"example.com"`
+   * - `"http://example.com"`
    * - `"subdomain.example.com/urlBase"`
    *
    * @see jiraProtocol
@@ -75,16 +77,8 @@ export interface JiraIntegrationInstanceConfig
   jiraHost: string;
 
   /**
-   * An optional configuration of the Jira server host HTTP connection protocol.
-   * Defaults to `'https'`.
-   *
-   * @see jiraHost
-   */
-  jiraProtocol?: string;
-
-  /**
    * An optional configuration of the Jira server API version. The integration
-   * will attempt to detect the version.
+   * will attempt to detect the version when this is not provided explicitly.
    */
   jiraApiVersion?: JiraApiVersion;
 
@@ -115,15 +109,25 @@ export interface JiraIntegrationInstanceConfig
 }
 
 /**
+ * Values extracted from the `jiraHost` configuration value.
+ */
+export type JiraHostConfig = {
+  protocol: string;
+  host: string;
+  port: string;
+  base: string | undefined;
+};
+
+/**
  * Properties normalized from the `IntegrationInstance.config` after validation.
  * This configuration is provided to execution steps.
  */
-export type IntegrationConfig = JiraIntegrationInstanceConfig & {
-  hostProtocol: 'http' | 'https';
-  hostName: string;
-  hostPort: number;
-  urlBase: string | undefined;
-};
+export type IntegrationConfig = JiraIntegrationInstanceConfig &
+  JiraHostConfig & {
+    username: string;
+    password: string;
+    apiVersion: JiraApiVersion;
+  };
 
 export async function validateInvocation(
   context: IntegrationExecutionContext<JiraIntegrationInstanceConfig>,
@@ -138,41 +142,137 @@ export async function validateInvocation(
 
   if (!isValidJiraHost(config.jiraHost)) {
     throw new IntegrationValidationError(
-      'jiraHost must be a valid hostname with optional port and root path. (ex: example.com, example.com:2913, example.com/urlBase, subdomain.example.com)',
+      'jiraHost must be a valid hostname with optional port and root path. (ex: example.com, example.com:2913, example.com/urlBase, http://subdomain.example.com)',
     );
   }
 
-  const normalizedConfig = buildNormalizedInstanceConfig(config);
-  const apiClient = new APIClient(context.logger, normalizedConfig);
+  const jiraHostConfig = buildJiraHostConfig(config.jiraHost);
+
+  let jiraApiVersion = config.jiraApiVersion;
+  if (!jiraApiVersion) {
+    try {
+      jiraApiVersion = await detectApiVersion(jiraHostConfig);
+    } catch (err) {
+      throw new IntegrationError({
+        code: 'UNKNOWN_JIRA_API_VERSION',
+        message: err.message,
+        cause: err,
+        fatal: true,
+      });
+    }
+  }
+
+  const normalizedConfig = buildNormalizedInstanceConfig(
+    config,
+    jiraHostConfig,
+    jiraApiVersion,
+  );
+
+  const jiraApi = new JiraApi(normalizedConfig);
+
+  // TODO: Reduce to a single wrapper client
+  const jiraClient = new JiraClient(context.logger, jiraApi);
+  const apiClient = new APIClient(context.logger, jiraClient);
+
   await apiClient.verifyAuthentication();
+
+  // TODO: Remove buildProjectConfigs and simplify everything that calls it
+  await validateProjectConfiguration(
+    jiraClient,
+    buildProjectConfigs(normalizedConfig.projects).map((e) => e.key),
+  );
 
   context.instance.config = normalizedConfig;
 }
 
+/**
+ * Used to validate and extract values from the `jiraHost` configuration value.
+ *
+ * Test, advance, and see capture groups with examples at
+ * https://regextester.github.io/XigoaHR0cHM_KSg6Ly8pKT8oKChbYS16QS1aMC05XXxbYS16QS1aMC05XVthLXpBLVowLTlcLV0qW2EtekEtWjAtOV0pXC4pKihbQS1aYS16MC05XXxbQS1aYS16MC05XVtBLVphLXowLTlcLV0qW0EtWmEtejAtOV0pKSg6KFxkezEsNH0pKT8oXC8oW0EtWmEtejAtOV0rKSk_JA/dGVzdGluZy5jb206ODA4MC8xMjMKdGVzdGluZy5jb20KbG9jYWxob3N0CmxvY2FsaG9zdDo4MDgwCmZ0cDovL2JvYmJseQpodHRwOi8vam9uZXMKaHR0cHM6Ly9ib2JieQpodHRwOi9ib2Ji/32770
+ * That URL needs to be updated here whent he regular expression is changed.
+ */
 const JIRA_HOST_REGEX =
-  /^((([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]))(:(\d{1,4}))?(\/([A-Za-z0-9]+))?$/;
+  /^((https?)(:\/\/))?((([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]))(:(\d{1,4}))?(\/([A-Za-z0-9]+))?$/;
 
 export function isValidJiraHost(jiraHost: string | undefined): boolean {
   return !!jiraHost && JIRA_HOST_REGEX.test(jiraHost);
 }
 
-export function buildNormalizedInstanceConfig(
-  config: JiraIntegrationInstanceConfig,
-): IntegrationConfig {
-  const match = config.jiraHost.match(JIRA_HOST_REGEX);
+export function buildJiraHostConfig(jiraHost: string): JiraHostConfig {
+  const match = jiraHost.match(JIRA_HOST_REGEX);
   if (match) {
     return {
-      ...config,
-      hostProtocol: (config.jiraProtocol as 'http' | 'https') || 'https',
-      hostName: match[1],
-      hostPort: Number(match[6]) || 443,
-      urlBase: match[8],
+      protocol: match[2] || 'https',
+      host: match[4],
+      port: match[9] || '443',
+      base: match[11],
     };
   } else {
     throw new IntegrationValidationError(
-      `Invalid jiraHost value, could not calculate configuration: ${JSON.stringify(
-        config.jiraHost,
-      )}`,
+      `Could not extract options from ${JSON.stringify(jiraHost)}`,
+    );
+  }
+}
+
+export function buildJiraApiOptions(
+  config: IntegrationConfig,
+  version: JiraApiVersion,
+): JiraApiOptions {
+  return {
+    protocol: config.protocol,
+    host: config.host,
+    port: config.port,
+    base: config.base,
+    username: config.jiraUsername,
+    password: config.jiraPassword,
+    apiVersion: version,
+    strictSSL: true,
+  };
+}
+
+export function buildNormalizedInstanceConfig(
+  config: JiraIntegrationInstanceConfig,
+  jiraHostConfig: JiraHostConfig,
+  jiraApiVersion: JiraApiVersion,
+): IntegrationConfig {
+  return {
+    ...config,
+    ...jiraHostConfig,
+    username: config.jiraUsername,
+    password: config.jiraPassword,
+    apiVersion: jiraApiVersion,
+  };
+}
+
+export async function validateProjectConfiguration(
+  client: JiraClient,
+  projects: string[],
+): Promise<void> {
+  let fetchedProjectKeys: string[];
+  try {
+    const fetchedProjects = await client.fetchProjects();
+    fetchedProjectKeys = fetchedProjects.map((p) => p.key);
+  } catch (err) {
+    throw new IntegrationProviderAPIError({
+      endpoint: 'fetchProjects',
+      status: err.statusCode,
+      statusText: err.name,
+      cause: err,
+    });
+  }
+
+  const configProjectKeys = buildProjectConfigs(projects).map((p) => p.key);
+
+  const invalidConfigProjectKeys = configProjectKeys.filter(
+    (k) => !fetchedProjectKeys.includes(k),
+  );
+
+  if (invalidConfigProjectKeys.length) {
+    throw new IntegrationValidationError(
+      `The following project key(s) are invalid: ${JSON.stringify(
+        invalidConfigProjectKeys,
+      )}. Ensure the authenticated user has access to this project.`,
     );
   }
 }

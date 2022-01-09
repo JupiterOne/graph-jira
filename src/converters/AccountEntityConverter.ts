@@ -1,11 +1,12 @@
+import { parseTimePropertyValue } from '@jupiterone/integration-sdk-core';
+
 import {
   ACCOUNT_ENTITY_CLASS,
   ACCOUNT_ENTITY_TYPE,
   AccountEntity,
 } from '../entities';
-import { parseTimePropertyValue } from '@jupiterone/integration-sdk-core';
 import { ServerInfo } from '../jira';
-import generateEntityKey from '../utils/generateEntityKey';
+import { generateEntityKey } from '../utils';
 
 export function createAccountEntity(serverInfo: ServerInfo): AccountEntity {
   return {

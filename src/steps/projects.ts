@@ -6,7 +6,6 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
-import { APIClient } from '../client';
 import { IntegrationConfig } from '../config';
 import { DATA_CONFIG_PROJECT_ENTITY_ARRAY } from '../constants';
 import { createProjectEntity } from '../converters/ProjectEntityConverter';
@@ -18,7 +17,7 @@ import {
   PROJECT_ENTITY_TYPE,
   ProjectEntity,
 } from '../entities';
-import { buildProjectConfigs } from '../utils/builders';
+import { buildProjectConfigs, createApiClient } from '../utils';
 import { DATA_ACCOUNT_ENTITY } from './account';
 
 export async function fetchProjects({
@@ -27,7 +26,7 @@ export async function fetchProjects({
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
   const config = instance.config;
-  const apiClient = new APIClient(logger, config);
+  const apiClient = createApiClient(logger, config);
 
   const accountEntity = await jobState.getData<AccountEntity>(
     DATA_ACCOUNT_ENTITY,

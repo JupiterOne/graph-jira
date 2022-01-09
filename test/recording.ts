@@ -5,8 +5,6 @@ import {
   SetupRecordingInput,
 } from '@jupiterone/integration-sdk-testing';
 
-import { DEFAULT_JIRA_HOST, integrationInstanceConfig } from './config';
-
 export { Recording };
 
 export function setupJiraRecording(
@@ -21,6 +19,7 @@ export function setupJiraRecording(
     },
     options: {
       logging: false,
+      ...input.options,
     },
   });
 }
@@ -37,9 +36,6 @@ function redact(entry: any): void {
     if (header.name === 'authorization') {
       header.value = 'Bearer [REDACTED]';
     }
-    if (header.name === 'host') {
-      header.value = DEFAULT_JIRA_HOST;
-    }
   });
 
   if (/access_tokens/.exec(entry.request.url)) {
@@ -47,9 +43,4 @@ function redact(entry: any): void {
     responseContent.token = '[REDACTED]';
     entry.response.content.text = JSON.stringify(responseContent);
   }
-
-  entry.request.url = entry.request.url.replace(
-    integrationInstanceConfig.jiraHost,
-    DEFAULT_JIRA_HOST,
-  );
 }

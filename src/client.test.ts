@@ -2,7 +2,7 @@ import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing
 
 import { normalizedInstanceConfig } from '../test/config';
 import { Recording, setupJiraRecording } from '../test/recording';
-import { APIClient } from './client';
+import { createApiClient } from './utils';
 
 const logger = createMockIntegrationLogger();
 
@@ -16,7 +16,7 @@ describe('iterateIssues', () => {
   it('should not error when the project does not exist anymore', async () => {
     recording = setupJiraRecording({
       directory: __dirname,
-      name: 'steps',
+      name: 'iterateIssuesMissingProject',
       options: {
         recordFailedRequests: true,
         matchRequestsBy: {
@@ -37,7 +37,7 @@ describe('iterateIssues', () => {
       },
     });
 
-    const apiClient = new APIClient(logger, normalizedInstanceConfig);
+    const apiClient = createApiClient(logger, normalizedInstanceConfig);
     await expect(
       apiClient.iterateIssues('key', 100000, 10, () => undefined),
     ).resolves.not.toThrow();

@@ -1,4 +1,5 @@
 import { Relationship } from '@jupiterone/integration-sdk-core';
+
 import {
   ISSUE_ENTITY_TYPE,
   USER_CREATED_ISSUE_RELATIONSHIP_CLASS,
@@ -8,7 +9,7 @@ import {
   USER_REPORTED_ISSUE_RELATIONSHIP_TYPE,
 } from '../entities';
 import { Issue, User } from '../jira';
-import generateEntityKey from '../utils/generateEntityKey';
+import { generateEntityKey } from '../utils';
 
 export function createUserCreatedIssueRelationships(issues: Issue[]) {
   return issues.reduce((acc: Relationship[], issue) => {
