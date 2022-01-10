@@ -20,7 +20,7 @@ describe(JiraClient, () => {
   let recording: Recording;
 
   afterEach(async () => {
-    if (recording) await recording.stop();
+    await recording.stop();
   });
 
   test('fetchServerInfo', async () => {
