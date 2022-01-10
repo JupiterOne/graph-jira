@@ -142,7 +142,7 @@ export async function validateInvocation(
 
   if (!isValidJiraHost(config.jiraHost)) {
     throw new IntegrationValidationError(
-      'jiraHost must be a valid hostname with optional port and root path. (ex: example.com, example.com:2913, example.com/urlBase, http://subdomain.example.com)',
+      'jiraHost must be a valid hostname with optional port and base path. (ex: example.com, example.com:2913, example.com/base, http://subdomain.example.com)',
     );
   }
 
