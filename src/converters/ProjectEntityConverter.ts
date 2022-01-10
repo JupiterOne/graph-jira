@@ -4,8 +4,7 @@ import {
   ProjectEntity,
 } from '../entities';
 import { Project } from '../jira';
-
-import generateEntityKey from '../utils/generateEntityKey';
+import { generateEntityKey } from '../utils';
 
 export function createProjectEntity(project: Project): ProjectEntity {
   const projectEntity: ProjectEntity = {

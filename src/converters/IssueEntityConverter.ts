@@ -1,8 +1,9 @@
+import camelCase from 'lodash/camelCase';
+
 import {
   IntegrationLogger,
   parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
-import camelCase from 'lodash/camelCase';
 
 import {
   CHANGE_ISSUE_ENTITY_CLASS,
@@ -16,7 +17,7 @@ import {
 } from '../entities';
 import { Field, Issue } from '../jira';
 import parseContent from '../jira/parseContent';
-import generateEntityKey from '../utils/generateEntityKey';
+import { generateEntityKey } from '../utils';
 import {
   extractValueFromCustomField,
   UNABLE_TO_PARSE_RESPONSE,

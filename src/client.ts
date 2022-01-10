@@ -2,19 +2,17 @@ import {
   IntegrationLogger,
   IntegrationProviderAuthenticationError,
   IntegrationProviderAuthorizationError,
-  IntegrationValidationError,
 } from '@jupiterone/integration-sdk-core';
 
-import { IntegrationConfig } from './config';
 import {
-  createJiraClient,
+  Field,
   Issue,
   IssuesOptions,
   JiraClient,
   Project,
+  ServerInfo,
   User,
 } from './jira';
-import { buildProjectConfigs } from './utils/builders';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
@@ -29,39 +27,29 @@ const USERS_PAGE_SIZE = 100;
 const ISSUES_PAGE_SIZE = 100;
 
 export class APIClient {
-  jira: JiraClient;
-  constructor(
-    readonly config: IntegrationConfig,
-    readonly logger: IntegrationLogger,
-  ) {
-    this.jira = createJiraClient(config, logger);
+  constructor(readonly logger: IntegrationLogger, readonly jira: JiraClient) {}
+
+  public async fetchServerInfo(): Promise<ServerInfo> {
+    return this.jira.fetchServerInfo();
   }
 
+  public async fetchFields(): Promise<Field[]> {
+    return this.jira.fetchFields();
+  }
+
+  /**
+   * Verifies authentication by making a call to `getCurrentUser()`.
+   */
   public async verifyAuthentication(): Promise<void> {
-    // the most light-weight request possible to validate
-    // authentication works with the provided credentials, throw an err if
-    // authentication fails
-    let fetchedProjectKeys: string[];
     try {
-      const fetchedProjects = await this.jira.fetchProjects();
-      fetchedProjectKeys = fetchedProjects.map((p) => p.key);
+      await this.jira.getCurrentUser();
     } catch (err) {
-      throw new IntegrationProviderAuthenticationError(err);
-    }
-
-    const configProjectKeys = buildProjectConfigs(this.config.projects).map(
-      (p) => p.key,
-    );
-
-    const invalidConfigProjectKeys = configProjectKeys.filter(
-      (k) => !fetchedProjectKeys.includes(k),
-    );
-    if (invalidConfigProjectKeys.length) {
-      throw new IntegrationValidationError(
-        `The following project key(s) are invalid: ${JSON.stringify(
-          invalidConfigProjectKeys,
-        )}. Ensure the authenticated user has access to this project.`,
-      );
+      throw new IntegrationProviderAuthenticationError({
+        endpoint: err.options.uri,
+        status: err.statusCode,
+        statusText: err.error.message,
+        cause: err,
+      });
     }
   }
 
@@ -242,11 +230,4 @@ export class APIClient {
       );
     }
   }
-}
-
-export function createAPIClient(
-  config: IntegrationConfig,
-  logger: IntegrationLogger,
-): APIClient {
-  return new APIClient(config, logger);
 }

@@ -7,8 +7,18 @@ This integration uses a wrapper for Jira API maintained
 
 ## Provider account setup
 
-You can get a free account on
+You can get a free Jira Cloud account on
 [Jira's website](https://www.atlassian.com/software/jira/free).
+
+[Jira Data Center](https://www.atlassian.com/software/jira/download-journey)
+(self-hosted) can be downloaded and executed locally. After you have
+successfully bootstrapped the local Jira server:
+
+1. During setup, allow the onboarding wizard to create a populated project
+   having the name `SP`.
+2. Create a new user `jupiterone-dev`.
+3. `cp .env.example .env` and verify configuration values.
+4. `LOAD_ENV=1 yarn test` to make new recording using the configuration.
 
 ## Authentication
 

@@ -1,23 +1,23 @@
 import {
+  createDirectRelationship,
+  IntegrationMissingKeyError,
   IntegrationStep,
   IntegrationStepExecutionContext,
   RelationshipClass,
-  createDirectRelationship,
-  IntegrationMissingKeyError,
 } from '@jupiterone/integration-sdk-core';
 
-import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
-import { DATA_ACCOUNT_ENTITY } from './account';
 import { createUserEntity } from '../converters';
 import {
   ACCOUNT_ENTITY_TYPE,
   ACCOUNT_USER_RELATIONSHIP_TYPE,
   AccountEntity,
-  USER_ENTITY_TYPE,
   USER_ENTITY_CLASS,
+  USER_ENTITY_TYPE,
   UserEntity,
 } from '../entities';
+import { createApiClient } from '../utils';
+import { DATA_ACCOUNT_ENTITY } from './account';
 
 export async function fetchUsers({
   instance,
@@ -25,7 +25,7 @@ export async function fetchUsers({
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
   const config = instance.config;
-  const apiClient = createAPIClient(config, logger);
+  const apiClient = createApiClient(logger, config);
 
   const accountEntity = await jobState.getData<AccountEntity>(
     DATA_ACCOUNT_ENTITY,

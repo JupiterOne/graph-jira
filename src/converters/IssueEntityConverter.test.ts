@@ -4,8 +4,7 @@ import { parseTimePropertyValue } from '@jupiterone/integration-sdk-core';
 import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 
 import { Issue } from '../jira';
-import { normalizeCustomFieldIdentifiers } from '../utils/builders';
-import generateEntityKey from '../utils/generateEntityKey';
+import { generateEntityKey, normalizeCustomFieldIdentifiers } from '../utils';
 import { createIssueEntity } from './';
 
 function getJiraIssue(overrides: object = {}): Issue {

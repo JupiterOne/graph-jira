@@ -12,7 +12,6 @@ import {
   Issue,
   IssuesOptions,
   IssueTypeName,
-  JiraParams,
   PaginationOptions,
   Project,
   ServerInfo,
@@ -20,21 +19,7 @@ import {
 } from './types';
 
 export class JiraClient {
-  private client: JiraApi;
-  private logger: IntegrationLogger;
-
-  constructor(params: JiraParams, logger: IntegrationLogger) {
-    const { host, username, password } = params;
-    this.client = new JiraApi({
-      protocol: 'https',
-      host,
-      username,
-      password,
-      apiVersion: '3',
-      strictSSL: true,
-    });
-    this.logger = logger;
-  }
+  constructor(private logger: IntegrationLogger, private client: JiraApi) {}
 
   public async addNewIssue(
     summary: string,
@@ -57,24 +42,24 @@ export class JiraClient {
     return issue;
   }
 
+  public async getCurrentUser(): Promise<any> {
+    return await this.client.getCurrentUser();
+  }
+
   public async findIssue(issueIdOrKey: string): Promise<Issue> {
-    const issue: Issue = (await this.client.findIssue(issueIdOrKey)) as Issue;
-    return issue;
+    return (await this.client.findIssue(issueIdOrKey)) as Issue;
   }
 
   public async fetchFields(): Promise<Field[]> {
-    const fields: Field[] = (await this.client.listFields()) as Field[];
-    return fields;
+    return (await this.client.listFields()) as Field[];
   }
 
   public async fetchProjects(): Promise<Project[]> {
-    const projects = (await this.client.listProjects()) as Project[];
-    return projects;
+    return (await this.client.listProjects()) as Project[];
   }
 
   public async fetchServerInfo(): Promise<ServerInfo> {
-    const info: ServerInfo = (await this.client.getServerInfo()) as ServerInfo;
-    return info;
+    return (await this.client.getServerInfo()) as ServerInfo;
   }
 
   public async fetchIssuesPage({

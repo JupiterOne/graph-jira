@@ -31,7 +31,8 @@
     "@jupiterone/integration-sdk-core": "^7.4.0",
     "dotenv": "^10.0.0",
     "jira-client": "^7.1.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "node-fetch": "2"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -47,11 +48,10 @@
     "@types/jest": "^24.0.0",
     "@types/jira-client": "^7.1.0",
     "@types/lodash": "^4.14.178",
-    "@types/nock": "^10.0.3",
     "@types/node": "~8.10.0",
+    "@types/node-fetch": "2",
     "fs-extra": "^8.0.1",
     "jest-extended": "^0.11.5",
-    "markdown-table": "^1.1.2",
-    "nock": "^10.0.6"
+    "markdown-table": "^1.1.2"
   }
 }

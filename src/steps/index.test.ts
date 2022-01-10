@@ -3,13 +3,13 @@ import {
   Recording,
 } from '@jupiterone/integration-sdk-testing';
 
+import { normalizedInstanceConfig } from '../../test/config';
+import { setupJiraRecording } from '../../test/recording';
 import { IntegrationConfig } from '../config';
-import { integrationConfig } from '../../test/config';
 import { fetchAccountDetails } from './account';
-import { fetchUsers } from './users';
 import { fetchIssues } from './issues';
 import { fetchProjects } from './projects';
-import { setupJiraRecording } from '../../test/recording';
+import { fetchUsers } from './users';
 
 jest.setTimeout(10000);
 
@@ -26,7 +26,7 @@ test('should collect data', async () => {
   });
 
   const context = createMockStepExecutionContext<IntegrationConfig>({
-    instanceConfig: integrationConfig,
+    instanceConfig: normalizedInstanceConfig,
   });
 
   // Simulates dependency graph execution.

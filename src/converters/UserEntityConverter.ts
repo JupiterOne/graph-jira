@@ -1,6 +1,6 @@
 import { USER_ENTITY_CLASS, USER_ENTITY_TYPE, UserEntity } from '../entities';
 import { User } from '../jira';
-import generateEntityKey from '../utils/generateEntityKey';
+import { generateEntityKey } from '../utils';
 
 export function createUserEntity(user: User): UserEntity {
   return {

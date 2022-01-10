@@ -1,4 +1,5 @@
 import { Relationship } from '@jupiterone/integration-sdk-core';
+
 import {
   ISSUE_ENTITY_TYPE,
   PROJECT_ENTITY_TYPE,
@@ -6,7 +7,7 @@ import {
   PROJECT_ISSUE_RELATIONSHIP_TYPE,
 } from '../entities';
 import { Issue, Project } from '../jira';
-import generateEntityKey from '../utils/generateEntityKey';
+import { generateEntityKey } from '../utils';
 
 export function createProjectIssueRelationships(issues: Issue[]) {
   return issues.reduce((acc: Relationship[], issue) => {

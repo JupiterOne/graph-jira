@@ -1,229 +1,109 @@
 import 'jest-extended';
 
-import nock from 'nock';
+import JiraApi from 'jira-client';
 
 import {
-  createMockStepExecutionContext,
+  createMockIntegrationLogger,
   Recording,
 } from '@jupiterone/integration-sdk-testing';
 
-import { integrationConfig } from '../../test/config';
+import { normalizedInstanceConfig } from '../../test/config';
 import { setupJiraRecording } from '../../test/recording';
-import { createAPIClient } from '../client';
-import { IntegrationConfig } from '../config';
 import { JiraClient } from './JiraClient';
 
 jest.setTimeout(10000);
 
-const JIRA_LOCAL_EXECUTION_HOST =
-  process.env.JIRA_LOCAL_EXECUTION_HOST || 'example.atlassian.com';
+const logger = createMockIntegrationLogger();
+const client = new JiraClient(logger, new JiraApi(normalizedInstanceConfig));
 
-const context = createMockStepExecutionContext<IntegrationConfig>({
-  instanceConfig: integrationConfig,
-});
-const logger = context.logger;
-
-function prepareScope(def: nock.NockDefinition) {
-  def.scope = `https://${JIRA_LOCAL_EXECUTION_HOST}:443`;
-}
-
-describe('JiraClient fetch ok data', () => {
-  beforeAll(() => {
-    nock.back.fixtures = `${__dirname}/../../test/fixtures/`;
-    process.env.CI
-      ? nock.back.setMode('lockdown')
-      : nock.back.setMode('record');
-  });
-
-  function getAuthenticatedClient() {
-    const client = new JiraClient(
-      {
-        host: JIRA_LOCAL_EXECUTION_HOST,
-        username: process.env.JIRA_LOCAL_EXECUTION_USERNAME || '',
-        password: process.env.JIRA_LOCAL_EXECUTION_PASSWORD || '',
-      },
-      logger,
-    );
-
-    return client;
-  }
-
-  test('fetch server info ok', async () => {
-    const { nockDone } = await nock.back('server-info-ok.json', {
-      before: prepareScope,
-    });
-    const client = getAuthenticatedClient();
-    const response = await client.fetchServerInfo();
-    expect(response).toContainKeys(['baseUrl', 'serverTitle']);
-    nockDone();
-  });
-
-  test('fetch projects ok', async () => {
-    const { nockDone } = await nock.back('projects-ok.json', {
-      before: prepareScope,
-    });
-    const client = getAuthenticatedClient();
-    const response = await client.fetchProjects();
-    expect(response).toBeArray();
-    expect(response).not.toBeArrayOfSize(0);
-    expect(response.map((value) => value.name)).toEqual([
-      'First Project',
-      'Second project',
-    ]);
-    nockDone();
-  });
-
-  test('fetch users ok', async () => {
-    const { nockDone } = await nock.back('users-ok.json', {
-      before: prepareScope,
-    });
-    const client = getAuthenticatedClient();
-    const response = await client.fetchUsersPage();
-    expect(response).toBeArray();
-    expect(response).not.toBeArrayOfSize(0);
-    nockDone();
-  });
-
-  test('fetch issues with existing project ok', async () => {
-    const { nockDone } = await nock.back('issues-ok.json', {
-      before: prepareScope,
-    });
-    const client = getAuthenticatedClient();
-    const response = await client.fetchIssuesPage({ project: 'First Project' });
-    expect(response).toBeArray();
-    expect(response).not.toBeArrayOfSize(0);
-    nockDone();
-  });
-
-  test('fetch issues with existing project and with updatedAt filter ok', async () => {
-    const { nockDone } = await nock.back('issues-updatedAt-ok.json', {
-      before: prepareScope,
-    });
-    const client = getAuthenticatedClient();
-    const response = await client.fetchIssuesPage({
-      project: 'First Project',
-      sinceAtTimestamp: Date.parse('2019-04-08T12:51:50.417Z'),
-    });
-    expect(response).toBeArray();
-    expect(response).not.toBeArrayOfSize(0);
-    nockDone();
-  });
-
-  test('fetch issues with not existing project ok', async () => {
-    const { nockDone } = await nock.back('issues-not-existed-exception.json', {
-      before: prepareScope,
-    });
-    const client = getAuthenticatedClient();
-    await expect(
-      client.fetchIssuesPage({ project: 'NotExistedProject' }),
-    ).rejects.toThrow();
-    nockDone();
-  });
-
-  afterAll(() => {
-    nock.restore();
-  });
-});
-
-describe('JiraClient recordings', () => {
+describe(JiraClient, () => {
   let recording: Recording;
 
   afterEach(async () => {
     await recording.stop();
   });
 
-  it('should not error when the project does not exist anymore', async () => {
+  test('fetchServerInfo', async () => {
     recording = setupJiraRecording({
       directory: __dirname,
-      name: 'steps',
+      name: 'fetchServerInfo',
+    });
+    const response = await client.fetchServerInfo();
+    expect(response).toContainKeys(['baseUrl', 'serverTitle']);
+  });
+
+  test('fetchProjects', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'fetchProjects',
+    });
+
+    const response = await client.fetchProjects();
+    expect(response).toBeArray();
+    expect(response).not.toBeArrayOfSize(0);
+    expect(response.map((value) => value.name)).toEqual([
+      'BUG',
+      'Jira J1 Integration',
+    ]);
+  });
+
+  test('fetchUsersPage', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'fetchUsersPage',
+    });
+
+    const response = await client.fetchUsersPage();
+    expect(response).toBeArray();
+    expect(response).not.toBeArrayOfSize(0);
+  });
+
+  test('fetchIssuesPage', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'fetchIssuesPage',
+    });
+
+    const response = await client.fetchIssuesPage({ project: 'JJI' });
+    expect(response).toBeArray();
+    expect(response).not.toBeArrayOfSize(0);
+  });
+
+  test('fetchIssuesPage with sinceAtTimestamp filter', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'fetchIssuesPageSinceAtTimestamp',
+    });
+
+    const response = await client.fetchIssuesPage({
+      project: 'JJI',
+      sinceAtTimestamp: Date.parse('2019-04-08T12:51:50.417Z'),
+    });
+    expect(response).toBeArray();
+    expect(response).not.toBeArrayOfSize(0);
+  });
+
+  test('fetchIssuesPage non-extant project', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'fetchIssuesPageNonExtantProject',
       options: {
         recordFailedRequests: true,
-        matchRequestsBy: {
-          method: true,
-          headers: false,
-          body: false,
-          order: true,
-          url: {
-            username: false,
-            password: false,
-            hostname: false,
-            port: false,
-            pathname: true,
-            query: true,
-            hash: false,
-          },
-        },
       },
     });
 
-    const apiClient = createAPIClient(context.instance.config, logger);
     await expect(
-      apiClient.iterateIssues('key', 100000, 10, () => undefined),
-    ).resolves.not.toThrow();
-  });
-});
-
-describe('JiraClient bad credentials', () => {
-  beforeAll(() => {
-    nock.back.fixtures = `${__dirname}/../../test/fixtures/`;
-    nock.back.setMode('record');
+      client.fetchIssuesPage({ project: 'NotExistedProject' }),
+    ).rejects.toThrow();
   });
 
-  function getAuthenticatedClient() {
-    const client = new JiraClient(
-      {
-        host: JIRA_LOCAL_EXECUTION_HOST,
-        username: 'fakeUser',
-        password: 'fakePassword',
-      },
-      logger,
-    );
-
-    return client;
-  }
-
-  test('fetch server info with bad auth', async () => {
-    const { nockDone } = await nock.back('projects-bad.json', {
-      before: prepareScope,
+  test('addNewIssue', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'addNewIssue',
     });
 
-    const client = getAuthenticatedClient();
-    await expect(client.fetchProjects()).rejects.toThrow();
-
-    nockDone();
-  });
-
-  afterAll(() => {
-    nock.restore();
-  });
-});
-
-describe('JiraClient creating data', () => {
-  beforeAll(() => {
-    nock.back.fixtures = `${__dirname}/../../test/fixtures/`;
-    nock.back.setMode('record');
-  });
-
-  function getAuthenticatedClient() {
-    const client = new JiraClient(
-      {
-        host: JIRA_LOCAL_EXECUTION_HOST,
-        username: process.env.JIRA_LOCAL_EXECUTION_USERNAME || '',
-        password: process.env.JIRA_LOCAL_EXECUTION_PASSWORD || '',
-      },
-      logger,
-    );
-
-    return client;
-  }
-
-  test('create issue with existing project ok', async () => {
-    const client = getAuthenticatedClient();
-    const { nockDone: creatingDone } = await nock.back('issue-create-ok.json', {
-      before: prepareScope,
-    });
     const createdIssue = await client.addNewIssue('Test Issue', 10000, 'Task');
-    creatingDone();
 
     expect(createdIssue).toContainKeys(['id', 'key', 'self']);
     expect(createdIssue).not.toContainKeys([
@@ -234,39 +114,30 @@ describe('JiraClient creating data', () => {
       'fields',
     ]);
 
-    const { nockDone: findingDone } = await nock.back('issue-found-ok.json', {
-      before: prepareScope,
-    });
     const foundIssue = await client.findIssue(createdIssue.id);
-    findingDone();
-
     expect(foundIssue).toContainKeys(['id', 'key', 'self', 'fields']);
   });
 
   test('#projectKeyToProjectId should return project id number if successful', async () => {
-    const { nockDone } = await nock.back('project-ok.json', {
-      before: prepareScope,
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'projectKeyToProjectId',
     });
 
-    const client = getAuthenticatedClient();
-    expect(await client.projectKeyToProjectId('PROJECTNAME')).toEqual(10000);
-    nockDone();
+    await expect(client.projectKeyToProjectId('BUG')).resolves.toEqual(10000);
   });
 
   test('#projectKeyToProjectId should return null project key does not exist', async () => {
-    const { nockDone } = await nock.back('project-bad.json', {
-      before: prepareScope,
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'projectKeyToProjectIdNonExtantProject',
+      options: {
+        recordFailedRequests: true,
+      },
     });
 
-    const client = getAuthenticatedClient();
     await expect(
       client.projectKeyToProjectId('PROJECTNAMEBAD'),
     ).rejects.toThrow(`No project could be found with key 'PROJECTNAMEBAD'`);
-
-    nockDone();
-  });
-
-  afterAll(() => {
-    nock.restore();
   });
 });
