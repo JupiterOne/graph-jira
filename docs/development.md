@@ -16,8 +16,9 @@ successfully bootstrapped the local Jira server:
 
 1. During setup, allow the onboarding wizard to create a populated project
    having the name `SP`.
-2. Create a new user `jupiterone-dev` with the password `tA_WFXarmbnhh6Xkfrx`.
-3. `cp .env.example .env` and vefify configuration values.
+2. Create a new user `jupiterone-dev`.
+3. `cp .env.example .env` and verify configuration values.
+4. `LOAD_ENV=1 yarn test` to make new recording using the configuration.
 
 ## Authentication
 

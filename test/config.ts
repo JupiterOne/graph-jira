@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 
 import {
+  buildJiraHostConfig,
   IntegrationConfig,
   JiraIntegrationInstanceConfig,
 } from '../src/config';
@@ -23,11 +24,8 @@ export const normalizedInstanceConfig: IntegrationConfig = {
   ...integrationInstanceConfig,
   username: integrationInstanceConfig.jiraUsername,
   password: integrationInstanceConfig.jiraPassword,
-  protocol: 'https',
-  host: integrationInstanceConfig.jiraHost,
-  port: '443',
+  ...buildJiraHostConfig(integrationInstanceConfig.jiraHost),
   apiVersion: '3',
-  base: undefined,
 };
 
 /**
@@ -40,10 +38,11 @@ export const normalizedInstanceConfig: IntegrationConfig = {
  * @see normalizedLocalServerInstanceConfig
  */
 export const localServerInstanceConfig: JiraIntegrationInstanceConfig = {
-  jiraHost: 'http://localhost:8080',
-  jiraUsername: 'jupiterone-dev',
-  jiraPassword: 'tA_WFXarmbnhh6Xkfrx',
-  projects: ['SP'],
+  jiraHost: process.env.LOCAL_SERVER_JIRA_HOST || 'http://localhost:8080',
+  jiraUsername: process.env.LOCAL_SERVER_JIRA_USERNAME || 'jupiterone-dev',
+  jiraPassword:
+    process.env.LOCAL_SERVER_JIRA_PASSWORD || 'default-jira-password',
+  projects: process.env.LOCAL_SERVER_PROJECTS || ['SP'],
 };
 
 /**
@@ -54,11 +53,8 @@ export const localServerInstanceConfig: JiraIntegrationInstanceConfig = {
  */
 export const normalizedLocalServerInstanceConfig: IntegrationConfig = {
   ...localServerInstanceConfig,
+  ...buildJiraHostConfig(localServerInstanceConfig.jiraHost),
   username: localServerInstanceConfig.jiraUsername,
   password: localServerInstanceConfig.jiraPassword,
-  protocol: 'http',
-  host: 'localhost',
-  port: '8080',
   apiVersion: '2',
-  base: undefined,
 };
