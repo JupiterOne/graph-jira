@@ -173,6 +173,18 @@ describe(isValidJiraHost, () => {
     expect(isValidJiraHost('fake-hostname.atlassian.net/subdir')).toBe(true);
   });
 
+  test('protocol http', () => {
+    expect(isValidJiraHost('http://fake-hostname.atlassian.net')).toBe(true);
+  });
+
+  test('protocol https', () => {
+    expect(isValidJiraHost('https://fake-hostname.atlassian.net')).toBe(true);
+  });
+
+  test('protocol ftp', () => {
+    expect(isValidJiraHost('ftp://fake-hostname.atlassian.net')).toBe(false);
+  });
+
   // TODO: Verify this cannot be multiple nodes
   test('multiple node base', () => {
     expect(
@@ -221,6 +233,24 @@ describe(buildJiraHostConfig, () => {
   test('http://localhost:8080/base', () => {
     expect(buildJiraHostConfig('http://localhost:8080')).toMatchObject({
       protocol: 'http',
+      host: 'localhost',
+      port: '8080',
+      base: undefined,
+    } as JiraHostConfig);
+  });
+
+  test('https://localhost', () => {
+    expect(buildJiraHostConfig('https://localhost')).toMatchObject({
+      protocol: 'https',
+      host: 'localhost',
+      port: '443',
+      base: undefined,
+    } as JiraHostConfig);
+  });
+
+  test('https://localhost:8080', () => {
+    expect(buildJiraHostConfig('https://localhost:8080')).toMatchObject({
+      protocol: 'https',
       host: 'localhost',
       port: '8080',
       base: undefined,
