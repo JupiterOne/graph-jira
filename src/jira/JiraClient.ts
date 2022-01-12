@@ -1,4 +1,4 @@
-import JiraApi, { JiraApiOptions } from 'jira-client';
+import JiraApi from 'jira-client';
 
 import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 import {

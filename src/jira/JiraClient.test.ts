@@ -1,20 +1,27 @@
 import 'jest-extended';
 
+import path from 'path';
+
 import {
   createMockIntegrationLogger,
   Recording,
+  SetupRecordingInput,
 } from '@jupiterone/integration-sdk-testing';
 
-import { normalizedInstanceConfig } from '../../test/config';
+import {
+  normalizedInstanceConfig,
+  normalizedLocalServerInstanceConfig,
+} from '../../test/config';
 import { setupJiraRecording } from '../../test/recording';
 import { JiraClient } from './JiraClient';
 
 jest.setTimeout(10000);
 
 const logger = createMockIntegrationLogger();
-const client = new JiraClient(logger, normalizedInstanceConfig);
 
-describe(JiraClient, () => {
+describe('JiraClient V' + normalizedInstanceConfig.apiVersion, () => {
+  const client = new JiraClient(logger, normalizedInstanceConfig);
+
   let recording: Recording;
 
   afterEach(async () => {
@@ -139,3 +146,126 @@ describe(JiraClient, () => {
     ).rejects.toThrow(`No project could be found with key 'PROJECTNAMEBAD'`);
   });
 });
+
+describe(
+  'JiraClient V' + normalizedLocalServerInstanceConfig.apiVersion,
+  () => {
+    const client = new JiraClient(logger, normalizedLocalServerInstanceConfig);
+
+    let recording: Recording;
+
+    function setupApiRecording(
+      name: string,
+      options?: SetupRecordingInput['options'],
+    ) {
+      recording = setupJiraRecording({
+        directory: path.join(
+          __dirname,
+          `api-v${normalizedLocalServerInstanceConfig.apiVersion}`,
+        ),
+        name,
+        options,
+      });
+    }
+
+    afterEach(async () => {
+      await recording.stop();
+    });
+
+    test('fetchServerInfo', async () => {
+      setupApiRecording('fetchServerInfo');
+      const response = await client.fetchServerInfo();
+      expect(response).toContainKeys(['baseUrl', 'serverTitle']);
+    });
+
+    test('fetchProjects', async () => {
+      setupApiRecording('fetchProjects');
+
+      const response = await client.fetchProjects();
+      expect(response).toBeArray();
+      expect(response).not.toBeArrayOfSize(0);
+      response.forEach((v) => expect(v.name).toBeString());
+    });
+
+    // test('fetchUsersPage', async () => {
+    //   setupApiRecording('fetchUsersPage');
+
+    //   const response = await client.fetchUsersPage();
+    //   expect(response).toBeArray();
+    //   expect(response).not.toBeArrayOfSize(0);
+    // });
+
+    test('fetchIssuesPage', async () => {
+      setupApiRecording('fetchIssuesPage');
+
+      const response = await client.fetchIssuesPage({
+        project: normalizedLocalServerInstanceConfig.projects[0],
+      });
+      expect(response).toBeArray();
+      expect(response).not.toBeArrayOfSize(0);
+    });
+
+    test('fetchIssuesPage with sinceAtTimestamp filter', async () => {
+      setupApiRecording('fetchIssuesPageSinceAtTimestamp');
+
+      const response = await client.fetchIssuesPage({
+        project: normalizedLocalServerInstanceConfig.projects[0],
+        sinceAtTimestamp: Date.parse('2019-04-08T12:51:50.417Z'),
+      });
+      expect(response).toBeArray();
+      expect(response).not.toBeArrayOfSize(0);
+    });
+
+    test('fetchIssuesPage non-extant project', async () => {
+      setupApiRecording('fetchIssuesPageNonExtantProject', {
+        recordFailedRequests: true,
+      });
+
+      await expect(
+        client.fetchIssuesPage({ project: 'NotExistedProject' }),
+      ).rejects.toThrow();
+    });
+
+    test('addNewIssue', async () => {
+      setupApiRecording('addNewIssue');
+
+      const createdIssue = await client.addNewIssue(
+        'Test Issue',
+        10000,
+        'Task',
+      );
+
+      expect(createdIssue).toContainKeys(['id', 'key', 'self']);
+      expect(createdIssue).not.toContainKeys([
+        'parent',
+        'project',
+        'creator',
+        'reporter',
+        'fields',
+      ]);
+
+      const foundIssue = await client.findIssue(createdIssue.id);
+      expect(foundIssue).toContainKeys(['id', 'key', 'self', 'fields']);
+    });
+
+    test('#projectKeyToProjectId should return project id number if successful', async () => {
+      setupApiRecording('projectKeyToProjectId');
+
+      await expect(
+        client.projectKeyToProjectId(
+          normalizedLocalServerInstanceConfig.projects[0],
+        ),
+      ).resolves.toEqual(10000);
+    });
+
+    test('#projectKeyToProjectId should return null project key does not exist', async () => {
+      setupApiRecording('projectKeyToProjectIdNonExtantProject', {
+        recordFailedRequests: true,
+      });
+
+      await expect(
+        client.projectKeyToProjectId('PROJECTNAMEBAD'),
+      ).rejects.toThrow(`No project could be found with key 'PROJECTNAMEBAD'`);
+    });
+  },
+);
