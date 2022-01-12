@@ -1,4 +1,4 @@
-import JiraApi from 'jira-client';
+import JiraApi, { JiraApiOptions } from 'jira-client';
 
 import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 import {
@@ -7,19 +7,39 @@ import {
   sleep,
 } from '@lifeomic/attempt';
 
+import { JiraClientConfig } from './';
 import {
   Field,
   Issue,
   IssuesOptions,
   IssueTypeName,
+  JiraApiVersion,
   PaginationOptions,
   Project,
   ServerInfo,
   User,
 } from './types';
 
+/**
+ * An adapter for `JiraApi` serving to handle differences in Jira API and server
+ * versions and provide an interface for pagination.
+ *
+ * The JiraApi accepts a `version` option that alters resource URLs to include
+ * the version number (i.e. `/rest/api/2/users`, `/rest/api/3/users`). However,
+ * there are [different versions of Jira][1] out there, each supporting API V2
+ * to some degree or other.
+ *
+ * [1]: https://docs.atlassian.com/software/jira/docs/api/REST/
+ */
 export class JiraClient {
-  constructor(private logger: IntegrationLogger, private client: JiraApi) {}
+  public apiVersion: JiraApiVersion;
+
+  private client: JiraApi;
+
+  constructor(private logger: IntegrationLogger, config: JiraClientConfig) {
+    this.apiVersion = config.apiVersion;
+    this.client = new JiraApi(config);
+  }
 
   public async addNewIssue(
     summary: string,

@@ -2,10 +2,10 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 
 import {
-  buildJiraHostConfig,
   IntegrationConfig,
   JiraIntegrationInstanceConfig,
 } from '../src/config';
+import { buildJiraHostConfig } from '../src/jira';
 
 if (process.env.LOAD_ENV) {
   dotenv.config({

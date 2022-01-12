@@ -1,7 +1,5 @@
 import 'jest-extended';
 
-import JiraApi from 'jira-client';
-
 import {
   createMockIntegrationLogger,
   Recording,
@@ -14,7 +12,7 @@ import { JiraClient } from './JiraClient';
 jest.setTimeout(10000);
 
 const logger = createMockIntegrationLogger();
-const client = new JiraClient(logger, new JiraApi(normalizedInstanceConfig));
+const client = new JiraClient(logger, normalizedInstanceConfig);
 
 describe(JiraClient, () => {
   let recording: Recording;
