@@ -1,5 +1,3 @@
-import JiraApi, { JiraApiOptions } from 'jira-client';
-
 import {
   IntegrationError,
   IntegrationExecutionContext,
@@ -10,8 +8,15 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { APIClient } from './client';
-import { JiraApiVersion, JiraClient } from './jira';
-import { detectApiVersion } from './jira/detectApiVersion';
+import {
+  buildJiraHostConfig,
+  detectApiVersion,
+  isValidJiraHost,
+  JiraApiVersion,
+  JiraClient,
+  JiraClientConfig,
+  JiraHostConfig,
+} from './jira';
 import { buildProjectConfigs } from './utils';
 
 /**
@@ -71,8 +76,7 @@ export interface JiraIntegrationInstanceConfig
    * - `"localhost/urlBase"`
    * - `"http://example.com"`
    * - `"subdomain.example.com/urlBase"`
-   *
-   * @see jiraProtocol
+   * - `"https://subdomain.example.com:443/urlBase"`
    */
   jiraHost: string;
 
@@ -109,24 +113,12 @@ export interface JiraIntegrationInstanceConfig
 }
 
 /**
- * Values extracted from the `jiraHost` configuration value.
- */
-export type JiraHostConfig = {
-  protocol: string;
-  host: string;
-  port: string;
-  base: string | undefined;
-};
-
-/**
  * Properties normalized from the `IntegrationInstance.config` after validation.
  * This configuration is provided to execution steps.
  */
 export type IntegrationConfig = JiraIntegrationInstanceConfig &
-  JiraHostConfig & {
-    username: string;
-    password: string;
-    apiVersion: JiraApiVersion;
+  JiraClientConfig & {
+    projects: string[];
   };
 
 export async function validateInvocation(
@@ -168,67 +160,14 @@ export async function validateInvocation(
     jiraApiVersion,
   );
 
-  const jiraApi = new JiraApi(normalizedConfig);
-
-  // TODO: Reduce to a single wrapper client
-  const jiraClient = new JiraClient(context.logger, jiraApi);
+  const jiraClient = new JiraClient(context.logger, normalizedConfig);
   const apiClient = new APIClient(context.logger, jiraClient);
 
   await apiClient.verifyAuthentication();
 
-  // TODO: Remove buildProjectConfigs and simplify everything that calls it
-  await validateProjectConfiguration(
-    jiraClient,
-    buildProjectConfigs(normalizedConfig.projects).map((e) => e.key),
-  );
+  await validateProjectConfiguration(jiraClient, normalizedConfig.projects);
 
   context.instance.config = normalizedConfig;
-}
-
-/**
- * Used to validate and extract values from the `jiraHost` configuration value.
- *
- * Test, advance, and see capture groups with examples at
- * https://regextester.github.io/XigoaHR0cHM_KSg6Ly8pKT8oKChbYS16QS1aMC05XXxbYS16QS1aMC05XVthLXpBLVowLTlcLV0qW2EtekEtWjAtOV0pXC4pKihbQS1aYS16MC05XXxbQS1aYS16MC05XVtBLVphLXowLTlcLV0qW0EtWmEtejAtOV0pKSg6KFxkezEsNH0pKT8oXC8oW0EtWmEtejAtOV0rKSk_JA/dGVzdGluZy5jb206ODA4MC8xMjMKdGVzdGluZy5jb20KbG9jYWxob3N0CmxvY2FsaG9zdDo4MDgwCmZ0cDovL2JvYmJseQpodHRwOi8vam9uZXMKaHR0cHM6Ly9ib2JieQpodHRwOi9ib2Ji/32770
- * That URL needs to be updated here whent he regular expression is changed.
- */
-const JIRA_HOST_REGEX =
-  /^((https?)(:\/\/))?((([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]))(:(\d{1,4}))?(\/([A-Za-z0-9]+))?$/;
-
-export function isValidJiraHost(jiraHost: string | undefined): boolean {
-  return !!jiraHost && JIRA_HOST_REGEX.test(jiraHost);
-}
-
-export function buildJiraHostConfig(jiraHost: string): JiraHostConfig {
-  const match = jiraHost.match(JIRA_HOST_REGEX);
-  if (match) {
-    return {
-      protocol: match[2] || 'https',
-      host: match[4],
-      port: match[9] || '443',
-      base: match[11],
-    };
-  } else {
-    throw new IntegrationValidationError(
-      `Could not extract options from ${JSON.stringify(jiraHost)}`,
-    );
-  }
-}
-
-export function buildJiraApiOptions(
-  config: IntegrationConfig,
-  version: JiraApiVersion,
-): JiraApiOptions {
-  return {
-    protocol: config.protocol,
-    host: config.host,
-    port: config.port,
-    base: config.base,
-    username: config.jiraUsername,
-    password: config.jiraPassword,
-    apiVersion: version,
-    strictSSL: true,
-  };
 }
 
 export function buildNormalizedInstanceConfig(
@@ -242,6 +181,8 @@ export function buildNormalizedInstanceConfig(
     username: config.jiraUsername,
     password: config.jiraPassword,
     apiVersion: jiraApiVersion,
+    // TODO: Remove buildProjectConfigs and simplify everything that calls it
+    projects: buildProjectConfigs(config.projects).map((e) => e.key),
   };
 }
 

@@ -1,5 +1,3 @@
-import JiraApi from 'jira-client';
-
 import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
 import { APIClient } from '../client';
@@ -16,5 +14,5 @@ export function createApiClient(
   logger: IntegrationLogger,
   config: IntegrationConfig,
 ): APIClient {
-  return new APIClient(logger, new JiraClient(logger, new JiraApi(config)));
+  return new APIClient(logger, new JiraClient(logger, config));
 }

@@ -1,3 +1,5 @@
+import { JiraApiOptions } from 'jira-client';
+
 export interface CreateIssueActionProperties {
   /**
    * The key of the issue project.
@@ -17,6 +19,24 @@ export type IssueTypeName =
 
 export type JiraApiVersion = '2' | '3';
 export const KNOWN_JIRA_API_VERSIONS: JiraApiVersion[] = ['3', '2'];
+
+/**
+ * `JiraApi` configuration values extracted from a Jira host configuration
+ * string.
+ */
+export type JiraHostConfig = Required<
+  Pick<JiraApiOptions, 'protocol' | 'host' | 'port'>
+> & {
+  base: string | undefined;
+};
+
+/**
+ * A complete set of required `JiraApi` configuration values.
+ */
+export type JiraClientConfig = JiraHostConfig &
+  Required<Pick<JiraApiOptions, 'username' | 'password'>> & {
+    apiVersion: JiraApiVersion;
+  };
 
 export interface PaginationOptions {
   startAt?: number;
