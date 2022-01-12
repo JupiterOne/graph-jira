@@ -106,9 +106,24 @@ export class JiraClient {
   }
 
   public async fetchUsersPage(options?: PaginationOptions): Promise<User[]> {
-    return retry(this.logger, async () =>
-      this.client.getUsers(options?.startAt, options?.pageSize),
-    ) as Promise<User[]>;
+    return retry(this.logger, async () => {
+      if (this.apiVersion === '3') {
+        return this.client.getUsers(
+          options?.startAt,
+          options?.pageSize,
+        ) as Promise<User[]>;
+      } else if (this.apiVersion === '2') {
+        // Tested with Jira server 8.20.3
+        return this.client.searchUsers({
+          startAt: options?.startAt,
+          maxResults: options?.pageSize,
+          username: '.',
+          query: '',
+        }) as Promise<User[]>;
+      } else {
+        throw new Error(`Unknown Jira API version: ${this.apiVersion}`);
+      }
+    });
   }
 
   /**

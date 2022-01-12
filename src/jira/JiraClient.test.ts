@@ -187,13 +187,13 @@ describe(
       response.forEach((v) => expect(v.name).toBeString());
     });
 
-    // test('fetchUsersPage', async () => {
-    //   setupApiRecording('fetchUsersPage');
+    test('fetchUsersPage', async () => {
+      setupApiRecording('fetchUsersPage');
 
-    //   const response = await client.fetchUsersPage();
-    //   expect(response).toBeArray();
-    //   expect(response).not.toBeArrayOfSize(0);
-    // });
+      const response = await client.fetchUsersPage();
+      expect(response).toBeArray();
+      expect(response).not.toBeArrayOfSize(0);
+    });
 
     test('fetchIssuesPage', async () => {
       setupApiRecording('fetchIssuesPage');
