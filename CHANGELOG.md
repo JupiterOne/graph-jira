@@ -8,9 +8,11 @@ and this project adheres to
 
 ## [Unreleased](https://github.com/JuptiterOne/graph-jira/compare/v1.9.8...HEAD)
 
+## 2.2.0
+
 ### Added
 
-- Added support for Jira API Version 2 (Jira Data Center)
+- Added support for Jira API Version 2 (Jira Data Center 8.20.3)
 - Added support for specifying the port in the `jiraHost` configuration value
   (i.e. `example.com:8080`)
 - Added optional bulk ingestion feature to allow for collecting every single
