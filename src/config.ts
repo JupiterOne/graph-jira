@@ -117,7 +117,9 @@ export interface JiraIntegrationInstanceConfig
  * This configuration is provided to execution steps.
  */
 export type IntegrationConfig = JiraIntegrationInstanceConfig &
-  JiraClientConfig;
+  JiraClientConfig & {
+    projects: string[];
+  };
 
 export async function validateInvocation(
   context: IntegrationExecutionContext<JiraIntegrationInstanceConfig>,
@@ -163,11 +165,7 @@ export async function validateInvocation(
 
   await apiClient.verifyAuthentication();
 
-  // TODO: Remove buildProjectConfigs and simplify everything that calls it
-  await validateProjectConfiguration(
-    jiraClient,
-    buildProjectConfigs(normalizedConfig.projects).map((e) => e.key),
-  );
+  await validateProjectConfiguration(jiraClient, normalizedConfig.projects);
 
   context.instance.config = normalizedConfig;
 }
@@ -183,6 +181,8 @@ export function buildNormalizedInstanceConfig(
     username: config.jiraUsername,
     password: config.jiraPassword,
     apiVersion: jiraApiVersion,
+    // TODO: Remove buildProjectConfigs and simplify everything that calls it
+    projects: buildProjectConfigs(config.projects).map((e) => e.key),
   };
 }
 

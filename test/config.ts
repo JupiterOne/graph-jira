@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 
 import {
-  IntegrationConfig,
+  buildNormalizedInstanceConfig,
   JiraIntegrationInstanceConfig,
 } from '../src/config';
 import { buildJiraHostConfig } from '../src/jira';
@@ -20,13 +20,11 @@ export const integrationInstanceConfig: JiraIntegrationInstanceConfig = {
   projects: process.env.PROJECTS || ['JJI'],
 };
 
-export const normalizedInstanceConfig: IntegrationConfig = {
-  ...integrationInstanceConfig,
-  username: integrationInstanceConfig.jiraUsername,
-  password: integrationInstanceConfig.jiraPassword,
-  ...buildJiraHostConfig(integrationInstanceConfig.jiraHost),
-  apiVersion: '3',
-};
+export const normalizedInstanceConfig = buildNormalizedInstanceConfig(
+  integrationInstanceConfig,
+  buildJiraHostConfig(integrationInstanceConfig.jiraHost),
+  '3',
+);
 
 /**
  * An instance configuration for a local Jira server. This object can be used in
@@ -51,10 +49,9 @@ export const localServerInstanceConfig: JiraIntegrationInstanceConfig = {
  *
  * @see localServerInstanceConfig
  */
-export const normalizedLocalServerInstanceConfig: IntegrationConfig = {
-  ...localServerInstanceConfig,
-  ...buildJiraHostConfig(localServerInstanceConfig.jiraHost),
-  username: localServerInstanceConfig.jiraUsername,
-  password: localServerInstanceConfig.jiraPassword,
-  apiVersion: '2',
-};
+export const normalizedLocalServerInstanceConfig =
+  buildNormalizedInstanceConfig(
+    localServerInstanceConfig,
+    buildJiraHostConfig(localServerInstanceConfig.jiraHost),
+    '2',
+  );
