@@ -1,36 +1,31 @@
-import { buildProjectConfigs } from './builders';
+import { normalizeProjectKeys } from './builders';
 
-describe('buildProjectConfigs', () => {
-  const correctOutputSingle = [{ key: 'string1' }];
-  const correctOutputDouble = [{ key: 'string1' }, { key: 'string2' }];
-
-  it('project configs from array', () => {
-    const input = ['string1', 'string2'];
-    const value = buildProjectConfigs(input);
-    expect(value).toEqual(correctOutputDouble);
+describe('normalizeProjectKeys', () => {
+  test('array, multiple entries', () => {
+    expect(normalizeProjectKeys(['string1', 'string2'])).toEqual([
+      'string1',
+      'string2',
+    ]);
   });
 
-  it('project configs from array with blank extras', () => {
-    const input = ['string1', 'string2', '', '   '];
-    const value = buildProjectConfigs(input);
-    expect(value).toEqual(correctOutputDouble);
+  test('array, blank entries', () => {
+    expect(normalizeProjectKeys(['string1', '', '  '])).toEqual(['string1']);
   });
 
-  it('project configs from string', () => {
-    const input = 'string1';
-    const value = buildProjectConfigs(input);
-    expect(value).toEqual(correctOutputSingle);
+  test('string, one entry', () => {
+    expect(normalizeProjectKeys('string1')).toEqual(['string1']);
   });
 
-  it('project configs from stringified array', () => {
-    const input = '[ "string1", "string2" ]';
-    const value = buildProjectConfigs(input);
-    expect(value).toEqual(correctOutputDouble);
+  test('JSON array, multiple entries', () => {
+    expect(normalizeProjectKeys('[ "string1", "string2" ]')).toEqual([
+      'string1',
+      'string2',
+    ]);
   });
 
-  it('project configs from stringified array and blank extras', () => {
-    const input = '[ "string1", "string2", "", "    " ]';
-    const value = buildProjectConfigs(input);
-    expect(value).toEqual(correctOutputDouble);
+  test('JSON array, blank entries', () => {
+    expect(normalizeProjectKeys('[ "string1", "", "    " ]')).toEqual([
+      'string1',
+    ]);
   });
 });

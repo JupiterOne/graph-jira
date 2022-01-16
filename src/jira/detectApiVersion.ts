@@ -15,6 +15,10 @@ const VERSION_DETECTIONS = {
   },
 };
 
+/**
+ * Detects the API version of the Jira server by fetching the `ServerInfo`. Note
+ * that this does not require authentication.
+ */
 export async function detectApiVersion(
   apiOptions: Required<Pick<JiraApiOptions, 'protocol' | 'host' | 'port'>>,
 ): Promise<JiraApiVersion> {

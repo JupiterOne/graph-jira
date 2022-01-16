@@ -108,7 +108,11 @@ describe('JiraClient V' + normalizedInstanceConfig.apiVersion, () => {
       name: 'addNewIssue',
     });
 
-    const createdIssue = await client.addNewIssue('Test Issue', 10000, 'Task');
+    const createdIssue = await client.addNewIssue({
+      summary: 'Test Issue',
+      projectId: 10000,
+      issueTypeName: 'Task',
+    });
 
     expect(createdIssue).toContainKeys(['id', 'key', 'self']);
     expect(createdIssue).not.toContainKeys([
@@ -121,6 +125,42 @@ describe('JiraClient V' + normalizedInstanceConfig.apiVersion, () => {
 
     const foundIssue = await client.findIssue(createdIssue.id);
     expect(foundIssue).toContainKeys(['id', 'key', 'self', 'fields']);
+  });
+
+  test('addNewIssue description', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'addNewIssueWithDescription',
+    });
+
+    const descriptionADF = {
+      version: 1,
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              text: 'Test description',
+            },
+          ],
+        },
+      ],
+    };
+
+    const createdIssue = await client.addNewIssue({
+      summary: 'Test Issue',
+      projectId: 10000,
+      issueTypeName: 'Task',
+      additionalFields: { description: descriptionADF },
+    });
+
+    expect(createdIssue).toContainKeys(['id', 'key', 'self']);
+
+    const foundIssue = await client.findIssue(createdIssue.id);
+    expect(foundIssue).toContainKeys(['id', 'key', 'self', 'fields']);
+    expect(foundIssue.fields.description).toEqual(descriptionADF);
   });
 
   test('#projectKeyToProjectId should return project id number if successful', async () => {
@@ -229,11 +269,11 @@ describe(
     test('addNewIssue', async () => {
       setupApiRecording('addNewIssue');
 
-      const createdIssue = await client.addNewIssue(
-        'Test Issue',
-        10000,
-        'Task',
-      );
+      const createdIssue = await client.addNewIssue({
+        summary: 'Test Issue',
+        projectId: 10000,
+        issueTypeName: 'Task',
+      });
 
       expect(createdIssue).toContainKeys(['id', 'key', 'self']);
       expect(createdIssue).not.toContainKeys([

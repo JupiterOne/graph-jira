@@ -1,10 +1,11 @@
+import { JiraProjectId } from './';
 import { JiraClient } from './JiraClient';
 import { CreateIssueActionProperties, Issue } from './types';
 
-async function getProjectIdFromProvidedProject(
+async function getProjectIdForProjectKey(
   client: JiraClient,
   project: string,
-): Promise<number> {
+): Promise<JiraProjectId> {
   const projectId = Number(project);
 
   if (!isNaN(projectId)) {
@@ -22,20 +23,24 @@ async function getProjectIdFromProvidedProject(
   return client.projectKeyToProjectId(project);
 }
 
-export default async function createJiraIssue(
+export async function createJiraIssue(
   client: JiraClient,
   action: { properties: CreateIssueActionProperties; [k: string]: any },
 ): Promise<Issue> {
-  const { summary, classification, project, additionalFields } =
-    action.properties;
+  const {
+    summary,
+    classification: issueTypeName,
+    project,
+    additionalFields,
+  } = action.properties;
 
-  const projectId = await getProjectIdFromProvidedProject(client, project);
-  const newIssue = await client.addNewIssue(
+  const projectId = await getProjectIdForProjectKey(client, project);
+  const newIssue = await client.addNewIssue({
     summary,
     projectId,
-    classification,
+    issueTypeName,
     additionalFields,
-  );
+  });
 
   return client.findIssue(newIssue.key);
 }

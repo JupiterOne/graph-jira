@@ -1,39 +1,39 @@
 import { JiraHostConfig } from './types';
-import { buildJiraHostConfig, isValidJiraHost } from './util';
+import { buildJiraHostConfig, isJiraHostString } from './util';
 
-describe(isValidJiraHost, () => {
+describe('isJiraHostString', () => {
   test('localhost:8080', () => {
-    expect(isValidJiraHost('localhost:8080')).toBe(true);
+    expect(isJiraHostString('localhost:8080')).toBe(true);
   });
 
   test('127.0.0.1:8080', () => {
-    expect(isValidJiraHost('127.0.0.1:8080')).toBe(true);
+    expect(isJiraHostString('127.0.0.1:8080')).toBe(true);
   });
 
   test('query params', () => {
-    expect(isValidJiraHost('test.com?somequeryparms')).toBe(false);
+    expect(isJiraHostString('test.com?somequeryparms')).toBe(false);
   });
 
   test('single node base', () => {
-    expect(isValidJiraHost('fake-hostname.atlassian.net/subdir')).toBe(true);
+    expect(isJiraHostString('fake-hostname.atlassian.net/subdir')).toBe(true);
   });
 
   test('protocol http', () => {
-    expect(isValidJiraHost('http://fake-hostname.atlassian.net')).toBe(true);
+    expect(isJiraHostString('http://fake-hostname.atlassian.net')).toBe(true);
   });
 
   test('protocol https', () => {
-    expect(isValidJiraHost('https://fake-hostname.atlassian.net')).toBe(true);
+    expect(isJiraHostString('https://fake-hostname.atlassian.net')).toBe(true);
   });
 
   test('protocol ftp', () => {
-    expect(isValidJiraHost('ftp://fake-hostname.atlassian.net')).toBe(false);
+    expect(isJiraHostString('ftp://fake-hostname.atlassian.net')).toBe(false);
   });
 
   // TODO: Verify this cannot be multiple nodes
   test('multiple node base', () => {
     expect(
-      isValidJiraHost('fake-hostname.atlassian.net/subdir/anothaone'),
+      isJiraHostString('fake-hostname.atlassian.net/subdir/anothaone'),
     ).toBe(false);
   });
 });
