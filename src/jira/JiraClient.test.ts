@@ -288,6 +288,25 @@ describe(
       expect(foundIssue).toContainKeys(['id', 'key', 'self', 'fields']);
     });
 
+    test('addNewIssue description', async () => {
+      setupApiRecording('addNewIssueWithDescription');
+
+      const createdIssue = await client.addNewIssue({
+        summary: 'Test Issue',
+        projectId: 10000,
+        issueTypeName: 'Task',
+        additionalFields: {
+          description: 'Test description',
+        },
+      });
+
+      expect(createdIssue).toContainKeys(['id', 'key', 'self']);
+
+      const foundIssue = await client.findIssue(createdIssue.id);
+      expect(foundIssue).toContainKeys(['id', 'key', 'self', 'fields']);
+      expect(foundIssue.fields.description).toEqual('Test description');
+    });
+
     test('#projectKeyToProjectId should return project id number if successful', async () => {
       setupApiRecording('projectKeyToProjectId');
 
