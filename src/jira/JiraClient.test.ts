@@ -19,6 +19,27 @@ jest.setTimeout(10000);
 
 const logger = createMockIntegrationLogger();
 
+const issueDescriptionText = 'Test description';
+
+/**
+ * The value of the `description` field for Jira API V3.
+ */
+const issueDescriptionADF = {
+  version: 1,
+  type: 'doc',
+  content: [
+    {
+      type: 'paragraph',
+      content: [
+        {
+          type: 'text',
+          text: issueDescriptionText,
+        },
+      ],
+    },
+  ],
+};
+
 describe('JiraClient V' + normalizedInstanceConfig.apiVersion, () => {
   const client = new JiraClient(logger, normalizedInstanceConfig);
 
@@ -133,34 +154,18 @@ describe('JiraClient V' + normalizedInstanceConfig.apiVersion, () => {
       name: 'addNewIssueWithDescription',
     });
 
-    const descriptionADF = {
-      version: 1,
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [
-            {
-              type: 'text',
-              text: 'Test description',
-            },
-          ],
-        },
-      ],
-    };
-
     const createdIssue = await client.addNewIssue({
       summary: 'Test Issue',
       projectId: 10000,
       issueTypeName: 'Task',
-      additionalFields: { description: descriptionADF },
+      additionalFields: { description: issueDescriptionADF },
     });
 
     expect(createdIssue).toContainKeys(['id', 'key', 'self']);
 
     const foundIssue = await client.findIssue(createdIssue.id);
     expect(foundIssue).toContainKeys(['id', 'key', 'self', 'fields']);
-    expect(foundIssue.fields.description).toEqual(descriptionADF);
+    expect(foundIssue.fields.description).toEqual(issueDescriptionADF);
   });
 
   test('#projectKeyToProjectId should return project id number if successful', async () => {
@@ -296,7 +301,7 @@ describe(
         projectId: 10000,
         issueTypeName: 'Task',
         additionalFields: {
-          description: 'Test description',
+          description: issueDescriptionText,
         },
       });
 
@@ -304,7 +309,7 @@ describe(
 
       const foundIssue = await client.findIssue(createdIssue.id);
       expect(foundIssue).toContainKeys(['id', 'key', 'self', 'fields']);
-      expect(foundIssue.fields.description).toEqual('Test description');
+      expect(foundIssue.fields.description).toEqual(issueDescriptionText);
     });
 
     test('#projectKeyToProjectId should return project id number if successful', async () => {

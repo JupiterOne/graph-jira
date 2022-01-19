@@ -11,6 +11,7 @@ import { JiraClientConfig } from './';
 import {
   Field,
   Issue,
+  IssueFields,
   IssuesOptions,
   IssueTypeName,
   JiraApiVersion,
@@ -26,7 +27,7 @@ type AddNewIssueParams = {
   summary: string;
   projectId: number;
   issueTypeName: IssueTypeName;
-  additionalFields?: object;
+  additionalFields?: IssueFields;
 };
 
 /**
@@ -50,6 +51,13 @@ export class JiraClient {
     this.client = new JiraApi(config);
   }
 
+  /**
+   * Add a new issue to the specified project.
+   *
+   * Jira API 3 supports a complex JSON structure (Atlassian Document Format)
+   * for some properties. It is currently the responsibility of the code calling
+   * this function to provide the propery values for these `additionalFields`.
+   */
   public async addNewIssue({
     summary,
     projectId,

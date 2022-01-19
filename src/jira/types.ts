@@ -1,21 +1,18 @@
 import { JiraApiOptions } from 'jira-client';
 
-export interface CreateIssueActionProperties {
-  /**
-   * The key of the issue project.
-   */
-  project: JiraProjectKey;
-  summary: string;
-  classification: IssueTypeName;
-  additionalFields?: object;
-}
-
+/**
+ * Common issue types in many default Jira project configurations. This value
+ * may be anything; it depends on what the target Jira project has configured.
+ */
 export type IssueTypeName =
   | 'Epic'
   | 'Improvement'
   | 'Task'
   | 'Sub-task'
-  | 'New Feature';
+  | 'New Feature'
+  | string;
+
+export type IssueFields = { [fieldName: string]: any };
 
 /**
  * Validates a Jira host string. The protocol, port, and base path are optional.

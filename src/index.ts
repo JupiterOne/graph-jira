@@ -19,11 +19,10 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> =
 // `@jupiterone/jupiter-integration-jira`! This is a transitional design, not a
 // recommended pattern for other integrations.
 //
-export {
-  JiraClient,
-  CreateIssueActionProperties,
-  createJiraIssue,
-} from './jira';
+export { CreateIssueActionProperties, createJiraIssue } from './actions';
+
+export { JiraClient } from './jira';
+
 export {
   JiraIntegrationInstanceConfig,
   IntegrationConfig,
