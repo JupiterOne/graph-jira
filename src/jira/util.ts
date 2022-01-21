@@ -1,4 +1,4 @@
-import { JiraHostConfig } from './types';
+import { JiraHostConfig, JiraHostString } from './types';
 
 /**
  * Used to validate and extract values from the `jiraHost` configuration value.
@@ -11,17 +11,11 @@ const JIRA_HOST_REGEX =
   /^((https?)(:\/\/))?((([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]))(:(\d{1,4}))?(\/([A-Za-z0-9]+))?$/;
 
 /**
- * Validates a Jira host string. The protocol, port, and base path are optional.
- * Valid values include:
- *
- * - `"localhost"`
- * - `"localhost:8080"`
- * - `"localhost/urlBase"`
- * - `"http://example.com"`
- * - `"subdomain.example.com/urlBase"`
- * - `"https://subdomain.example.com:443/urlBase"`
+ * Answers true when `jiraHost` is a valid `JiraHostString`.
  */
-export function isValidJiraHost(jiraHost: string | undefined): boolean {
+export function isJiraHostString(
+  jiraHost: string | undefined,
+): jiraHost is JiraHostString {
   return !!jiraHost && JIRA_HOST_REGEX.test(jiraHost);
 }
 
@@ -30,7 +24,7 @@ export function isValidJiraHost(jiraHost: string | undefined): boolean {
  *
  * @throws Error when the host string is not valid or cannot be parsed
  */
-export function buildJiraHostConfig(jiraHost: string): JiraHostConfig {
+export function buildJiraHostConfig(jiraHost: JiraHostString): JiraHostConfig {
   const match = jiraHost.match(JIRA_HOST_REGEX);
   if (match) {
     return {
@@ -40,8 +34,6 @@ export function buildJiraHostConfig(jiraHost: string): JiraHostConfig {
       base: match[11],
     };
   } else {
-    throw new Error(
-      `Could not extract options from ${JSON.stringify(jiraHost)}`,
-    );
+    throw new Error(`Invalid Jira host value ${JSON.stringify(jiraHost)}`);
   }
 }

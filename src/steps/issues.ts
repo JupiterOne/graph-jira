@@ -24,14 +24,8 @@ import {
   USER_REPORTED_ISSUE_RELATIONSHIP_TYPE,
   UserEntity,
 } from '../entities';
-import { Field, Issue } from '../jira';
-import { ProjectConfig } from '../types';
-import {
-  buildProjectConfigs,
-  createApiClient,
-  generateEntityKey,
-  normalizeCustomFieldIdentifiers,
-} from '../utils';
+import { Field, Issue, JiraProjectKey } from '../jira';
+import { createApiClient, generateEntityKey } from '../utils';
 
 /**
  * Maximum number of issues to ingest per project. This limit can be removed by
@@ -59,42 +53,38 @@ export async function fetchIssues({
 
   const config = instance.config;
   const lastJobTimestamp = executionHistory.lastSuccessful?.startedOn || 0;
-  const projectConfigs = buildProjectConfigs(instance.config.projects);
-  const customFieldsToInclude = normalizeCustomFieldIdentifiers(
-    config.customFields || [],
-  );
 
   const apiClient = createApiClient(logger, config);
   const fieldsById = await fetchJiraFields(apiClient);
 
-  const issueProcessor = async (projectConfig: ProjectConfig, issue: Issue) =>
+  const issueProcessor = async (projectKey: JiraProjectKey, issue: Issue) =>
     processIssue(
       {
         logger,
         jobState,
         fieldsById,
-        customFieldsToInclude,
+        customFieldsToInclude: config.customFields,
         projectEntities,
       },
-      projectConfig,
+      projectKey,
       issue,
     );
 
-  for (const projectConfig of projectConfigs) {
+  for (const projectKey of config.projects) {
     const projectIssueProcessor = async (issue: Issue) =>
-      issueProcessor(projectConfig, issue);
+      issueProcessor(projectKey, issue);
     if (config.bulkIngestIssues) {
       logger.info(
-        { projectConfig, bulkIngestIssues: config.bulkIngestIssues },
+        {
+          projectConfig: projectKey,
+          bulkIngestIssues: config.bulkIngestIssues,
+        },
         'Bulk issue ingestion is enabled',
       );
-      await apiClient.iterateAllIssues(
-        projectConfig.key,
-        projectIssueProcessor,
-      );
+      await apiClient.iterateAllIssues(projectKey, projectIssueProcessor);
     } else {
       await apiClient.iterateIssues(
-        projectConfig.key,
+        projectKey,
         lastJobTimestamp,
         INGESTION_MAX_ISSUES_PER_PROJECT,
         projectIssueProcessor,
@@ -130,7 +120,7 @@ async function processIssue(
     fieldsById,
     projectEntities,
   }: ProcessIssueContext,
-  projectConfig: ProjectConfig,
+  projectKey: JiraProjectKey,
   issue: Issue,
 ) {
   try {
@@ -144,7 +134,7 @@ async function processIssue(
     )) as IssueEntity;
 
     const projectEntity = projectEntities?.find(
-      (project) => project.key === projectConfig.key,
+      (project) => project.key === projectKey,
     );
 
     if (projectEntity) {
@@ -157,7 +147,7 @@ async function processIssue(
       );
     } else {
       logger.warn(
-        { projectKey: projectConfig.key },
+        { projectKey },
         'Unable to create issue -> project relationship because the project was not in the job state',
       );
     }

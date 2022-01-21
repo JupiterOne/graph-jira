@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased](https://github.com/JuptiterOne/graph-jira/compare/v1.9.8...HEAD)
 
+### Fixed
+
+- Fixed ability to create Jira issues from the managed runtime environment.
+
 ## 2.2.0
 
 ### Added

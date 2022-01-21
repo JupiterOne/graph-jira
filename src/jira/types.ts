@@ -1,21 +1,41 @@
 import { JiraApiOptions } from 'jira-client';
 
-export interface CreateIssueActionProperties {
-  /**
-   * The key of the issue project.
-   */
-  project: string;
-  summary: string;
-  classification: IssueTypeName;
-  additionalFields?: object;
-}
-
+/**
+ * Common issue types in many default Jira project configurations. This value
+ * may be anything; it depends on what the target Jira project has configured.
+ */
 export type IssueTypeName =
   | 'Epic'
   | 'Improvement'
   | 'Task'
   | 'Sub-task'
-  | 'New Feature';
+  | 'New Feature'
+  | string;
+
+export type IssueFields = { [fieldName: string]: any };
+
+/**
+ * Validates a Jira host string. The protocol, port, and base path are optional.
+ * Valid values include:
+ *
+ * - `"localhost"`
+ * - `"localhost:8080"`
+ * - `"localhost/urlBase"`
+ * - `"http://example.com"`
+ * - `"subdomain.example.com/urlBase"`
+ * - `"https://subdomain.example.com:443/urlBase"`
+ */
+export type JiraHostString = string;
+
+/**
+ * Identifies a Jira project by its key value.
+ */
+export type JiraProjectKey = string;
+
+/**
+ * Identified a Jira project by its ID value.
+ */
+export type JiraProjectId = number;
 
 export type JiraApiVersion = '2' | '3';
 export const KNOWN_JIRA_API_VERSIONS: JiraApiVersion[] = ['3', '2'];
@@ -25,8 +45,9 @@ export const KNOWN_JIRA_API_VERSIONS: JiraApiVersion[] = ['3', '2'];
  * string.
  */
 export type JiraHostConfig = Required<
-  Pick<JiraApiOptions, 'protocol' | 'host' | 'port'>
+  Pick<JiraApiOptions, 'protocol' | 'port'>
 > & {
+  host: JiraHostString;
   base: string | undefined;
 };
 

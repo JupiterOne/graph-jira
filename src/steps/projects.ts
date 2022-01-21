@@ -17,7 +17,7 @@ import {
   PROJECT_ENTITY_TYPE,
   ProjectEntity,
 } from '../entities';
-import { buildProjectConfigs, createApiClient } from '../utils';
+import { createApiClient } from '../utils';
 import { DATA_ACCOUNT_ENTITY } from './account';
 
 export async function fetchProjects({
@@ -37,11 +37,6 @@ export async function fetchProjects({
     );
   }
 
-  const projectConfigKeys = buildProjectConfigs(instance.config.projects).map(
-    (c) => c.key,
-  );
-
-  //for use later in Issues
   const projectEntities: ProjectEntity[] = [];
 
   await apiClient.iterateProjects(async (project) => {
@@ -49,7 +44,7 @@ export async function fetchProjects({
       createProjectEntity(project),
     )) as ProjectEntity;
 
-    if (projectConfigKeys.includes(projectEntity.key)) {
+    if (config.projects.includes(projectEntity.key)) {
       projectEntities.push(projectEntity);
     }
     await jobState.addRelationship(

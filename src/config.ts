@@ -11,13 +11,13 @@ import { APIClient } from './client';
 import {
   buildJiraHostConfig,
   detectApiVersion,
-  isValidJiraHost,
+  isJiraHostString,
   JiraApiVersion,
   JiraClient,
   JiraClientConfig,
   JiraHostConfig,
 } from './jira';
-import { buildProjectConfigs } from './utils';
+import { normalizeCustomFieldIdentifiers, normalizeProjectKeys } from './utils';
 
 /**
  * A type describing the configuration fields required to execute the
@@ -68,15 +68,7 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
 export interface JiraIntegrationInstanceConfig
   extends IntegrationInstanceConfig {
   /**
-   * The Jira host name and optionally the port and root path. Valid values
-   * include:
-   *
-   * - `"localhost"`
-   * - `"localhost:8080"`
-   * - `"localhost/urlBase"`
-   * - `"http://example.com"`
-   * - `"subdomain.example.com/urlBase"`
-   * - `"https://subdomain.example.com:443/urlBase"`
+   * An unvalidated `JiraHostString`.
    */
   jiraHost: string;
 
@@ -119,8 +111,16 @@ export interface JiraIntegrationInstanceConfig
 export type IntegrationConfig = JiraIntegrationInstanceConfig &
   JiraClientConfig & {
     projects: string[];
+    customFields: string[];
   };
 
+/**
+ * Validates the integration configuration. The `context.instance.config` will
+ * be assigned an object containing validated values.
+ *
+ * TODO: Adopt SDK 8.2.0 to use `loadExecutionConfig` insteaad of mutating in
+ * this validation function. See https://github.com/JupiterOne/sdk/pull/587.
+ */
 export async function validateInvocation(
   context: IntegrationExecutionContext<JiraIntegrationInstanceConfig>,
 ) {
@@ -132,12 +132,32 @@ export async function validateInvocation(
     );
   }
 
-  if (!isValidJiraHost(config.jiraHost)) {
+  if (!isJiraHostString(config.jiraHost)) {
     throw new IntegrationValidationError(
-      'jiraHost must be a valid hostname with optional port and base path. (ex: example.com, example.com:2913, example.com/base, http://subdomain.example.com)',
+      'jiraHost must be a valid Jira host string (ex: example.com, example.com:2913, example.com/base, http://subdomain.example.com)',
     );
   }
 
+  const normalizedConfig = await normalizeInstanceConfig(config);
+  const jiraClient = new JiraClient(context.logger, normalizedConfig);
+  const apiClient = new APIClient(context.logger, jiraClient);
+
+  await apiClient.verifyAuthentication();
+
+  await validateProjectKeys(jiraClient, normalizedConfig.projects);
+
+  context.instance.config = normalizedConfig;
+}
+
+/**
+ * Produces an `IntegrationConfig`, detecting the server API version when one is
+ * not provided.
+ *
+ * @throws IntegrationError when the API version cannot be determined.
+ */
+export async function normalizeInstanceConfig(
+  config: JiraIntegrationInstanceConfig,
+): Promise<IntegrationConfig> {
   const jiraHostConfig = buildJiraHostConfig(config.jiraHost);
 
   let jiraApiVersion = config.jiraApiVersion;
@@ -154,20 +174,7 @@ export async function validateInvocation(
     }
   }
 
-  const normalizedConfig = buildNormalizedInstanceConfig(
-    config,
-    jiraHostConfig,
-    jiraApiVersion,
-  );
-
-  const jiraClient = new JiraClient(context.logger, normalizedConfig);
-  const apiClient = new APIClient(context.logger, jiraClient);
-
-  await apiClient.verifyAuthentication();
-
-  await validateProjectConfiguration(jiraClient, normalizedConfig.projects);
-
-  context.instance.config = normalizedConfig;
+  return buildNormalizedInstanceConfig(config, jiraHostConfig, jiraApiVersion);
 }
 
 export function buildNormalizedInstanceConfig(
@@ -181,12 +188,12 @@ export function buildNormalizedInstanceConfig(
     username: config.jiraUsername,
     password: config.jiraPassword,
     apiVersion: jiraApiVersion,
-    // TODO: Remove buildProjectConfigs and simplify everything that calls it
-    projects: buildProjectConfigs(config.projects).map((e) => e.key),
+    projects: normalizeProjectKeys(config.projects),
+    customFields: normalizeCustomFieldIdentifiers(config.customFields),
   };
 }
 
-export async function validateProjectConfiguration(
+export async function validateProjectKeys(
   client: JiraClient,
   projects: string[],
 ): Promise<void> {
@@ -203,9 +210,7 @@ export async function validateProjectConfiguration(
     });
   }
 
-  const configProjectKeys = buildProjectConfigs(projects).map((p) => p.key);
-
-  const invalidConfigProjectKeys = configProjectKeys.filter(
+  const invalidConfigProjectKeys = projects.filter(
     (k) => !fetchedProjectKeys.includes(k),
   );
 
