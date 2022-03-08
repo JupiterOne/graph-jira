@@ -1,9 +1,11 @@
 import {
   createDirectRelationship,
+  IntegrationInfoEventName,
   IntegrationLogger,
   IntegrationMissingKeyError,
   IntegrationStep,
   IntegrationStepExecutionContext,
+  IntegrationWarnEventName,
   JobState,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
@@ -81,14 +83,24 @@ export async function fetchIssues({
         },
         'Bulk issue ingestion is enabled',
       );
+      logger.publishInfoEvent({
+        name: IntegrationInfoEventName.Stats,
+        description: 'Bulk issu ingestion is enabled',
+      });
       await apiClient.iterateAllIssues(projectKey, projectIssueProcessor);
     } else {
-      await apiClient.iterateIssues(
+      const allIssuesIngested = await apiClient.iterateIssues(
         projectKey,
         lastJobTimestamp,
         INGESTION_MAX_ISSUES_PER_PROJECT,
         projectIssueProcessor,
       );
+      if (!allIssuesIngested) {
+        logger.publishWarnEvent({
+          name: IntegrationWarnEventName.IngestionLimitEncountered,
+          description: `Issue Ingestion limit of ${INGESTION_MAX_ISSUES_PER_PROJECT} for project ${projectKey} was encountered. Not all issues were ingested. If there is a need to ingest all issues, please contact support so a bulk ingestion can be performed.`,
+        });
+      }
     }
   }
 }

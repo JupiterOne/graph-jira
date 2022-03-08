@@ -6,7 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/JuptiterOne/graph-jira/compare/v1.9.8...HEAD)
+## [Unreleased]
+
+### Added
+
+- publish logging event when all issues for a project are not ingested
+- publish logging event when in bulk ingest mode
+- upgrade to newest version of sdk
 
 ## 2.2.1
 
