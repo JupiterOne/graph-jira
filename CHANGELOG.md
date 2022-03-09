@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 2.3.1
+
+### Fixed
+
+- peer dependency for sdk
+
 ## 2.3.0
 
 ### Added
