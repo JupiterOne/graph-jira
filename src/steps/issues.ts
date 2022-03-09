@@ -85,7 +85,7 @@ export async function fetchIssues({
       );
       logger.publishInfoEvent({
         name: IntegrationInfoEventName.Stats,
-        description: 'Bulk issu ingestion is enabled',
+        description: 'Bulk issue ingestion is enabled',
       });
       await apiClient.iterateAllIssues(projectKey, projectIssueProcessor);
     } else {
