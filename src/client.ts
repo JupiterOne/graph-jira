@@ -124,13 +124,15 @@ export class APIClient {
    * @param maxIssues limits ingestion to a maximum number of issues,
    * particularly necessary for `sinceAtTimestamp: 0`
    * @param iteratee receives each issue to produce entities/relationships
+   *
+   * @returns boolean indicating whether or not all issues were ingested
    */
   public async iterateIssues(
     project: string,
     sinceAtTimestamp: number,
     maxIssues: number,
     iteratee: ResourceIteratee<Issue>,
-  ): Promise<void> {
+  ): Promise<boolean> {
     let issuesProcessed = 0;
 
     await this.paginateIssues(
@@ -152,7 +154,9 @@ export class APIClient {
         { issuesProcessed, maxIssues, sinceAtTimestamp },
         'Reached maximum number of issues; may not have pulled all issues modified since timestamp.',
       );
+      return false;
     }
+    return true;
   }
 
   /**
