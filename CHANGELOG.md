@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 2.3.0
+
 ### Added
 
 - publish logging event when all issues for a project are not ingested
