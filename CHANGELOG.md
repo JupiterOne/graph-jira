@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 2.3.2
+
+### Removed
+
+- removed `_rawData` from `jira_issue` entity.
+
 ## 2.3.1
 
 ### Fixed
