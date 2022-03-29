@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 2.3.3 - 2022-03-29
+
+### Added
+
+- Updated to SDK verison 8.8.0 with new logic for actively shrinking rawData
+  when needed due to upload size constraints.
+- Added back in `_rawData` to `jira_issue` entity.
+
 ## 2.3.2
 
 ### Removed
