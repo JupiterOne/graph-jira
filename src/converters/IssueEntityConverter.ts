@@ -115,15 +115,12 @@ export function createIssueEntity({
     _key: generateEntityKey(ISSUE_ENTITY_TYPE, issue.id),
     _type: ISSUE_ENTITY_TYPE,
     _class: issueClass,
-    //  rawData for this entity is disabled to avoid requests larger then 6MB
-    /*
     _rawData: [
       {
         name: 'default',
         rawData: issue as any,
       },
     ],
-    */
     ...customFields,
     id: issue.id,
     key: issue.key,
@@ -160,14 +157,11 @@ export function createIssueEntity({
       issue.fields.components && issue.fields.components.map((c) => c.name),
     priority: issue.fields.priority && issue.fields.priority.name,
   };
-  // rawData is disabled for this entity to avoid requests larger than 6MB
-  /*
   if (requestedClass) {
     entity._rawData.push({
       name: 'event',
       rawData: { requestedClass },
     });
   }
-  */
   return entity;
 }
