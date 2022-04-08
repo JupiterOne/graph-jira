@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 2.3.3 - 2022-04-08
+
+### Added
+
+- Updated to SDK verison 8.10.1 with a smaller max upload size.
+
 ## 2.3.3 - 2022-03-29
 
 ### Added
