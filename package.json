@@ -34,7 +34,7 @@
     "node-fetch": "2"
   },
   "peerDependencies": {
-    "@jupiterone/integration-sdk-core": "^8.8.0"
+    "@jupiterone/integration-sdk-core": "^8.10.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -43,9 +43,9 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.1.0",
-    "@jupiterone/integration-sdk-core": "^8.8.0",
-    "@jupiterone/integration-sdk-dev-tools": "^8.8.0",
-    "@jupiterone/integration-sdk-testing": "^8.8.0",
+    "@jupiterone/integration-sdk-core": "^8.10.1",
+    "@jupiterone/integration-sdk-dev-tools": "^8.10.1",
+    "@jupiterone/integration-sdk-testing": "^8.10.1",
     "@types/bunyan": "^1.8.5",
     "@types/fs-extra": "^7.0.0",
     "@types/jest": "^27.4.1",
