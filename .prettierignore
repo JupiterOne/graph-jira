@@ -2,3 +2,4 @@ coverage
 dist
 .vscode
 .j1-integration
+.gitleaks.yml
