@@ -11,8 +11,22 @@ You can get a free Jira Cloud account on
 [Jira's website](https://www.atlassian.com/software/jira/free).
 
 [Jira Data Center](https://www.atlassian.com/software/jira/download-journey)
-(self-hosted) can be downloaded and executed locally. After you have
-successfully bootstrapped the local Jira server:
+(self-hosted) can be downloaded and executed locally, following the setup
+instructions in the download. Note that you'll need to obtain a Starter License,
+which must be provided during software setup.
+[Getting started with Jira Software Data
+Center](https://confluence.atlassian.com/enterprise/getting-started-with-jira-software-data-center-948226882.html)
+provides additional details.
+
+```sh
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home
+export JIRA_HOME=/Users/aiwilliams/Workspaces/jira-home
+cd ~/Downloads/atlassian-jira-software-8.20.3-standalone
+./bin/start-jira.sh
+open http://localhost:8080
+```
+
+After you have successfully bootstrapped the local Jira server:
 
 1. During setup, allow the onboarding wizard to create a populated project
    having the name `SP`.
