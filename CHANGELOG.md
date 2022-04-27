@@ -8,6 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 2.3.5 - 2022-04-27
+
+### Changed
+
+- doc updates
+- run/enforce prettier
+- pr template
+- CODEOWNERS
+
 ## 2.3.4 - 2022-04-08
 
 ### Added
