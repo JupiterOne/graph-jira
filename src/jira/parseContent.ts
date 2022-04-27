@@ -1,59 +1,59 @@
-import { TextContent } from ".";
+import { TextContent } from '.';
 
 export default function parseContent(
   content: TextContent[] | undefined,
-  joinWith: string = "\n\n",
+  joinWith: string = '\n\n',
 ): string {
-  return content ? content.map(c => parseContentBlock(c)).join(joinWith) : "";
+  return content ? content.map((c) => parseContentBlock(c)).join(joinWith) : '';
 }
 
 const EMOJI_MAP: { [key: string]: string } = {
-  ":check_mark:": "✅",
-  ":cross_mark:": "❌",
+  ':check_mark:': '✅',
+  ':cross_mark:': '❌',
 };
 
 function parseTextStyle(mark: { type: string }): string {
   const type = mark && mark.type;
   switch (type) {
-    case "em":
-      return "_";
-    case "strong":
-      return "**";
-    case "code":
-      return "`";
+    case 'em':
+      return '_';
+    case 'strong':
+      return '**';
+    case 'code':
+      return '`';
     default:
-      return "";
+      return '';
   }
 }
 
 function parseContentBlock(content: TextContent): string {
   switch (content.type) {
-    case "panel": {
-      return parseContent(content.content) + "\n\n---";
+    case 'panel': {
+      return parseContent(content.content) + '\n\n---';
     }
-    case "bulletList": {
-      return "- " + parseContent(content.content, "\n\n- ");
+    case 'bulletList': {
+      return '- ' + parseContent(content.content, '\n\n- ');
     }
-    case "listItem": {
-      return parseContent(content.content, "\n\n  ");
+    case 'listItem': {
+      return parseContent(content.content, '\n\n  ');
     }
-    case "emoji": {
+    case 'emoji': {
       if (content.attrs && content.attrs.text) {
         return EMOJI_MAP[content.attrs.text] || content.attrs.text;
       } else {
-        return "";
+        return '';
       }
     }
-    case "codeBlock": {
+    case 'codeBlock': {
       if (content.content) {
-        const code = content.content.map(c => c.text).join("\n");
-        const lang = content.attrs ? content.attrs.language : "";
+        const code = content.content.map((c) => c.text).join('\n');
+        const lang = content.attrs ? content.attrs.language : '';
         return `\`\`\`${lang}\n${code}\n\`\`\``;
       } else {
-        return "";
+        return '';
       }
     }
-    case "text": {
+    case 'text': {
       if (content.text) {
         let text = content.text;
         for (const mark of content.marks || []) {
@@ -62,23 +62,23 @@ function parseContentBlock(content: TextContent): string {
         }
         return text;
       }
-      return "";
+      return '';
     }
-    case "mention": {
-      return content.attrs ? `@${content.attrs.text}` : "";
+    case 'mention': {
+      return content.attrs ? `@${content.attrs.text}` : '';
     }
-    case "hardBreak": {
-      return "\n";
+    case 'hardBreak': {
+      return '\n';
     }
-    case "blockquote": {
+    case 'blockquote': {
       return content.content
-        ? `> ${content.content.map(c => parseContentBlock(c)).join("")}`
-        : "> ";
+        ? `> ${content.content.map((c) => parseContentBlock(c)).join('')}`
+        : '> ';
     }
-    case "paragraph": {
+    case 'paragraph': {
       return content.content
-        ? content.content.map(c => parseContentBlock(c)).join("")
-        : "";
+        ? content.content.map((c) => parseContentBlock(c)).join('')
+        : '';
     }
     default: {
       if (content.text) {
@@ -93,19 +93,19 @@ function parseContentBlock(content: TextContent): string {
           return content.attrs.text;
         }
       }
-      return "";
+      return '';
     }
   }
 }
 
 export function parseNumber(s: string | number): number | string {
-  if (typeof s !== "string") {
+  if (typeof s !== 'string') {
     return s;
   }
   const NUM_REGEX = /^[\d,]*(\.[\d]*)?(e[\d]*)?$/;
   const match = s.match(NUM_REGEX);
   if (match) {
-    const numStr = s.replace(",", "");
+    const numStr = s.replace(',', '');
     return match[1] || match[2] ? parseFloat(numStr) : parseInt(numStr, 10);
   } else {
     return s;
