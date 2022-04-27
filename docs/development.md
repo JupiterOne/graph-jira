@@ -7,16 +7,15 @@ This integration uses a wrapper for Jira API maintained
 
 ## Provider account setup
 
-You can get a free Jira Cloud account on
-[Jira's website](https://www.atlassian.com/software/jira/free).
+You can get a free Jira Cloud account on [Jira's website][free-hosted].
 
-[Jira Data Center](https://www.atlassian.com/software/jira/download-journey)
-(self-hosted) can be downloaded and executed locally, following the setup
-instructions in the download. Note that you'll need to obtain a Starter License,
-which must be provided during software setup.
-[Getting started with Jira Software Data
-Center](https://confluence.atlassian.com/enterprise/getting-started-with-jira-software-data-center-948226882.html)
-provides additional details.
+[Jira Data Center][data-center] (self-hosted) can be downloaded and executed
+locally, following the setup instructions in the download.
+
+First-time installs will be offered a free evaluation license. This has been
+sufficient for development so far. It is possible also to purchase a Starter
+License, though it will be associated to a single Server ID. [Getting started
+with Jira Software Data Center][data-center-start] provides additional details.
 
 ```sh
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home
@@ -38,8 +37,7 @@ After you have successfully bootstrapped the local Jira server:
 
 The first version of the integration used a simple host/username/password
 authentication method. However, Jira supports OAuth, and we should change to it
-at some point. For more, see [Jira and OAuth]
-(https://developer.atlassian.com/server/jira/platform/jira-rest-api-example-oauth-authentication-6291692/)
+at some point. For more, see [Jira and OAuth][jira-oauth].
 
 It looks like the Jira client wrapper for the REST API that we are using already
 supports OAuth. From the client constructor: options.oauth = { consumer_key:
@@ -55,3 +53,10 @@ configures which authen to use.
 
 With the basic username/password authentication currently in place, there
 appears to be no timeout on the credentials.
+
+[free-hosted]: https://www.atlassian.com/software/jira/free
+[data-center]: https://www.atlassian.com/software/jira/download-journey
+[data-center-start]:
+  https://confluence.atlassian.com/enterprise/getting-started-with-jira-software-data-center-948226882.html
+[jira-oauth]:
+  https://developer.atlassian.com/server/jira/platform/jira-rest-api-example-oauth-authentication-6291692/
