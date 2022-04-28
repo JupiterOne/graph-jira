@@ -14,7 +14,6 @@ import {
 } from '../../test/config';
 import { setupJiraRecording } from '../../test/recording';
 import { JiraClient } from './JiraClient';
-import { createUserEntity } from '../converters';
 
 jest.setTimeout(10000);
 
@@ -237,11 +236,6 @@ describe(
       setupApiRecording('fetchUsersPage');
 
       const response = await client.fetchUsersPage();
-
-      for (const user of response) {
-        console.log(createUserEntity(user, client.apiVersion)._key);
-      }
-
       expect(response).toBeArray();
       expect(response).not.toBeArrayOfSize(0);
     });
