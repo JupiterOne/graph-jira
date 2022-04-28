@@ -8,9 +8,19 @@ and this project adheres to
 
 ## [Unreleased]
 
+### BREAKING
+
+- exported function createUserCreatedIssueRelationships now requires an
+  apiVersion string in args
+- exported function createUserReportedIssueRelationships now requires an
+  apiVersion string in args
+
 ### Changed
 
 - fix user ingestion for jira software on-prem
+
+### Added
+
 - add docs
 - expand test coverage for jira software on-prem
 
