@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- fix user ingestion for jira software on-prem
+- add docs
+- expand test coverage for jira software on-prem
+
 ## 2.3.5 - 2022-04-27
 
 ### Changed

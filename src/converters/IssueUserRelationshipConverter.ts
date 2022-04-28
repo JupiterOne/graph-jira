@@ -11,7 +11,7 @@ import {
 import { Issue, User, UserV2, UserV3 } from '../jira';
 import { generateEntityKey } from '../utils';
 
-// TODO: Test changes to this in deployment project
+// TODO(mdaum INT-3514): Test changes to this in deployment project
 export function createUserCreatedIssueRelationships(
   issues: Issue[],
   apiVersion: string,
@@ -75,7 +75,7 @@ export function createUserReportedIssueRelationships(
     }
   }, []);
 }
-// TODO: Test changes to this in deployment project
+// TODO(mdaum INT-3514): Test changes to this in deployment project
 function createUserReportedIssueRelationship(
   user: User,
   issue: Issue,
