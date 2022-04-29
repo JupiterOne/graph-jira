@@ -124,12 +124,46 @@ export interface User {
     [size: string]: string;
   };
   active: boolean;
+  deleted?: boolean;
+  accountId?: string;
+  key?: string;
+  emailAddress: string;
+  displayName: string;
+  timeZone: string;
+  locale?: string;
+  accountType?: string; // e.g. 'atlassian' or 'customer'
+}
+
+// only for use in converters
+export interface UserV3 extends User {
+  self: string;
+  name: string;
+  avatarUrls: {
+    [size: string]: string;
+  };
+  active: boolean;
   accountId: string;
   emailAddress: string;
   displayName: string;
   timeZone: string;
   locale?: string;
   accountType?: string; // e.g. 'atlassian' or 'customer'
+}
+
+// only for use in converters
+export interface UserV2 extends User {
+  self: string;
+  key: string;
+  name: string;
+  emailAddress: string;
+  avatarUrls: {
+    [size: string]: string;
+  };
+  displayName: string;
+  active: boolean;
+  deleted: boolean;
+  timeZone: string;
+  locale?: string;
 }
 
 export interface Component {

@@ -1,22 +1,49 @@
 import { USER_ENTITY_CLASS, USER_ENTITY_TYPE, UserEntity } from '../entities';
-import { User } from '../jira';
+import { User, UserV2, UserV3 } from '../jira';
 import { generateEntityKey } from '../utils';
 
-export function createUserEntity(user: User): UserEntity {
-  return {
-    _key: generateEntityKey(USER_ENTITY_TYPE, user.accountId),
-    _type: USER_ENTITY_TYPE,
-    _class: USER_ENTITY_CLASS,
-    _rawData: [{ name: 'default', rawData: user }],
-    id: user.accountId,
-    displayName: user.displayName,
-    self: user.self,
-    name: user.name || user.displayName,
-    email: user.emailAddress,
-    timeZone: user.timeZone,
-    active: user.active,
-    accountType: user.accountType,
-    username: user.emailAddress || user.displayName, //some system users in Jira don't have emails
-    webLink: `https://${user.self.split('/')[2]}/jira/people/${user.accountId}`,
-  };
+export function createUserEntity(user: User, apiVersion: string): UserEntity {
+  if (apiVersion === '3') {
+    const castedUser = user as UserV3;
+    return {
+      _key: generateEntityKey(USER_ENTITY_TYPE, castedUser.accountId),
+      _type: USER_ENTITY_TYPE,
+      _class: USER_ENTITY_CLASS,
+      _rawData: [{ name: 'default', rawData: castedUser }],
+      id: castedUser.accountId,
+      displayName: castedUser.displayName,
+      self: castedUser.self,
+      name: castedUser.name || castedUser.displayName,
+      email: castedUser.emailAddress,
+      timeZone: castedUser.timeZone,
+      active: castedUser.active,
+      accountType: castedUser.accountType,
+      username: castedUser.emailAddress || castedUser.displayName, //some system users in Jira don't have emails
+      webLink: `https://${castedUser.self.split('/')[2]}/jira/people/${
+        castedUser.accountId
+      }`,
+    };
+  } else if (apiVersion === '2') {
+    const castedUser = user as UserV2;
+    return {
+      _key: castedUser.key,
+      _type: USER_ENTITY_TYPE,
+      _class: USER_ENTITY_CLASS,
+      _rawData: [{ name: 'default', rawData: castedUser }],
+      id: castedUser.key,
+      displayName: castedUser.displayName,
+      self: castedUser.self,
+      name: castedUser.name || castedUser.displayName,
+      email: castedUser.emailAddress,
+      timeZone: castedUser.timeZone,
+      active: castedUser.active,
+      deleted: castedUser.deleted,
+      username: castedUser.emailAddress || castedUser.displayName, //some system users in Jira don't have emails
+      webLink: `https://${castedUser.self.split('/')[2]}/jira/people/${
+        castedUser.key
+      }`,
+    };
+  } else {
+    throw new Error(`Unknown Jira API version: ${apiVersion}`);
+  }
 }
