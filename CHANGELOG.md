@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.0.0 - 2022-04-29
+
 ### BREAKING
 
 - exported function createUserCreatedIssueRelationships now requires an
