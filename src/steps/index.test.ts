@@ -3,7 +3,10 @@ import {
   Recording,
 } from '@jupiterone/integration-sdk-testing';
 
-import { normalizedInstanceConfig } from '../../test/config';
+import {
+  normalizedInstanceConfig,
+  normalizedLocalServerInstanceConfig,
+} from '../../test/config';
 import { setupJiraRecording } from '../../test/recording';
 import { IntegrationConfig } from '../config';
 import { fetchAccountDetails } from './account';
@@ -19,14 +22,16 @@ afterEach(async () => {
   await recording.stop();
 });
 
-test('should collect data', async () => {
+async function testSteps(cloud: boolean = true) {
   recording = setupJiraRecording({
     directory: __dirname,
-    name: 'steps',
+    name: 'steps' + (cloud ? 'Cloud' : 'DataCenter'),
   });
 
   const context = createMockStepExecutionContext<IntegrationConfig>({
-    instanceConfig: normalizedInstanceConfig,
+    instanceConfig: cloud
+      ? normalizedInstanceConfig
+      : normalizedLocalServerInstanceConfig,
   });
 
   // Simulates dependency graph execution.
@@ -57,7 +62,7 @@ test('should collect data', async () => {
         _type: { const: 'jira_account' },
         name: { type: 'string' },
         displayName: { type: 'string' },
-        webLink: { type: 'string', format: 'url' },
+        webLink: cloud ? { type: 'string', format: 'url' } : { type: 'string' },
         _rawData: {
           type: 'array',
           items: { type: 'object' },
@@ -102,7 +107,7 @@ test('should collect data', async () => {
         displayName: { type: 'string' },
         id: { type: 'string' },
         key: { type: 'string' }, //not the same as ._key
-        webLink: { type: 'string', format: 'url' },
+        webLink: cloud ? { type: 'string', format: 'url' } : { type: 'string' },
         _rawData: {
           type: 'array',
           items: { type: 'object' },
@@ -126,7 +131,7 @@ test('should collect data', async () => {
         displayName: { type: 'string' },
         id: { type: 'string' },
         key: { type: 'string' }, //not the same as ._key
-        webLink: { type: 'string', format: 'url' },
+        webLink: cloud ? { type: 'string', format: 'url' } : { type: 'string' },
         _rawData: {
           type: 'array',
           items: { type: 'object' },
@@ -135,4 +140,12 @@ test('should collect data', async () => {
       required: ['name', 'displayName', 'id', 'key', 'webLink'],
     },
   });
+}
+
+test('should collect data (cloud)', async () => {
+  await testSteps(true);
+});
+
+test('should collect data (data center)', async () => {
+  await testSteps(false);
 });

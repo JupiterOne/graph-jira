@@ -38,7 +38,7 @@ export async function fetchUsers({
 
   await apiClient.iterateUsers(async (user) => {
     const userEntity = (await jobState.addEntity(
-      createUserEntity(user),
+      createUserEntity(user, apiClient.jira.apiVersion),
     )) as UserEntity;
 
     await jobState.addRelationship(

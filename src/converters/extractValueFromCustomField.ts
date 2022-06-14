@@ -1,8 +1,8 @@
-import { isArray } from "util";
-import { TextContent } from "../jira";
-import parseContent, { parseNumber } from "../jira/parseContent";
+import { isArray } from 'util';
+import { TextContent } from '../jira';
+import parseContent, { parseNumber } from '../jira/parseContent';
 
-export const UNABLE_TO_PARSE_RESPONSE = "7e6e239c-b4ac-11eb-8529-0242ac130003";
+export const UNABLE_TO_PARSE_RESPONSE = '7e6e239c-b4ac-11eb-8529-0242ac130003';
 
 /**
  * There are several different custom field types Jira allows.
@@ -21,14 +21,14 @@ export function extractValueFromCustomField(value: any): any {
    *   TextFields
    *   URLFields
    */
-  if (["string", "number"].includes(typeof value)) {
+  if (['string', 'number'].includes(typeof value)) {
     return value;
-  } else if (typeof value === "object") {
+  } else if (typeof value === 'object') {
     /**
      * I'm unsure what this handles as this case is not in the Jiras docs,
      * but I'm too scared to pull it out.
      */
-    if (value.type === "doc" && value.content) {
+    if (value.type === 'doc' && value.content) {
       return parseContent(value.content as TextContent[]);
     } else if (value.value) {
       /**
@@ -37,7 +37,7 @@ export function extractValueFromCustomField(value: any): any {
        *   RadioButtons
        *   SelectLists
        */
-      return typeof value.value === "object"
+      return typeof value.value === 'object'
         ? JSON.stringify(value.value)
         : parseNumber(value.value);
     } else if (value.name || value.id || value.key) {
@@ -64,7 +64,7 @@ export function extractValueFromCustomField(value: any): any {
        *   Multi Select
        *   Multi User Picker
        */
-      return value.map(extractValueFromCustomField).join(",");
+      return value.map(extractValueFromCustomField).join(',');
     } else {
       return UNABLE_TO_PARSE_RESPONSE;
     }

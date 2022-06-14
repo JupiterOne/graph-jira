@@ -134,6 +134,14 @@ Before you use an existing user, you should verify a couple of things.
 4. Click the **trash can** icon.
 5. Click the **Remove** button to delete the integration.
 
+## Jira Cloud vs Jira On-Prem
+
+This integration supports both Jira Cloud and Jira on-prem deployments and will
+automatically detect which is being ingested. It is important to note that there
+are some minor differences in the APIs for cloud and on-prem. For this reason,
+we recommended that you recreate your integration configuration in the event of
+an on-prem -> cloud migration or vice versa.
+
 <!-- {J1_DOCUMENTATION_MARKER_START} -->
 <!--
 ********************************************************************************

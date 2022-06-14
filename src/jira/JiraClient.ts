@@ -131,6 +131,7 @@ export class JiraClient {
         ) as Promise<User[]>;
       } else if (this.apiVersion === '2') {
         // Tested with Jira server 8.20.3
+        // https://docs.atlassian.com/software/jira/docs/api/REST/8.20.1/#user-findUsers
         return this.client.searchUsers({
           startAt: options?.startAt,
           maxResults: options?.pageSize,

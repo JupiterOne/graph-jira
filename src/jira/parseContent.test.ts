@@ -1,25 +1,25 @@
-import { TextContent } from "./";
-import parseContent from "./parseContent";
+import { TextContent } from './';
+import parseContent from './parseContent';
 
-test("parse paragraph contents", () => {
+test('parse paragraph contents', () => {
   const testContent: TextContent = {
-    type: "doc",
+    type: 'doc',
     content: [
       {
-        type: "paragraph",
+        type: 'paragraph',
         content: [
           {
-            type: "text",
-            text: "When a user is added to the organization...",
+            type: 'text',
+            text: 'When a user is added to the organization...',
           },
         ],
       },
       {
-        type: "paragraph",
+        type: 'paragraph',
         content: [
           {
-            type: "text",
-            text: "Mitigating controls should be put in place...",
+            type: 'text',
+            text: 'Mitigating controls should be put in place...',
           },
         ],
       },
@@ -34,28 +34,28 @@ Mitigating controls should be put in place...`,
   );
 });
 
-test("parse code block contents", () => {
+test('parse code block contents', () => {
   const testContent: TextContent = {
-    type: "doc",
+    type: 'doc',
     content: [
       {
-        type: "paragraph",
+        type: 'paragraph',
         content: [
           {
-            type: "text",
-            text: "Example CLI Code:",
+            type: 'text',
+            text: 'Example CLI Code:',
           },
         ],
       },
       {
-        type: "codeBlock",
+        type: 'codeBlock',
         attrs: {
-          language: "bash",
+          language: 'bash',
         },
         content: [
           {
-            type: "text",
-            text: "j1 -o delete --alert -a j1dev -f ./alerts.json\r\nDone!",
+            type: 'text',
+            text: 'j1 -o delete --alert -a j1dev -f ./alerts.json\r\nDone!',
           },
         ],
       },
@@ -72,40 +72,40 @@ j1 -o delete --alert -a j1dev -f ./alerts.json\r\nDone!
   );
 });
 
-test("parse url contents", () => {
+test('parse url contents', () => {
   const testContent: TextContent = {
-    type: "doc",
+    type: 'doc',
     content: [
       {
-        type: "paragraph",
+        type: 'paragraph',
         content: [
           {
-            type: "text",
-            text: "The summary will contain the following items:",
+            type: 'text',
+            text: 'The summary will contain the following items:',
           },
           {
-            type: "hardBreak",
+            type: 'hardBreak',
           },
           {
-            type: "text",
-            text: "• summary.csv (see ",
+            type: 'text',
+            text: '• summary.csv (see ',
           },
           {
-            type: "inlineCard",
+            type: 'inlineCard',
             attrs: {
-              url: "https://domain.atlassian.net/browse/KEY-1234#icft=KEY-1234",
+              url: 'https://domain.atlassian.net/browse/KEY-1234#icft=KEY-1234',
             },
           },
           {
-            type: "text",
-            text: ")",
+            type: 'text',
+            text: ')',
           },
           {
-            type: "hardBreak",
+            type: 'hardBreak',
           },
           {
-            type: "text",
-            text: "• policies.csv",
+            type: 'text',
+            text: '• policies.csv',
           },
         ],
       },
@@ -120,121 +120,121 @@ test("parse url contents", () => {
   );
 });
 
-test("parse complex contents", () => {
+test('parse complex contents', () => {
   const testContent: TextContent = {
-    type: "doc",
+    type: 'doc',
     content: [
       {
-        type: "paragraph",
+        type: 'paragraph',
         content: [
           {
-            type: "text",
-            text: "Issue",
+            type: 'text',
+            text: 'Issue',
             marks: [
               {
-                type: "strong",
+                type: 'strong',
               },
             ],
           },
           {
-            type: "text",
-            text: ": At 5pm on Monday Sept 9th 2019, ",
+            type: 'text',
+            text: ': At 5pm on Monday Sept 9th 2019, ',
           },
           {
-            type: "mention",
+            type: 'mention',
             attrs: {
-              id: "123456789",
-              text: "Joe Smith",
+              id: '123456789',
+              text: 'Joe Smith',
             },
           },
           {
-            type: "text",
-            text: " discovered an issue. ",
+            type: 'text',
+            text: ' discovered an issue. ',
           },
         ],
       },
       {
-        type: "paragraph",
+        type: 'paragraph',
         content: [
           {
-            type: "text",
-            text: "Determination",
+            type: 'text',
+            text: 'Determination',
             marks: [
               {
-                type: "strong",
+                type: 'strong',
               },
             ],
           },
           {
-            type: "text",
-            text: ": This issue was due to a misconfiguration.",
+            type: 'text',
+            text: ': This issue was due to a misconfiguration.',
           },
         ],
       },
       {
-        type: "paragraph",
+        type: 'paragraph',
         content: [
           {
-            type: "text",
-            text: "Resolution",
+            type: 'text',
+            text: 'Resolution',
             marks: [
               {
-                type: "strong",
+                type: 'strong',
               },
             ],
           },
           {
-            type: "text",
-            text: ": The team changed the access control policy in ",
+            type: 'text',
+            text: ': The team changed the access control policy in ',
           },
           {
-            type: "text",
-            text: "code",
+            type: 'text',
+            text: 'code',
             marks: [
               {
-                type: "code",
+                type: 'code',
               },
             ],
           },
           {
-            type: "text",
-            text: ".",
+            type: 'text',
+            text: '.',
           },
         ],
       },
       {
-        type: "paragraph",
+        type: 'paragraph',
         content: [
           {
-            type: "text",
-            text: "Length of Exposure",
+            type: 'text',
+            text: 'Length of Exposure',
             marks: [
               {
-                type: "strong",
+                type: 'strong',
               },
             ],
           },
           {
-            type: "text",
-            text: ": This issue has been present for a day.",
+            type: 'text',
+            text: ': This issue has been present for a day.',
           },
         ],
       },
       {
-        type: "paragraph",
+        type: 'paragraph',
         content: [
           {
-            type: "text",
-            text: "Forensic Analysis",
+            type: 'text',
+            text: 'Forensic Analysis',
             marks: [
               {
-                type: "strong",
+                type: 'strong',
               },
             ],
           },
           {
-            type: "text",
-            text: ": No breach.",
+            type: 'text',
+            text: ': No breach.',
           },
         ],
       },
@@ -254,267 +254,265 @@ test("parse complex contents", () => {
   );
 });
 
-test("parse content with panels and lists", () => {
+test('parse content with panels and lists', () => {
   const testContent: TextContent = {
-    type: "doc",
+    type: 'doc',
     content: [
       {
-        type: "panel",
+        type: 'panel',
         attrs: {
-          panelType: "info",
+          panelType: 'info',
         },
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
-                text: "Summary",
+                type: 'text',
+                text: 'Summary',
                 marks: [
                   {
-                    type: "strong",
+                    type: 'strong',
                   },
                 ],
               },
             ],
           },
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "emoji",
+                type: 'emoji',
                 attrs: {
-                  shortName: ":cross_mark:",
-                  id: "atlassian-cross_mark",
-                  text: ":cross_mark:",
+                  shortName: ':cross_mark:',
+                  id: 'atlassian-cross_mark',
+                  text: ':cross_mark:',
                 },
               },
               {
-                type: "text",
-                text: " Review required",
+                type: 'text',
+                text: ' Review required',
               },
             ],
           },
         ],
       },
       {
-        type: "panel",
+        type: 'panel',
         attrs: {
-          panelType: "info",
+          panelType: 'info',
         },
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
-                text: "Code changes review",
+                type: 'text',
+                text: 'Code changes review',
                 marks: [
                   {
-                    type: "strong",
+                    type: 'strong',
                   },
                 ],
               },
             ],
           },
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
-                text: "The previous approval (",
+                type: 'text',
+                text: 'The previous approval (',
               },
               {
-                type: "inlineCard",
+                type: 'inlineCard',
                 attrs: {
-                  url:
-                    "https://test.atlassian.net/browse/PRODCM-12345#icft=PRODCM-12345",
+                  url: 'https://test.atlassian.net/browse/PRODCM-12345#icft=PRODCM-12345',
                 },
               },
               {
-                type: "text",
-                text: ") was for build jupiter-integration-jira/master:65.",
+                type: 'text',
+                text: ') was for build jupiter-integration-jira/master:65.',
               },
             ],
           },
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
-                text: "In jupiterone/jupiter-integration-jira:",
+                type: 'text',
+                text: 'In jupiterone/jupiter-integration-jira:',
               },
             ],
           },
           {
-            type: "bulletList",
+            type: 'bulletList',
             content: [
               {
-                type: "listItem",
+                type: 'listItem',
                 content: [
                   {
-                    type: "paragraph",
+                    type: 'paragraph',
                     content: [
                       {
-                        type: "emoji",
+                        type: 'emoji',
                         attrs: {
-                          shortName: ":check_mark:",
-                          id: "atlassian-check_mark",
-                          text: ":check_mark:",
+                          shortName: ':check_mark:',
+                          id: 'atlassian-check_mark',
+                          text: ':check_mark:',
                         },
                       },
                       {
-                        type: "text",
-                        text: " Merged in custom-fields (",
+                        type: 'text',
+                        text: ' Merged in custom-fields (',
                       },
                       {
-                        type: "text",
-                        text: "pull request #71",
+                        type: 'text',
+                        text: 'pull request #71',
                         marks: [
                           {
-                            type: "link",
+                            type: 'link',
                             attrs: {
-                              href:
-                                "https://bitbucket.org/jupiterone/jupiter-integration-jira/pull-requests/71",
+                              href: 'https://bitbucket.org/jupiterone/jupiter-integration-jira/pull-requests/71',
                             },
                           },
                         ],
                       },
                       {
-                        type: "text",
-                        text: ")",
+                        type: 'text',
+                        text: ')',
                       },
                     ],
                   },
                 ],
               },
               {
-                type: "listItem",
+                type: 'listItem',
                 content: [
                   {
-                    type: "paragraph",
+                    type: 'paragraph',
                     content: [
                       {
-                        type: "emoji",
+                        type: 'emoji',
                         attrs: {
-                          shortName: ":check_mark:",
-                          id: "atlassian-check_mark",
-                          text: ":check_mark:",
+                          shortName: ':check_mark:',
+                          id: 'atlassian-check_mark',
+                          text: ':check_mark:',
                         },
                       },
                       {
-                        type: "text",
-                        text: " upgrade to v1.6.4",
+                        type: 'text',
+                        text: ' upgrade to v1.6.4',
                       },
                     ],
                   },
                 ],
               },
               {
-                type: "listItem",
+                type: 'listItem',
                 content: [
                   {
-                    type: "paragraph",
+                    type: 'paragraph',
                     content: [
                       {
-                        type: "emoji",
+                        type: 'emoji',
                         attrs: {
-                          shortName: ":check_mark:",
-                          id: "atlassian-check_mark",
-                          text: ":check_mark:",
+                          shortName: ':check_mark:',
+                          id: 'atlassian-check_mark',
+                          text: ':check_mark:',
                         },
                       },
                       {
-                        type: "text",
-                        text: " upgrade to 1.6.3",
+                        type: 'text',
+                        text: ' upgrade to 1.6.3',
                       },
                     ],
                   },
                 ],
               },
               {
-                type: "listItem",
+                type: 'listItem',
                 content: [
                   {
-                    type: "paragraph",
+                    type: 'paragraph',
                     content: [
                       {
-                        type: "emoji",
+                        type: 'emoji',
                         attrs: {
-                          shortName: ":check_mark:",
-                          id: "atlassian-check_mark",
-                          text: ":check_mark:",
+                          shortName: ':check_mark:',
+                          id: 'atlassian-check_mark',
+                          text: ':check_mark:',
                         },
                       },
                       {
-                        type: "text",
-                        text: " v1.6.1",
+                        type: 'text',
+                        text: ' v1.6.1',
                       },
                     ],
                   },
                 ],
               },
               {
-                type: "listItem",
+                type: 'listItem',
                 content: [
                   {
-                    type: "paragraph",
+                    type: 'paragraph',
                     content: [
                       {
-                        type: "emoji",
+                        type: 'emoji',
                         attrs: {
-                          shortName: ":check_mark:",
-                          id: "atlassian-check_mark",
-                          text: ":check_mark:",
+                          shortName: ':check_mark:',
+                          id: 'atlassian-check_mark',
+                          text: ':check_mark:',
                         },
                       },
                       {
-                        type: "text",
-                        text: " upgrade to v1.6.0",
+                        type: 'text',
+                        text: ' upgrade to v1.6.0',
                       },
                     ],
                   },
                 ],
               },
               {
-                type: "listItem",
+                type: 'listItem',
                 content: [
                   {
-                    type: "paragraph",
+                    type: 'paragraph',
                     content: [
                       {
-                        type: "emoji",
+                        type: 'emoji',
                         attrs: {
-                          shortName: ":check_mark:",
-                          id: "atlassian-check_mark",
-                          text: ":check_mark:",
+                          shortName: ':check_mark:',
+                          id: 'atlassian-check_mark',
+                          text: ':check_mark:',
                         },
                       },
                       {
-                        type: "text",
-                        text: " update description",
+                        type: 'text',
+                        text: ' update description',
                       },
                     ],
                   },
                 ],
               },
               {
-                type: "listItem",
+                type: 'listItem',
                 content: [
                   {
-                    type: "paragraph",
+                    type: 'paragraph',
                     content: [
                       {
-                        type: "emoji",
+                        type: 'emoji',
                         attrs: {
-                          shortName: ":check_mark:",
-                          id: "atlassian-check_mark",
-                          text: ":check_mark:",
+                          shortName: ':check_mark:',
+                          id: 'atlassian-check_mark',
+                          text: ':check_mark:',
                         },
                       },
                       {
-                        type: "text",
-                        text: " Add customFields to integration definition",
+                        type: 'text',
+                        text: ' Add customFields to integration definition',
                       },
                     ],
                   },
@@ -525,39 +523,39 @@ test("parse content with panels and lists", () => {
         ],
       },
       {
-        type: "panel",
+        type: 'panel',
         attrs: {
-          panelType: "info",
+          panelType: 'info',
         },
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
-                text: "Security process review",
+                type: 'text',
+                text: 'Security process review',
                 marks: [
                   {
-                    type: "strong",
+                    type: 'strong',
                   },
                 ],
               },
             ],
           },
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "emoji",
+                type: 'emoji',
                 attrs: {
-                  shortName: ":check_mark:",
-                  id: "atlassian-check_mark",
-                  text: ":check_mark:",
+                  shortName: ':check_mark:',
+                  id: 'atlassian-check_mark',
+                  text: ':check_mark:',
                 },
               },
               {
-                type: "text",
-                text: " Snyk scan was detected and found no problems",
+                type: 'text',
+                text: ' Snyk scan was detected and found no problems',
               },
             ],
           },

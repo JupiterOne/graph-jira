@@ -36,6 +36,7 @@ export interface UserEntity extends Entity {
   email: string;
   timeZone: string;
   active: boolean;
+  deleted?: boolean;
   accountType?: string;
 }
 

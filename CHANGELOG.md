@@ -8,6 +8,33 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.0.0 - 2022-04-29
+
+### BREAKING
+
+- exported function createUserCreatedIssueRelationships now requires an
+  apiVersion string in args
+- exported function createUserReportedIssueRelationships now requires an
+  apiVersion string in args
+
+### Changed
+
+- fix user ingestion for jira software on-prem
+
+### Added
+
+- add docs
+- expand test coverage for jira software on-prem
+
+## 2.3.5 - 2022-04-27
+
+### Changed
+
+- doc updates
+- run/enforce prettier
+- pr template
+- CODEOWNERS
+
 ## 2.3.4 - 2022-04-08
 
 ### Added
