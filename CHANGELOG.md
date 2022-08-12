@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.0.1 - 2022-08-12
+
 ## Fixed
 
 - updated sdk to fix rawData trimming issues
