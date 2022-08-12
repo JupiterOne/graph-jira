@@ -18,7 +18,7 @@ export function setupJiraRecording(
       redact(entry);
     },
     options: {
-      logging: false,
+      logLevel: 'silent',
       ...input.options,
     },
   });
