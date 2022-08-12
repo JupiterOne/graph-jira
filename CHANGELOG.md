@@ -11,6 +11,7 @@ and this project adheres to
 ## Fixed
 
 - updated sdk to fix rawData trimming issues
+- remove gitleaks
 
 ## 3.0.0 - 2022-04-29
 
