@@ -49,6 +49,13 @@ is too large. We recommend setting it to a smaller value. If you require
 re-ingestion of missed issue updates as a result of hitting our limits, please
 contact Support.
 
+(\*) Since this integration will ingest the last 2000 recently created/updated
+issues **per project since the last successful integration run**, adding new
+projects to an existing integration configuration is discouraged. If one wishes
+to ingest additional projects after the creation of an integration
+configuration, we recommend that a new configuration be created with **all** the
+projects one wishes to ingest. Then delete the old integration configuration.
+
 ## Requirements
 
 - JupiterOne requires the hostname for your Jira organization. JupiterOne also

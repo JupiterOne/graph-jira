@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+## Updated
+
+- docs
+
 ## 3.0.1 - 2022-08-12
 
 ## Fixed
