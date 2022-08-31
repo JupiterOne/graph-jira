@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.0.2 - 2022-08-31
+
 ## Changed
 
 - No longer write jira issues to disk. It isn't necessary
