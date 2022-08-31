@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+## Changed
+
+- No longer write jira issues to disk. It isn't necessary
+
 ## Updated
 
 - docs
