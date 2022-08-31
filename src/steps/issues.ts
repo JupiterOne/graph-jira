@@ -232,6 +232,9 @@ export const issueSteps: IntegrationStep<IntegrationConfig>[] = [
         _type: ISSUE_ENTITY_TYPE,
         _class: ISSUE_ENTITY_CLASS,
         partial: true,
+        indexMetadata: {
+          enabled: false,
+        },
       },
     ],
     relationships: [
