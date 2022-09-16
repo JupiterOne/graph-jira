@@ -18,6 +18,7 @@ export const integrationInstanceConfig: JiraIntegrationInstanceConfig = {
   jiraUsername: process.env.JIRA_USERNAME || 'development@jupiterone.dev',
   jiraPassword: process.env.JIRA_PASSWORD || 'default-jira-password',
   projects: process.env.PROJECTS || ['JJI'],
+  redactIssueDescriptions: false,
 };
 
 export const normalizedInstanceConfig = buildNormalizedInstanceConfig(
@@ -41,6 +42,7 @@ export const localServerInstanceConfig: JiraIntegrationInstanceConfig = {
   jiraPassword:
     process.env.LOCAL_SERVER_JIRA_PASSWORD || 'default-jira-password',
   projects: process.env.LOCAL_SERVER_PROJECTS || ['SP'],
+  redactIssueDescriptions: false,
 };
 
 /**

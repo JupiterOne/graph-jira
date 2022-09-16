@@ -352,6 +352,7 @@ describe('createIssueEntity', () => {
         logger: createMockIntegrationLogger(),
         fieldsById: fieldsById as any,
         customFieldsToInclude,
+        redactIssueDescriptions: false,
       }),
     ).toEqual(expectedIssueEntity);
   });
@@ -365,6 +366,7 @@ describe('createIssueEntity', () => {
       createIssueEntity({
         issue: jiraIssue,
         logger: createMockIntegrationLogger(),
+        redactIssueDescriptions: false,
       })._class,
     ).toEqual(['Finding', 'Record', 'Issue']);
   });
@@ -376,7 +378,47 @@ describe('createIssueEntity', () => {
         issue: jiraIssue,
         logger: createMockIntegrationLogger(),
         requestedClass: 'SomeClass',
+        redactIssueDescriptions: false,
       })._class,
     ).toEqual(['Record', 'Issue', 'SomeClass']);
+  });
+
+  test('will redact issue description if requested', () => {
+    const jiraIssue = getJiraIssue();
+    const expectedIssueEntity = {
+      _key: generateEntityKey('jira_issue', '47788'),
+      _type: 'jira_issue',
+      _class: ['Risk', 'Record', 'Issue'],
+      _rawData: [{ name: 'default', rawData: jiraIssue }],
+      id: '47788',
+      key: 'J1TEMP-112',
+      name: 'J1TEMP-112',
+      displayName: 'J1TEMP-112',
+      summary: 'Test Custom Field',
+      description: 'REDACTED',
+      category: 'issue',
+      webLink: `https://test.atlassian.net/browse/J1TEMP-112`,
+      status: 'Open',
+      active: true,
+      issueType: 'Risk',
+      reporter: 'adamz@company.com',
+      assignee: undefined,
+      creator: 'adamz@company.com',
+      createdOn: parseTimePropertyValue(jiraIssue.fields.created),
+      updatedOn: parseTimePropertyValue(jiraIssue.fields.updated),
+      resolvedOn: parseTimePropertyValue(jiraIssue.fields.resolutiondate),
+      dueOn: parseTimePropertyValue(jiraIssue.fields.duedate),
+      resolution: undefined,
+      labels: [],
+      components: [],
+      priority: 'Medium',
+    };
+    expect(
+      createIssueEntity({
+        issue: jiraIssue as any,
+        logger: createMockIntegrationLogger(),
+        redactIssueDescriptions: true,
+      }),
+    ).toEqual(expectedIssueEntity);
   });
 });

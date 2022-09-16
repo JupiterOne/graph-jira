@@ -51,6 +51,10 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     type: 'string',
     mask: true,
   },
+  redactIssueDescriptions: {
+    type: 'boolean',
+    mask: false,
+  },
   projects: {
     type: 'string',
     mask: false,
@@ -85,6 +89,11 @@ export interface JiraIntegrationInstanceConfig
    * An array of Jira project keys to target for ingestion.
    */
   projects: string[] | string;
+
+  /**
+   * Defaults to false. Set to true if you would like issue descriptions to be redacted in jira_issue entities.
+   */
+  redactIssueDescriptions: boolean;
 
   /**
    * An optional array of Jira Custom Field identifiers, indicating which custom

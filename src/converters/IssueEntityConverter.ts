@@ -43,12 +43,14 @@ export function createIssueEntity({
   fieldsById,
   customFieldsToInclude,
   requestedClass,
+  redactIssueDescriptions,
 }: {
   issue: Issue;
   logger: IntegrationLogger;
   fieldsById?: { [id: string]: Field };
   customFieldsToInclude?: string[];
   requestedClass?: unknown;
+  redactIssueDescriptions: boolean;
 }): IssueEntity {
   fieldsById = fieldsById || {};
   customFieldsToInclude = customFieldsToInclude || [];
@@ -111,6 +113,16 @@ export function createIssueEntity({
     }
   }
 
+  let entityDescription: string;
+  if (redactIssueDescriptions) {
+    entityDescription = 'REDACTED';
+  } else {
+    entityDescription =
+      (issue.fields.description &&
+        parseContent(issue.fields.description.content)) ||
+      'no description available';
+  }
+
   const entity = {
     _key: generateEntityKey(ISSUE_ENTITY_TYPE, issue.id),
     _type: ISSUE_ENTITY_TYPE,
@@ -127,10 +139,7 @@ export function createIssueEntity({
     name: issue.key,
     displayName: issue.key,
     summary: issue.fields.summary,
-    description:
-      (issue.fields.description &&
-        parseContent(issue.fields.description.content)) ||
-      'no description available',
+    description: entityDescription,
     category: 'issue',
     webLink: `https://${issue.self.split('/')[2]}/browse/${issue.key}`,
     status,
