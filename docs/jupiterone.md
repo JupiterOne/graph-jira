@@ -131,7 +131,7 @@ Before you use an existing user, you should verify a couple of things.
    - Enter the **User Password** associated with the user email, or the **API
      Key** if the password requires MFA.
    - Toggle the **Redact Issue Descriptions** option if you would like to avoid
-     desciptions on your `jira_issue` entities
+     descriptions on your `jira_issue` entities
    - Enter the **Project Keys** that the integration will retrieve data from.
 4. Click **Create Configuration** once all values are provided.
 
