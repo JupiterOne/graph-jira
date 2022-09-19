@@ -389,7 +389,21 @@ describe('createIssueEntity', () => {
       _key: generateEntityKey('jira_issue', '47788'),
       _type: 'jira_issue',
       _class: ['Risk', 'Record', 'Issue'],
-      _rawData: [{ name: 'default', rawData: jiraIssue }],
+      _rawData: [
+        {
+          name: 'default',
+          rawData: {
+            ...jiraIssue,
+            fields: {
+              ...jiraIssue.fields,
+              description: {
+                type: 'text',
+                text: 'REDACTED',
+              },
+            },
+          },
+        },
+      ],
       id: '47788',
       key: 'J1TEMP-112',
       name: 'J1TEMP-112',

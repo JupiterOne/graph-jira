@@ -115,6 +115,12 @@ export function createIssueEntity({
 
   let entityDescription: string;
   if (redactIssueDescriptions) {
+    if (issue.fields.description) {
+      issue.fields.description = {
+        type: 'text',
+        text: 'REDACTED',
+      };
+    } // don't let description leak in rawData
     entityDescription = 'REDACTED';
   } else {
     entityDescription =
