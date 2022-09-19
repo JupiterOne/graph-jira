@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.1.0 - 2022-09-19
+
 ## Added
 
 - new config option `redactIssueDescriptions`
