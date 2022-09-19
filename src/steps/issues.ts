@@ -54,6 +54,12 @@ export async function fetchIssues({
   }
 
   const config = instance.config;
+  const { redactIssueDescriptions } = config;
+
+  if (redactIssueDescriptions) {
+    logger.info('Will redact descriptions for ingested jira_issue entities');
+  }
+
   const lastJobTimestamp = executionHistory.lastSuccessful?.startedOn || 0;
 
   const apiClient = createApiClient(logger, config);
@@ -67,6 +73,7 @@ export async function fetchIssues({
         fieldsById,
         customFieldsToInclude: config.customFields,
         projectEntities,
+        redactIssueDescriptions,
       },
       projectKey,
       issue,
@@ -113,6 +120,7 @@ type ProcessIssueContext = {
   fieldsById: IdFieldMap;
   customFieldsToInclude: string[];
   projectEntities: ProjectEntity[];
+  redactIssueDescriptions: boolean;
 };
 
 async function fetchJiraFields(apiClient: APIClient) {
@@ -131,6 +139,7 @@ async function processIssue(
     customFieldsToInclude,
     fieldsById,
     projectEntities,
+    redactIssueDescriptions,
   }: ProcessIssueContext,
   projectKey: JiraProjectKey,
   issue: Issue,
@@ -142,6 +151,7 @@ async function processIssue(
         logger,
         fieldsById,
         customFieldsToInclude,
+        redactIssueDescriptions,
       }),
     )) as IssueEntity;
 
