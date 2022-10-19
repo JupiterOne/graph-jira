@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## Changed
+
+- Added retry requests on response 500.
+- Updated documentation to reflect that basic authentication is now deprecated
+  and the API token is always needed.
+
 ## 3.1.0 - 2022-09-19
 
 ## Added
