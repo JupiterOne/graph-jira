@@ -128,8 +128,7 @@ Before you use an existing user, you should verify a couple of things.
      integration.
    - Enter the **Hostname** of your organization.
    - Enter the **User Email** used to authenticate with Jira.
-   - Enter the **User Password** associated with the user email, or the **API
-     Key** if the password requires MFA.
+   - Enter the **API Token** in the **User Password** field.
    - Toggle the **Redact Issue Descriptions** option if you would like to avoid
      descriptions on your `jira_issue` entities
    - Enter the **Project Keys** that the integration will retrieve data from.

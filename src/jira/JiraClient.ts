@@ -188,7 +188,8 @@ async function retry<T>(logger: IntegrationLogger, func: () => Promise<T[]>) {
         statusCode === 401 ||
         statusCode === 403 ||
         statusCode === 404 ||
-        statusCode === 400
+        statusCode === 400 ||
+        statusCode === 500
       ) {
         attemptContext.abort();
         logger.info(
