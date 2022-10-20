@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.2.0 - 2022-10-19
+
 ## Changed
 
 - Added retry requests on response 500.
