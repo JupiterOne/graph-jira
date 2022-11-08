@@ -20,14 +20,18 @@ const VERSION_DETECTIONS = {
  * that this does not require authentication.
  */
 export async function detectApiVersion(
-  apiOptions: Required<Pick<JiraApiOptions, 'protocol' | 'host' | 'port'>>,
+  apiOptions: Required<Pick<JiraApiOptions, 'protocol' | 'host' | 'port'>> & {
+    base?: string;
+  },
 ): Promise<JiraApiVersion> {
   const errors: Error[] = [];
 
   for (const version of KNOWN_JIRA_API_VERSIONS) {
     try {
       const response = await fetch(
-        `${apiOptions.protocol}://${apiOptions.host}:${apiOptions.port}/rest/api/${version}/serverInfo`,
+        `${apiOptions.protocol}://${apiOptions.host}:${apiOptions.port}${
+          apiOptions.base ? `/${apiOptions.base}` : ''
+        }/rest/api/${version}/serverInfo`,
         {
           follow: 0,
         },
