@@ -28,14 +28,14 @@ export async function detectApiVersion(
 
   for (const version of KNOWN_JIRA_API_VERSIONS) {
     try {
-      const response = await fetch(
-        `${apiOptions.protocol}://${apiOptions.host}:${apiOptions.port}${
-          apiOptions.base ? `/${apiOptions.base}` : ''
-        }/rest/api/${version}/serverInfo`,
-        {
-          follow: 0,
-        },
-      );
+      const base = `${apiOptions.protocol}://${apiOptions.host}:${apiOptions.port}`;
+      const url = apiOptions.base
+        ? `${base}/${apiOptions.base}/rest/api/${version}/serverInfo`
+        : `${base}/rest/api/${version}/serverInfo`;
+
+      const response = await fetch(url, {
+        follow: 0,
+      });
       if (response.headers.get('content-type')?.match(/application\/json/)) {
         const info = (await response.json()) as ServerInfo;
         if (VERSION_DETECTIONS[version](response.status, info)) {
