@@ -67,4 +67,23 @@ describe(detectApiVersion, () => {
       }),
     ).rejects.toThrow('Could not detect the Jira server version');
   });
+
+  test('with custom path', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'withCustomPath',
+      options: {
+        recordFailedRequests: true,
+      },
+    });
+
+    await expect(
+      detectApiVersion({
+        protocol: normalizedLocalServerInstanceConfig.protocol,
+        host: normalizedLocalServerInstanceConfig.host,
+        port: normalizedLocalServerInstanceConfig.port,
+        base: 'test',
+      }),
+    ).resolves.toEqual('2');
+  });
 });
