@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+## Fixed
+
+- Fixed the `UNKNOWN_JIRA_API_VERSION` validation issue when hostname contains
+  nesting.
+
 ## 3.2.0 - 2022-10-19
 
 ## Changed

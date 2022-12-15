@@ -48,7 +48,7 @@ export type JiraHostConfig = Required<
   Pick<JiraApiOptions, 'protocol' | 'port'>
 > & {
   host: JiraHostString;
-  base: string | undefined;
+  base?: string;
 };
 
 /**
