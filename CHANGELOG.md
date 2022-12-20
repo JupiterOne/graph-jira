@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.3.0 - 2022-12-20
+
 ## Fixed
 
 - Fixed the `UNKNOWN_JIRA_API_VERSION` validation issue when hostname contains
