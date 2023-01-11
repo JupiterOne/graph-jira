@@ -91,6 +91,13 @@ function normalizeIssueFields(
     if (apiVersion === '3') {
       normalizedFields.description = markdownToADF(alertRulesDescription);
     }
+  } else {
+    // Support non-ADF description field
+    if (apiVersion === '3') {
+      normalizedFields.description = markdownToADF(
+        normalizedFields.description,
+      );
+    }
   }
 
   return normalizedFields;
