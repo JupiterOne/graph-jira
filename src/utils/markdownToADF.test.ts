@@ -60,6 +60,7 @@ describe('markdownToADF', () => {
       }),
     );
   });
+
   test('Converts basic markdown to ADF', () => {
     expect(parseObject(markdownToADF(BASIC_MARKDOWN))).toMatchObject(
       parseObject({
