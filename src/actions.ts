@@ -7,6 +7,7 @@ import {
   JiraProjectId,
   JiraProjectKey,
 } from './jira';
+import { markdownToADF } from './utils/markdownToADF';
 
 /**
  * The structure of the `properties` data provided by the JupiterOne Alert Rules
@@ -79,14 +80,19 @@ function normalizeIssueFields(
   issueFields: IssueFields | undefined,
 ): IssueFields {
   const normalizedFields: IssueFields = { ...issueFields };
-  if (
-    apiVersion === '2' &&
-    isAlertRulesDescriptionADF(normalizedFields.description)
-  ) {
-    normalizedFields.description = getAlertRulesDescription(
+  const isADF = isAlertRulesDescriptionADF(normalizedFields.description);
+  if (isADF) {
+    const alertRulesDescription = getAlertRulesDescription(
       normalizedFields.description,
     );
+    if (apiVersion === '2') {
+      normalizedFields.description = alertRulesDescription;
+    }
+    if (apiVersion === '3') {
+      normalizedFields.description = markdownToADF(alertRulesDescription);
+    }
   }
+
   return normalizedFields;
 }
 
