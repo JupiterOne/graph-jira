@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-jira",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "A JupiterOne managed integration for https://www.atlassian.com/software/jira.",
   "main": "dist/index.js",
   "repository": "https://github.com/JupiterOne/graph-jira",
@@ -32,6 +32,7 @@
     "dotenv": "^10.0.0",
     "jira-client": "^7.1.0",
     "lodash": "^4.17.21",
+    "md-to-adf": "^0.6.4",
     "node-fetch": "2"
   },
   "peerDependencies": {
