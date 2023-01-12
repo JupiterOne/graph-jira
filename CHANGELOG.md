@@ -8,12 +8,6 @@ and this project adheres to
 
 ## [Unreleased]
 
-## 3.5.0 - 2023-01-12
-
-## Fixed
-
-- Fixed ADF formatting issues
-
 ## 3.3.0 - 2022-12-20
 
 ## Fixed
