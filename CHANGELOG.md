@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.6.0 - 2023-01-23
+
+## Added
+
+- Functionality to upload descriptions as an issue attachment when they exceed
+  the Jira character limit
+
 ## 3.5.0 - 2023-01-12
 
 ## Fixed
