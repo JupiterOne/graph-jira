@@ -7,6 +7,8 @@ import {
   sleep,
 } from '@lifeomic/attempt';
 
+import util from 'util';
+
 import { JiraClientConfig } from './';
 import {
   Field,
@@ -22,6 +24,8 @@ import {
   ServerInfo,
   User,
 } from './types';
+import FormData from 'form-data';
+import fs from 'fs';
 
 type AddNewIssueParams = {
   summary: string;
@@ -29,6 +33,13 @@ type AddNewIssueParams = {
   issueTypeName: IssueTypeName;
   additionalFields?: IssueFields;
 };
+
+// This is necessary due to the fact that in node-10, writeFile does not have an async version
+const writeFileAsync = util.promisify(fs.writeFile);
+const unlinkFileAsync = util.promisify(fs.unlink);
+
+const JIRA_ATTACHMENT_FILENAME = 'jupiterone-content';
+const JIRA_ATTACHMENT_FILETYPE = 'txt';
 
 /**
  * An adapter for `JiraApi` serving to handle differences in Jira API and server
@@ -77,6 +88,39 @@ export class JiraClient {
       },
     })) as Issue;
     return issue;
+  }
+
+  public async addAttachmentOnIssue({
+    issueId,
+    attachmentContent,
+  }): Promise<void> {
+    const filePath = `/tmp/${JIRA_ATTACHMENT_FILENAME}-${issueId}.${JIRA_ATTACHMENT_FILETYPE}`;
+    await writeFileAsync(filePath, attachmentContent);
+    const form = new FormData();
+    const stats = fs.statSync(filePath);
+    const fileSizeInBytes = stats.size;
+    const fileStream = fs.createReadStream(filePath);
+
+    form.append('file', fileStream, { knownLength: fileSizeInBytes });
+
+    try {
+      await this.client.addAttachmentOnIssue(issueId, fileStream);
+    } catch (error) {
+      this.logger.error(
+        { filePath, error },
+        'Error adding attachment to issue',
+      );
+    }
+
+    try {
+      await unlinkFileAsync(filePath);
+    } catch (error) {
+      this.logger.error(
+        { filePath, error },
+        'Error removing temp file from lambda container',
+      );
+    }
+    // Consider returning  better type, but the docs are bad and dont help
   }
 
   public async getCurrentUser(): Promise<any> {

@@ -1,5 +1,6 @@
 import { CreateIssueActionProperties, createJiraIssue } from './actions';
 import { Issue } from './jira';
+import largeAdf from '../test/fixtures/large-adf.json';
 
 const issueDescriptionText = 'Test description';
 
@@ -42,6 +43,7 @@ describe('createJiraIssue', () => {
     mockClient.projectKeyToProjectId = jest.fn().mockResolvedValueOnce(123456);
     mockClient.addNewIssue = jest.fn().mockResolvedValueOnce(createdIssue);
     mockClient.findIssue = jest.fn().mockResolvedValueOnce(foundIssue);
+    mockClient.addAttachmentOnIssue = jest.fn().mockResolvedValueOnce({});
   });
 
   test('uses project ID as provided', async () => {
@@ -111,6 +113,39 @@ describe('createJiraIssue', () => {
     });
 
     expect(mockClient.findIssue).toHaveBeenCalledWith(createdIssue.key);
+    expect(issue).toBe(foundIssue);
+  });
+
+  test('does not try to create an attachment for a normal sized description', async () => {
+    mockClient.apiVersion = '3';
+
+    const issue = await createJiraIssue(mockClient, {
+      properties: actionProperties,
+    });
+
+    // Should not create attachments unless absolutely necessary
+    expect(mockClient.addAttachmentOnIssue).not.toHaveBeenCalled();
+    expect(issue).toBe(foundIssue);
+  });
+
+  test('should add the description as an attachment if it is too large', async () => {
+    mockClient.apiVersion = '3';
+
+    const issue = await createJiraIssue(mockClient, {
+      properties: {
+        ...actionProperties,
+        additionalFields: { description: largeAdf },
+      },
+    });
+    expect(mockClient.addAttachmentOnIssue).toHaveBeenCalled();
+
+    // Should not create attachments unless absolutely necessary
+    expect(mockClient.addAttachmentOnIssue).toHaveBeenCalledWith(
+      expect.objectContaining({
+        issueId: createdIssue.id,
+        attachmentContent: expect.any(String),
+      }),
+    );
     expect(issue).toBe(foundIssue);
   });
 });
