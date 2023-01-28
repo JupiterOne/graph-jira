@@ -246,7 +246,7 @@ export const issueSteps: IntegrationStep<IntegrationConfig>[] = [
         _class: ISSUE_ENTITY_CLASS,
         partial: true,
         indexMetadata: {
-          enabled: true,
+          enabled: false,
         },
       },
     ],
