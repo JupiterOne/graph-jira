@@ -353,6 +353,7 @@ describe('createIssueEntity', () => {
         fieldsById: fieldsById as any,
         customFieldsToInclude,
         redactIssueDescriptions: false,
+        apiVersion: '3',
       }),
     ).toEqual(expectedIssueEntity);
   });
@@ -367,6 +368,7 @@ describe('createIssueEntity', () => {
         issue: jiraIssue,
         logger: createMockIntegrationLogger(),
         redactIssueDescriptions: false,
+        apiVersion: '3',
       })._class,
     ).toEqual(['Finding', 'Record', 'Issue']);
   });
@@ -379,6 +381,7 @@ describe('createIssueEntity', () => {
         logger: createMockIntegrationLogger(),
         requestedClass: 'SomeClass',
         redactIssueDescriptions: false,
+        apiVersion: '3',
       })._class,
     ).toEqual(['Record', 'Issue', 'SomeClass']);
   });
@@ -432,6 +435,52 @@ describe('createIssueEntity', () => {
         issue: jiraIssue as any,
         logger: createMockIntegrationLogger(),
         redactIssueDescriptions: true,
+        apiVersion: '3',
+      }),
+    ).toEqual(expectedIssueEntity);
+  });
+
+  test('ingests v2 description', () => {
+    const jiraIssue = getJiraIssue();
+    jiraIssue.fields.description =
+      'This is a version 2 description. Notice how this is just a string instead of an array of TextContent objects';
+
+    const expectedIssueEntity = {
+      _key: generateEntityKey('jira_issue', '47788'),
+      _type: 'jira_issue',
+      _class: ['Risk', 'Record', 'Issue'],
+      _rawData: [{ name: 'default', rawData: jiraIssue }],
+      id: '47788',
+      key: 'J1TEMP-112',
+      name: 'J1TEMP-112',
+      displayName: 'J1TEMP-112',
+      summary: 'Test Custom Field',
+      description:
+        'This is a version 2 description. Notice how this is just a string instead of an array of TextContent objects',
+      category: 'issue',
+      webLink: `https://test.atlassian.net/browse/J1TEMP-112`,
+      status: 'Open',
+      active: true,
+      issueType: 'Risk',
+      reporter: 'adamz@company.com',
+      assignee: undefined,
+      creator: 'adamz@company.com',
+      createdOn: parseTimePropertyValue(jiraIssue.fields.created),
+      updatedOn: parseTimePropertyValue(jiraIssue.fields.updated),
+      resolvedOn: parseTimePropertyValue(jiraIssue.fields.resolutiondate),
+      dueOn: parseTimePropertyValue(jiraIssue.fields.duedate),
+      resolution: undefined,
+      labels: [],
+      components: [],
+      priority: 'Medium',
+    };
+
+    expect(
+      createIssueEntity({
+        issue: jiraIssue as any,
+        logger: createMockIntegrationLogger(),
+        redactIssueDescriptions: false,
+        apiVersion: '2',
       }),
     ).toEqual(expectedIssueEntity);
   });

@@ -15,7 +15,7 @@ import {
   RISK_ISSUE_ENTITY_CLASS,
   VULN_ISSUE_ENTITY_CLASS,
 } from '../entities';
-import { Field, Issue } from '../jira';
+import { Field, Issue, TextContent } from '../jira';
 import parseContent from '../jira/parseContent';
 import { generateEntityKey } from '../utils';
 import {
@@ -44,6 +44,7 @@ export function createIssueEntity({
   customFieldsToInclude,
   requestedClass,
   redactIssueDescriptions,
+  apiVersion,
 }: {
   issue: Issue;
   logger: IntegrationLogger;
@@ -51,6 +52,7 @@ export function createIssueEntity({
   customFieldsToInclude?: string[];
   requestedClass?: unknown;
   redactIssueDescriptions: boolean;
+  apiVersion: string;
 }): IssueEntity {
   fieldsById = fieldsById || {};
   customFieldsToInclude = customFieldsToInclude || [];
@@ -125,7 +127,9 @@ export function createIssueEntity({
   } else {
     entityDescription =
       (issue.fields.description &&
-        parseContent(issue.fields.description.content)) ||
+        (apiVersion === '2'
+          ? (issue.fields.description as string)
+          : parseContent((issue.fields.description as TextContent).content))) ||
       'no description available';
   }
 
