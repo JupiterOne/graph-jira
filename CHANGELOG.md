@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added description in finding entity for API version 2
+
 ## 3.6.0 - 2023-01-23
 
 ## Added

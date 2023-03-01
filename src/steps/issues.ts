@@ -54,7 +54,7 @@ export async function fetchIssues({
   }
 
   const config = instance.config;
-  const { redactIssueDescriptions } = config;
+  const { redactIssueDescriptions, apiVersion } = config;
 
   if (redactIssueDescriptions) {
     logger.info('Will redact descriptions for ingested jira_issue entities');
@@ -74,6 +74,7 @@ export async function fetchIssues({
         customFieldsToInclude: config.customFields,
         projectEntities,
         redactIssueDescriptions,
+        apiVersion,
       },
       projectKey,
       issue,
@@ -121,6 +122,7 @@ type ProcessIssueContext = {
   customFieldsToInclude: string[];
   projectEntities: ProjectEntity[];
   redactIssueDescriptions: boolean;
+  apiVersion: string;
 };
 
 async function fetchJiraFields(apiClient: APIClient) {
@@ -140,6 +142,7 @@ async function processIssue(
     fieldsById,
     projectEntities,
     redactIssueDescriptions,
+    apiVersion,
   }: ProcessIssueContext,
   projectKey: JiraProjectKey,
   issue: Issue,
@@ -152,9 +155,9 @@ async function processIssue(
         fieldsById,
         customFieldsToInclude,
         redactIssueDescriptions,
+        apiVersion,
       }),
     )) as IssueEntity;
-
     const projectEntity = projectEntities?.find(
       (project) => project.key === projectKey,
     );

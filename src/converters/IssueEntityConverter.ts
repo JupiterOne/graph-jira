@@ -15,7 +15,7 @@ import {
   RISK_ISSUE_ENTITY_CLASS,
   VULN_ISSUE_ENTITY_CLASS,
 } from '../entities';
-import { Field, Issue } from '../jira';
+import { Field, Issue, TextContent } from '../jira';
 import parseContent from '../jira/parseContent';
 import { generateEntityKey } from '../utils';
 import {
@@ -37,6 +37,17 @@ const DONE = [
   'transferred',
 ];
 
+function getIssueDescription(issue: Issue, apiVersion: string): string {
+  const { description } = issue.fields;
+  if (!description) {
+    return 'no description available';
+  }
+
+  return apiVersion === '2'
+    ? (description as string)
+    : parseContent((description as TextContent).content);
+}
+
 export function createIssueEntity({
   issue,
   logger,
@@ -44,6 +55,7 @@ export function createIssueEntity({
   customFieldsToInclude,
   requestedClass,
   redactIssueDescriptions,
+  apiVersion,
 }: {
   issue: Issue;
   logger: IntegrationLogger;
@@ -51,6 +63,7 @@ export function createIssueEntity({
   customFieldsToInclude?: string[];
   requestedClass?: unknown;
   redactIssueDescriptions: boolean;
+  apiVersion: string;
 }): IssueEntity {
   fieldsById = fieldsById || {};
   customFieldsToInclude = customFieldsToInclude || [];
@@ -123,10 +136,7 @@ export function createIssueEntity({
     } // don't let description leak in rawData
     entityDescription = 'REDACTED';
   } else {
-    entityDescription =
-      (issue.fields.description &&
-        parseContent(issue.fields.description.content)) ||
-      'no description available';
+    entityDescription = getIssueDescription(issue, apiVersion);
   }
 
   const entity = {
