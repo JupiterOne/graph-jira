@@ -37,6 +37,17 @@ const DONE = [
   'transferred',
 ];
 
+function getIssueDescription(issue: Issue, apiVersion: string): string {
+  const { description } = issue.fields;
+  if (!description) {
+    return 'no description available';
+  }
+
+  return apiVersion === '2'
+    ? (description as string)
+    : parseContent((description as TextContent).content);
+}
+
 export function createIssueEntity({
   issue,
   logger,
@@ -125,12 +136,7 @@ export function createIssueEntity({
     } // don't let description leak in rawData
     entityDescription = 'REDACTED';
   } else {
-    entityDescription =
-      (issue.fields.description &&
-        (apiVersion === '2'
-          ? (issue.fields.description as string)
-          : parseContent((issue.fields.description as TextContent).content))) ||
-      'no description available';
+    entityDescription = getIssueDescription(issue, apiVersion);
   }
 
   const entity = {
