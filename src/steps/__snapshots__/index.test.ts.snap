@@ -1201,7 +1201,7 @@ Object {
       "components": Array [],
       "createdOn": 1651170296000,
       "creator": "jupiterone-dev@jupiterone.com",
-      "description": "no description available",
+      "description": "Test description",
       "displayName": "SP-25",
       "dueOn": undefined,
       "id": "10024",
@@ -2735,7 +2735,20 @@ Object {
       "components": Array [],
       "createdOn": 1650530387000,
       "creator": "mdaum1993@gmail.com",
-      "description": "no description available",
+      "description": "*To delete this Sample Project _(must be performed by a user with Administration rights)_* 
+- Open the administration interface to the projects page by using the keyboard shortcut 'g' then 'g' and typing 'Projects' in to the search dialog
+- Select the \\"Delete\\" link for the \\"SP\\" project
+
+*To delete the Sample Project workflow and workflow scheme _(must be performed by a user with Administration rights)_* 
+- Open the administration interface to the workflow schemes page by using the keyboard shortcut 'g' then 'g' and typing 'Workflow Schemes' in to the search dialog
+- Select the \\"Delete\\" link for the \\"SP: Software Simplified Workflow Scheme\\" workflow scheme
+- Go to the workflows page by using the keyboard shortcut 'g' then 'g' and typing 'Workflows' in to the search dialog(_OnDemand users should select the second match for Workflows_)
+- Expand the \\"Inactive\\" section
+- Select the \\"Delete\\" link for the \\"Software Simplified Workflow  for Project SP\\" workflow
+
+*To delete this Board _(must be performed by the owner of this Board or an Administrator)_*
+- Click the \\"Tools\\" cog at the top right of this board
+- Select \\"Delete\\"",
       "displayName": "SP-17",
       "dueOn": undefined,
       "id": "10016",
@@ -3263,7 +3276,9 @@ You can add your own Quick Filters in the board configuration (select *Board > C
       "components": Array [],
       "createdOn": 1651066787000,
       "creator": "mdaum1993@gmail.com",
-      "description": "no description available",
+      "description": "*Creating Quick Filters*
+
+You can add your own Quick Filters in the board configuration (select *Board > Configure*)",
       "displayName": "SP-14",
       "dueOn": undefined,
       "id": "10013",
@@ -3457,7 +3472,11 @@ For other fields you can open Quick Edit, select \\"Edit\\" from the cog drop-do
       "components": Array [],
       "createdOn": 1650530387000,
       "creator": "mdaum1993@gmail.com",
-      "description": "no description available",
+      "description": "*Editing using the Detail View*
+
+Many of the fields in the detail view can be inline edited by simply clicking on them. 
+
+For other fields you can open Quick Edit, select \\"Edit\\" from the cog drop-down.",
       "displayName": "SP-13",
       "dueOn": undefined,
       "id": "10012",
@@ -4499,7 +4518,11 @@ However, you can apply estimates to bugs if you wish by configuring the \\"Story
       "components": Array [],
       "createdOn": 1651168188000,
       "creator": "mdaum1993@gmail.com",
-      "description": "no description available",
+      "description": "*Estimation of Bugs*
+
+Scrum teams do not normally apply story point estimates to bugs because bugs are considered to be part of the ongoing work that the team must deal with (i.e the overhead). If you view the story points completed in a sprint as a measure of progress, then bugs also have no value because they do not deliver anything additional to the customer. 
+
+However, you can apply estimates to bugs if you wish by configuring the \\"Story Points\\" field to apply to other Issue Types (by default it only applies to Stories and Epics). Some more information on this is in the [documentation|https://confluence.atlassian.com/display/GH/Story+Point].",
       "displayName": "SP-8",
       "dueOn": undefined,
       "id": "10007",
@@ -4919,7 +4942,11 @@ You can add sub-tasks to a story on the sub-task tab (folder icon) above.",
       "components": Array [],
       "createdOn": 1651168187000,
       "creator": "mdaum1993@gmail.com",
-      "description": "no description available",
+      "description": "*Task Breakdown*
+
+Many teams choose to break down user stories into a set of tasks needed to implement the story. They then update the status of these tasks during a sprint to track progress. The completion of the last task signals the end of the story. 
+
+You can add sub-tasks to a story on the sub-task tab (folder icon) above.",
       "displayName": "SP-6",
       "dueOn": undefined,
       "id": "10005",
@@ -5086,7 +5113,9 @@ During the Planning Meeting the team will examine the stories at the top of the 
       "components": Array [],
       "createdOn": 1651168187000,
       "creator": "mdaum1993@gmail.com",
-      "description": "no description available",
+      "description": "*Starting a Sprint*
+
+During the Planning Meeting the team will examine the stories at the top of the backlog and determine which they can commit to completing during the coming sprint. Based on this information the Product Owner might break down stories into smaller stories, adjust story priorities or otherwise work with the team to define the ideal sprint outcome. When the sprint is started the stories are moved into the sprint backlog.",
       "displayName": "SP-5",
       "dueOn": undefined,
       "id": "10004",
@@ -5271,7 +5300,19 @@ You can configure JIRA Software to use time-based estimates if you wish. In the 
       "components": Array [],
       "createdOn": 1651168187000,
       "creator": "mdaum1993@gmail.com",
-      "description": "no description available",
+      "description": "This story is estimated at 5 Story Points (as shown in the \\"Estimate\\" field at the top right of the Detail View). 
+
+Try updating the Story Point estimate to 4 by clicking on the \\"Estimate\\" then typing.
+
+*Estimating using Story Points*
+
+Because the traditional process of estimating tasks in weeks or days is often wildly inaccurate, many Scrum teams estimate in Story Points instead. Story Points exist merely as a way to estimate a task's difficulty compared to some other task (for example, a 10-point story would probably take double the effort of a 5-point story). As teams mature with Scrum they tend to achieve a consistent number of Story Points from Sprint to Sprint -- this is termed the team's _velocity_. This allows the Product Owner to use the velocity to predict how many Sprints it will take to deliver parts of the backlog. 
+
+Many teams use Planning Poker to achieve consensus on Story Point estimates.
+
+*Using Other Estimation Units*
+
+You can configure JIRA Software to use time-based estimates if you wish. In the configuration for the board, on the \\"Estimation\\" tab, select \\"Original Time Estimate\\" as your Estimation Statistic. If you also wish to track the time used during the Sprint, select \\"Remaining Estimate and Time Spent\\" to enable Time Tracking in JIRA Software.",
       "displayName": "SP-4",
       "dueOn": undefined,
       "id": "10003",
@@ -5446,7 +5487,9 @@ The backlog is the source of truth for the order of work to be completed. It is 
       "components": Array [],
       "createdOn": 1651168187000,
       "creator": "mdaum1993@gmail.com",
-      "description": "no description available",
+      "description": "*About the Product Backlog*
+
+The backlog is the source of truth for the order of work to be completed. It is expected that the Product Owner will work with the team to make sure that the backlog represents the current approach to delivering the product. JIRA Software makes it easy to prioritise (rank) Stories by dragging them up and down the backlog.",
       "displayName": "SP-3",
       "dueOn": undefined,
       "id": "10002",
@@ -5628,7 +5671,15 @@ Stories to be implemented in the future are stored in the Product Backlog. The b
       "components": Array [],
       "createdOn": 1651168187000,
       "creator": "mdaum1993@gmail.com",
-      "description": "no description available",
+      "description": "When you click \\"+ Create Issue\\" you will be asked for the correct project (select \\"SP\\") and Issue Type (select \\"Story\\").
+
+*About User Stories*
+
+The Scrum methodology drops traditional software requirement statements in favour of real world problems expressed as User Stories. Stories describe the task a particular user is trying to achieve and its value. They are typically of the form \\"As a (role) I want (something) so that (benefit)\\". This approach focuses the team on the core user need rather than on implementation details. 
+
+Stories are \\"placeholders for a conversation\\" -- they do not need to be especially detailed since it is expected that the team will work together to resolve ambiguity as the story is developed. 
+
+Stories to be implemented in the future are stored in the Product Backlog. The backlog is ranked by the Product Owner so that the next items to be completed are at the top.",
       "displayName": "SP-2",
       "dueOn": undefined,
       "id": "10001",
@@ -5808,7 +5859,13 @@ The Scrum Alliance offers an excellent [introduction to Scrum|http://www.scrumal
       "components": Array [],
       "createdOn": 1651168187000,
       "creator": "mdaum1993@gmail.com",
-      "description": "no description available",
+      "description": "*About Scrum*
+
+Scrum is an iterative approach to Agile software development. The methodology has been around since the 1980s but was popularised by Jeff Sutherland and Ken Schwaber. 
+
+Scrum breaks the development of a product down in to discrete iterations (termed Sprints) that each deliver functionality that could potentially be shipped to users.
+
+The Scrum Alliance offers an excellent [introduction to Scrum|http://www.scrumalliance.org/resources/47] that provides an overview of key Scrum concepts, stakeholders, processes and artefacts.",
       "displayName": "SP-1",
       "dueOn": undefined,
       "id": "10000",

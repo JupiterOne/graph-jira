@@ -252,7 +252,7 @@ export interface Issue extends Resource {
     reporter?: User;
     assignee?: User;
     summary: string;
-    description: TextContent;
+    description: TextContent | string;
     subtasks: Issue[];
     customfield?: any;
   };
