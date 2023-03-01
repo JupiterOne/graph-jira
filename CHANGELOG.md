@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### 3.6.1 - 2023-03-01
+
+### Fixed
+
+- Properly parse issue description for versions 2 and 3.
+
 ### Added
 
 - Added description in finding entity for API version 2
