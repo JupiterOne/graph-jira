@@ -7,6 +7,24 @@ with JupiterOne in the [integration documentation](docs/jupiterone.md).
 
 ### Prerequisites
 
+In the Atlassian cloud or locally installed Jira instance, the following
+information is required:
+
+1. After logging into the Jira instance, use the Settings Gear icon to access
+   Atlassian account settings. From that page use the Security link to access
+   the API token link to create and manage API tokens.
+2. Select create API token, and when the API token dialog appears, assign a name
+   to it; e.g. "J1-token".
+3. Copy the new token value and keep it for the next section as the PASSWORD
+   field to in the local `.env` file.
+4. Copy the URL from the browser, keeping only the `protocol://host.domain.tld`
+   portion and keep it for the next section as the HOST field in the local
+   `.env` file. Do not include a trailing slash `/`.
+5. From the `Projects` menu at top of page, a project key name can be selected
+   to be used in the next section to setup the local `.env` file.
+
+### Steps to running the graph-jira locally
+
 1. Install [Node.js](https://nodejs.org/) using the
    [installer](https://nodejs.org/en/download/) or a version manager such as
    [nvm](https://github.com/nvm-sh/nvm) or [fnm](https://github.com/Schniz/fnm).
@@ -23,6 +41,15 @@ with JupiterOne in the [integration documentation](docs/jupiterone.md).
    executed in a development environment, values for these parameters are read
    from Node's `process.env`, loaded from `.env`. That file has been added to
    `.gitignore` to avoid commiting credentials.
+
+6. Edit the local `.env` file and update the following fields: a. JIRA_HOST: the
+   value containing the `protocol://host.domain.tld` from prerequisites. b.
+   JIRA_API_VERSION: use the value of `3`. c. JIRA_USERNAME: the email id used
+   to access tha Atlassian Jira system from prerequisites. d. JIRA_PASSWORD: the
+   API token value from prerequisites. e. PROJECTS: can be left as `[""]` or
+   specify a key name from prerequisites. f. REDACT_ISSUE_DESCRIPTIONS: can
+   remain FALSE, unless data in the Jira descriptions is highly sensitive or
+   other company sensitivity rating which deems it not shareable.
 
 ### Running the integration
 
