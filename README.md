@@ -1,7 +1,9 @@
 # JupiterOne Integration
 
 Learn about the data ingested, benefits of this integration, and how to use it
-with JupiterOne in the [integration documentation](docs/jupiterone.md).
+with JupiterOne in the [integration documentation](docs/jupiterone.md). The
+askJ1 community also has documentation on Jira integrations here:
+[Jira integration with JupiterOne](https://community.askj1.com/kb/articles/1009-jira-integration-with-jupiterone)
 
 ## Development
 
@@ -10,6 +12,8 @@ with JupiterOne in the [integration documentation](docs/jupiterone.md).
 In the Atlassian cloud or locally installed Jira instance, the following
 information is required:
 
+For cloud based Jira instance:
+
 1. After logging into the Jira instance, use the Settings Gear icon to access
    Atlassian account settings. From that page use the Security link to access
    the API token link to create and manage API tokens.
@@ -17,9 +21,20 @@ information is required:
    to it; e.g. "J1-token".
 3. Copy the new token value and keep it for the next section as the PASSWORD
    field to in the local `.env` file.
-4. Copy the URL from the browser, keeping only the `protocol://host.domain.tld`
-   portion and keep it for the next section as the HOST field in the local
-   `.env` file. Do not include a trailing slash `/`.
+4. Copy the cloud URL from the browser, keeping only the
+   `protocol://host.domain.tld` portion and keep it for the next section as the
+   HOST field in the local `.env` file. Do not include a trailing slash `/`.
+
+For local installed Jira:
+
+1. This install assumes there is a running local Jira envirnment that can be
+   accessed with a browser.
+2. Use the login name and password to login to Jira through the browser as the
+   username and password values in the `.env` below.
+3. The API version for locally installed version of Jira is limited to `2`.
+4. For a locally installed Jira, the URL value for the HOST field will be
+   similar to `http://localhost:8088`.
+
 5. From the `Projects` menu at top of page, a project key name can be selected
    to be used in the next section to setup the local `.env` file.
 
@@ -42,14 +57,17 @@ information is required:
    from Node's `process.env`, loaded from `.env`. That file has been added to
    `.gitignore` to avoid commiting credentials.
 
-6. Edit the local `.env` file and update the following fields: a. JIRA_HOST: the
-   value containing the `protocol://host.domain.tld` from prerequisites. b.
-   JIRA_API_VERSION: use the value of `3`. c. JIRA_USERNAME: the email id used
-   to access tha Atlassian Jira system from prerequisites. d. JIRA_PASSWORD: the
-   API token value from prerequisites. e. PROJECTS: can be left as `[""]` or
-   specify a key name from prerequisites. f. REDACT_ISSUE_DESCRIPTIONS: can
-   remain FALSE, unless data in the Jira descriptions is highly sensitive or
-   other company sensitivity rating which deems it not shareable.
+6. Edit the local `.env` file and update the following fields:
+   - JIRA_HOST: the value containing the host URL from prerequisites.
+   - JIRA_API_VERSION: use the value of `3`, unless Jira is running locally.
+   - JIRA_USERNAME: the email id used to access tha Atlassian Jira system from
+     prerequisites.
+   - JIRA_PASSWORD: the API token value from cloud prerequisites. Or the user
+     password for local Jira.
+   - PROJECTS: can be left as `[""]` or specify a key name from prerequisites.
+   - REDACT_ISSUE_DESCRIPTIONS: can remain FALSE, unless data in the Jira
+     descriptions is highly sensitive or other company sensitivity rating which
+     deems it not shareable.
 
 ### Running the integration
 
@@ -77,3 +95,6 @@ developing this integration.
 
 The history of this integration's development can be viewed at
 [CHANGELOG.md](CHANGELOG.md).
+
+[def]:
+  https://community.askj1.com/kb/articles/1009-jira-integration-with-jupiterone
