@@ -61,7 +61,8 @@ For local installed Jira:
 
 6. Edit the local `.env` file and update the following fields:
    - JIRA_HOST: the value containing the host URL from prerequisites.
-   - JIRA_API_VERSION: use the value of `3`, unless Jira is running locally.
+   - JIRA_API_VERSION: use the value of `3`, unless Jira is running locally,
+     then default to `2`.
    - JIRA_USERNAME: the email id used to access tha Atlassian Jira system from
      prerequisites.
    - JIRA_PASSWORD: the API token value from cloud prerequisites. Or the user
