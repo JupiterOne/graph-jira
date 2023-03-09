@@ -35,14 +35,16 @@ For local installed Jira:
 4. For a locally installed Jira, the URL value for the HOST field will be
    similar to `http://localhost:8088`.
 
-5. From the `Projects` menu at top of page, a project key name can be selected
-   to be used in the next section to setup the local `.env` file.
+5. For either install use the `Projects` menu at top of the Jira page, and a
+   project key name can be selected to be optionally used in the next section to
+   setup the local `.env` file.
 
 ### Steps to running the graph-jira locally
 
 1. Install [Node.js](https://nodejs.org/) using the
    [installer](https://nodejs.org/en/download/) or a version manager such as
    [nvm](https://github.com/nvm-sh/nvm) or [fnm](https://github.com/Schniz/fnm).
+   Be sure to use Node version 14.x.
 2. Install [`yarn`](https://yarnpkg.com/getting-started/install) or
    [`npm`](https://github.com/npm/cli#installation) to install dependencies.
 3. Install dependencies with `yarn install`.
@@ -71,7 +73,7 @@ For local installed Jira:
 
 ### Running the integration
 
-1. `yarn start` to collect data
+1. `yarn start` to run integrtion and collect data
 2. `yarn graph` to show a visualization of the collected data
 3. `yarn j1-integration -h` for additional commands
 
