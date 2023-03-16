@@ -5,50 +5,34 @@ with JupiterOne in the [integration documentation](docs/jupiterone.md). The
 askJ1 community also has documentation on Jira integrations here:
 [Jira integration with JupiterOne](https://community.askj1.com/kb/articles/1009-jira-integration-with-jupiterone)
 
-## Development
-
-### Prerequisites
-
-Setup a new user in Jira:
-
-1. This can be performed using the Atlassian cloud or a local install of Jira to create a new user for Basic auth or retrieving API tokens.
-2. Access Jira with a user assigned to an admin group, select the Jira gear icon, then 
-   select `System` and then the `User Management` link.
-3. Select `Create User` button, and fill in the required fields. Be sure to check
-   `Jira Software` in the `Application Access` section.
-4. This user will be defaulted into the  `jira-software-users` group, which is the default
-    group for Jira Software users. If this user is only to be used for the integration, then best practice for least priviledge is to not assign them to any additional admin or elevated groups.
-5. After logging in, this new user can immediately be used to test the integration.
-   Depending on the type Jira instance, follow the instructions below for Jira API access.
+## Prerequisites
 
 In the Atlassian cloud or locally installed Jira instance, the following
 information is required:
 
 For cloud based Jira instance to create an API token:
 
-1. After logging into the Jira instance, use the Settings Gear icon to access Atlassian 
-   account settings. From that page use the Security link to access the API token link to create and manage API tokens.
+1. After an administrator logs into the Jira instance, use the Settings Gear icon to
+   access Atlassian account settings. From that page use the Security link to access the API token link to create and manage API tokens.
 2. Select create API token, and when the API token dialog appears, assign a name
-   to it; e.g. "J1-token".
+   to it; e.g. "integration-token".
 3. Copy the new token value and keep it for the next section as the PASSWORD
    field to in the local `.env` file.
 4. Copy the cloud URL from the browser, keeping only the
    `protocol://host.domain.tld` portion and keep it for the next section as the
    HOST field in the local `.env` file. Do not include a trailing slash `/`.
 
-For local installed Jira:
+For locally installed Jira:
 
 1. This install assumes there is a running local Jira envirnment that can be accessed with 
-   a browser.
+   a browser. For example using the [Jira docker image](https://hub.docker.com/r/atlassian/jira-software).
 2. Use the login name and password to login to Jira through the browser as the username and
    password values in the `.env` file below.
-3. The API version for locally installed version of Jira is limited to `2`.
 4. For a locally installed Jira, the URL value for the HOST field will be
    similar to `http://localhost:8088`.
 
 For either install use the `Projects` menu at top of the Jira page, and a
-   project key name can be optionally be selected to be used in the next section to
-   setup the local `.env` file.
+project key name can be chosen to limit scope of the integration. This value would be used in the next section to setup the local `.env` file.
 
 ### Steps to running the graph-jira locally
 
@@ -70,18 +54,19 @@ For either install use the `Projects` menu at top of the Jira page, and a
    from Node's `process.env`, loaded from `.env`. That file has been added to
    `.gitignore` to avoid commiting credentials.
 
-6. Edit the local `.env` file and update the following fields:
-   - JIRA_HOST: the value containing the host URL from prerequisites.
+6. Modify the local `.env` file and update the following fields:
+   - JIRA_HOST: the value containing the host URL.
    - JIRA_API_VERSION: use the value of `3`, unless Jira is running locally,
      then default to `2`.
-   - JIRA_USERNAME: the email id used to access tha Atlassian Jira system from
-     prerequisites.
-   - JIRA_PASSWORD: the API token value from cloud prerequisites. Or the user
+   - JIRA_USERNAME: the email id used to access Jira.
+   - JIRA_PASSWORD: the API token value from Jira cloud. Or the user
      password for local Jira.
    - PROJECTS: can be left as `[""]` or specify a key name from prerequisites.
    - REDACT_ISSUE_DESCRIPTIONS: can remain FALSE, unless data in the Jira
      descriptions is highly sensitive or other company sensitivity rating which
      deems it not shareable.
+
+## Development
 
 ### Running the integration
 
