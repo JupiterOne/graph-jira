@@ -12,8 +12,9 @@ information is required:
 
 For cloud based Jira instance to create an API token:
 
-1. After an administrator logs into the Jira instance, use the Settings Gear icon to
-   access Atlassian account settings. From that page use the Security link to access the API token link to create and manage API tokens.
+1. After an administrator logs into the Jira instance, use the Settings Gear
+   icon to access Atlassian account settings. From that page use the Security
+   link to access the API token link to create and manage API tokens.
 2. Select create API token, and when the API token dialog appears, assign a name
    to it; e.g. "integration-token".
 3. Copy the new token value and keep it for the next section as the PASSWORD
@@ -24,15 +25,17 @@ For cloud based Jira instance to create an API token:
 
 For locally installed Jira:
 
-1. This install assumes there is a running local Jira envirnment that can be accessed with 
-   a browser. For example using the [Jira docker image](https://hub.docker.com/r/atlassian/jira-software).
-2. Use the login name and password to login to Jira through the browser as the username and
-   password values in the `.env` file below.
-4. For a locally installed Jira, the URL value for the HOST field will be
+1. This install assumes there is a running local Jira envirnment that can be
+   accessed with a browser. For example using the
+   [Jira docker image](https://hub.docker.com/r/atlassian/jira-software).
+2. Use the login name and password to login to Jira through the browser as the
+   username and password values in the `.env` file below.
+3. For a locally installed Jira, the URL value for the HOST field will be
    similar to `http://localhost:8088`.
 
 For either install use the `Projects` menu at top of the Jira page, and a
-project key name can be chosen to limit scope of the integration. This value would be used in the next section to setup the local `.env` file.
+project key name can be chosen to limit scope of the integration. This value
+would be used in the next section to setup the local `.env` file.
 
 ### Steps to running the graph-jira locally
 
@@ -59,8 +62,8 @@ project key name can be chosen to limit scope of the integration. This value wou
    - JIRA_API_VERSION: use the value of `3`, unless Jira is running locally,
      then default to `2`.
    - JIRA_USERNAME: the email id used to access Jira.
-   - JIRA_PASSWORD: the API token value from Jira cloud. Or the user
-     password for local Jira.
+   - JIRA_PASSWORD: the API token value from Jira cloud. Or the user password
+     for local Jira.
    - PROJECTS: can be left as `[""]` or specify a key name from prerequisites.
    - REDACT_ISSUE_DESCRIPTIONS: can remain FALSE, unless data in the Jira
      descriptions is highly sensitive or other company sensitivity rating which
