@@ -25,13 +25,13 @@ askJ1 community also has documentation on Jira integrations here:
    names of these parameters are defined in `src/instanceConfigFields.ts`. When
    executed in a development environment, values for these parameters are read
    from Node's `process.env`, loaded from `.env`. That file has been added to
-   `.gitignore` to avoid commiting credentials.
+   `.gitignore` to avoid committing credentials.
 
 ## Development
 
 ### Running the integration
 
-1. `yarn start` to run integrtion and collect data
+1. `yarn start` to run integration and collect data
 2. `yarn graph` to show a visualization of the collected data
 3. `yarn j1-integration -h` for additional commands
 
