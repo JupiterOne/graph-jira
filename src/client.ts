@@ -1,7 +1,7 @@
 import {
   IntegrationLogger,
-  IntegrationProviderAuthenticationError,
   IntegrationProviderAuthorizationError,
+  IntegrationValidationError,
 } from '@jupiterone/integration-sdk-core';
 
 import {
@@ -44,12 +44,8 @@ export class APIClient {
     try {
       await this.jira.getCurrentUser();
     } catch (err) {
-      throw new IntegrationProviderAuthenticationError({
-        endpoint: err.options.uri,
-        status: err.statusCode,
-        statusText: err.error.message,
-        cause: err,
-      });
+      // Wrong credentials
+      throw new IntegrationValidationError(err);
     }
   }
 

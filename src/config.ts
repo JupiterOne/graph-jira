@@ -1,5 +1,4 @@
 import {
-  IntegrationError,
   IntegrationExecutionContext,
   IntegrationInstanceConfig,
   IntegrationInstanceConfigFieldMap,
@@ -162,7 +161,7 @@ export async function validateInvocation(
  * Produces an `IntegrationConfig`, detecting the server API version when one is
  * not provided.
  *
- * @throws IntegrationError when the API version cannot be determined.
+ * @throws IntegrationValidationError when the API version cannot be determined.
  */
 export async function normalizeInstanceConfig(
   config: JiraIntegrationInstanceConfig,
@@ -170,17 +169,12 @@ export async function normalizeInstanceConfig(
   const jiraHostConfig = buildJiraHostConfig(config.jiraHost);
 
   let jiraApiVersion = config.jiraApiVersion;
-  if (!jiraApiVersion) {
-    try {
-      jiraApiVersion = await detectApiVersion(jiraHostConfig);
-    } catch (err) {
-      throw new IntegrationError({
-        code: 'UNKNOWN_JIRA_API_VERSION',
-        message: err.message,
-        cause: err,
-        fatal: true,
-      });
-    }
+  try {
+    jiraApiVersion = await detectApiVersion(jiraHostConfig);
+  } catch (err) {
+    throw new IntegrationValidationError(
+      `code: INVALID_JIRA_HOST_URL message: ${err.message} cause: can not resolve URL address`,
+    );
   }
 
   return buildNormalizedInstanceConfig(config, jiraHostConfig, jiraApiVersion);
