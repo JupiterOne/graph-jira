@@ -49,7 +49,7 @@ export async function detectApiVersion(
     }
   }
 
-  let message = `Invalid config on Jira host url: ${apiOptions.protocol}://${apiOptions.host}:${apiOptions.port}/${apiOptions.base}}`;
+  let message = `Invalid config on Jira host url: ${apiOptions.protocol}://${apiOptions.host}:${apiOptions.port}`;
   errors.forEach((e) => (message += `\n\t${e.message}`));
   throw new IntegrationValidationError(message);
 }

@@ -1,7 +1,4 @@
-import {
-  IntegrationProviderAuthenticationError,
-  IntegrationValidationError,
-} from '@jupiterone/integration-sdk-core';
+import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
 import {
   createMockExecutionContext,
   Recording,
@@ -65,7 +62,7 @@ describe(validateInvocation, () => {
       });
 
     await expect(validateInvocation(executionContext)).rejects.toThrow(
-      IntegrationProviderAuthenticationError,
+      IntegrationValidationError,
     );
   });
 
@@ -97,7 +94,7 @@ describe(validateInvocation, () => {
     });
 
     await expect(validateInvocation(executionContext)).rejects.toThrow(
-      IntegrationProviderAuthenticationError,
+      IntegrationValidationError,
     );
   });
 
