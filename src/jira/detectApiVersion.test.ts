@@ -59,9 +59,9 @@ describe(detectApiVersion, () => {
       },
     });
 
-    let protocol = 'http';
-    let host = 'example.com';
-    let port = '80';
+    const protocol = 'http';
+    const host = 'example.com';
+    const port = '80';
 
     await expect(
       detectApiVersion({
