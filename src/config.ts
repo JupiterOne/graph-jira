@@ -175,7 +175,7 @@ export async function normalizeInstanceConfig(
     } catch (err) {
       // api version is bad or cant be detected
       throw new IntegrationValidationError(
-        `code: INVALID_JIRA_API_VERSION message: api version ${jiraApiVersion} ${err.message} cause: can not resolve API version`,
+        `code: UNKNOWN_JIRA_API_VERSION message: api version ${jiraApiVersion} ${err.message} cause: can not resolve API version`,
       );
     }
   }
