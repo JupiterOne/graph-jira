@@ -44,7 +44,8 @@ export class APIClient {
     try {
       await this.jira.getCurrentUser();
     } catch (err) {
-      // Wrong credentials
+      // bad config
+      err.message += ' -problem with config';
       throw new IntegrationValidationError(err);
     }
   }

@@ -169,12 +169,15 @@ export async function normalizeInstanceConfig(
   const jiraHostConfig = buildJiraHostConfig(config.jiraHost);
 
   let jiraApiVersion = config.jiraApiVersion;
-  try {
-    jiraApiVersion = await detectApiVersion(jiraHostConfig);
-  } catch (err) {
-    throw new IntegrationValidationError(
-      `code: INVALID_JIRA_HOST_URL message: ${err.message} cause: can not resolve URL address`,
-    );
+  if (!jiraApiVersion) {
+    try {
+      jiraApiVersion = await detectApiVersion(jiraHostConfig);
+    } catch (err) {
+      // api version is bad or cant be detected
+      throw new IntegrationValidationError(
+        `code: INVALID_JIRA_API_VERSION message: api version ${jiraApiVersion} ${err.message} cause: can not resolve API version`,
+      );
+    }
   }
 
   return buildNormalizedInstanceConfig(config, jiraHostConfig, jiraApiVersion);
