@@ -142,13 +142,15 @@ export async function validateInvocation(
 
   if (!isJiraHostString(config.jiraHost)) {
     throw new IntegrationValidationError(
-      'jiraHost must be a valid Jira host string (ex: example.com, example.com:2913, example.com/base, http://subdomain.example.com)',
+      'The Host config value must be a valid Jira host string (ex: example.com, example.com:2913, example.com/base, http://subdomain.example.com)',
     );
   }
 
   const normalizedConfig = await normalizeInstanceConfig(config);
   const jiraClient = new JiraClient(context.logger, normalizedConfig);
   const apiClient = new APIClient(context.logger, jiraClient);
+
+  await apiClient.verifyJiraHost(config.jiraHost);
 
   await apiClient.verifyAuthentication();
 
@@ -175,7 +177,7 @@ export async function normalizeInstanceConfig(
     } catch (err) {
       // api version is bad or cant be detected
       throw new IntegrationValidationError(
-        `code: UNKNOWN_JIRA_API_VERSION message: api version ${jiraApiVersion} ${err.message} cause: can not resolve API version`,
+        `There is a problem with the Jira configuration: ${err.message}`,
       );
     }
   }
@@ -222,7 +224,7 @@ export async function validateProjectKeys(
 
   if (invalidConfigProjectKeys.length) {
     throw new IntegrationValidationError(
-      `The following project key(s) are invalid: ${JSON.stringify(
+      `There is a problem with the Jira configuration, the project key(s) are invalid: ${JSON.stringify(
         invalidConfigProjectKeys,
       )}. Ensure the authenticated user has access to this project.`,
     );
