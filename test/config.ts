@@ -42,7 +42,7 @@ export const localServerInstanceConfig: JiraIntegrationInstanceConfig = {
   jiraUsername: process.env.LOCAL_SERVER_JIRA_USERNAME || 'jupiterone-dev',
   jiraPassword:
     process.env.LOCAL_SERVER_JIRA_PASSWORD || 'default-jira-password',
-  jiraAPIToken: process.env.JIRA_PAT_TOKEN || 'das789h23fih9asij0asfih9fq',
+  jiraPATToken: process.env.JIRA_PAT_TOKEN || 'das789h23fih9asij0asfih9fq',
   projects: process.env.LOCAL_SERVER_PROJECTS || ['SP'],
   redactIssueDescriptions: false,
 };
