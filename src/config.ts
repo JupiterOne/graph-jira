@@ -51,6 +51,10 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     type: 'string',
     mask: true,
   },
+  jiraPATToken: {
+    type: 'string',
+    mask: true,
+  },
   redactIssueDescriptions: {
     type: 'boolean',
     mask: false,
@@ -84,6 +88,7 @@ export interface JiraIntegrationInstanceConfig
 
   jiraUsername: string;
   jiraPassword: string;
+  jiraPATToken: string;
 
   /**
    * An array of Jira project keys to target for ingestion.
@@ -135,9 +140,13 @@ export async function validateInvocation(
 ) {
   const { config } = context.instance;
 
-  if (!config.jiraHost || !config.jiraPassword || !config.jiraUsername) {
+  if (!config.jiraHost) {
+    throw new IntegrationValidationError('Config requires {jiraHost}');
+  }
+
+  if (!(config.jiraPassword && config.jiraUsername) && !config.jiraPATToken) {
     throw new IntegrationValidationError(
-      'Config requires all of {jiraHost, jiraUsername, jiraPassword}',
+      'Config requires either {jiraUsername, jiraPassword} or {jiraPATToken}',
     );
   }
 
@@ -196,6 +205,7 @@ export function buildNormalizedInstanceConfig(
     ...jiraHostConfig,
     username: config.jiraUsername,
     password: config.jiraPassword,
+    bearer: config.jiraPATToken,
     apiVersion: jiraApiVersion,
     projects: normalizeProjectKeys(config.projects),
     customFields: normalizeCustomFieldIdentifiers(config.customFields),

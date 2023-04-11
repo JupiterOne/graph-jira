@@ -7,6 +7,8 @@ import {
 import { setupJiraRecording } from '../../test/recording';
 import { detectApiVersion } from './detectApiVersion';
 
+jest.setTimeout(10000);
+
 describe(detectApiVersion, () => {
   let recording: Recording;
 

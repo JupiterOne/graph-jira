@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### 3.6.2 - 2023-04-04
+
+### Added
+
+- Added support for using a Jira PAT Token for Jira On-Prem
+
 ### 3.6.1 - 2023-03-01
 
 ### Fixed

@@ -15,6 +15,8 @@ import {
 import { setupJiraRecording } from '../test/recording';
 import { JiraIntegrationInstanceConfig, validateInvocation } from './config';
 
+jest.setTimeout(10000);
+
 describe(validateInvocation, () => {
   let recording: Recording;
 

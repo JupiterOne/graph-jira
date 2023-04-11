@@ -17,6 +17,7 @@ export const integrationInstanceConfig: JiraIntegrationInstanceConfig = {
   jiraHost: process.env.JIRA_HOST || 'jupiterone-dev.atlassian.net',
   jiraUsername: process.env.JIRA_USERNAME || 'development@jupiterone.dev',
   jiraPassword: process.env.JIRA_PASSWORD || 'default-jira-password',
+  jiraPATToken: process.env.JIRA_PAT_TOKEN || 'das789h23fih9asij0asfih9fq',
   projects: process.env.PROJECTS || ['JJI'],
   redactIssueDescriptions: false,
 };
@@ -41,6 +42,7 @@ export const localServerInstanceConfig: JiraIntegrationInstanceConfig = {
   jiraUsername: process.env.LOCAL_SERVER_JIRA_USERNAME || 'jupiterone-dev',
   jiraPassword:
     process.env.LOCAL_SERVER_JIRA_PASSWORD || 'default-jira-password',
+  jiraAPIToken: process.env.JIRA_PAT_TOKEN || 'das789h23fih9asij0asfih9fq',
   projects: process.env.LOCAL_SERVER_PROJECTS || ['SP'],
   redactIssueDescriptions: false,
 };
