@@ -63,6 +63,10 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     type: 'boolean',
     mask: false,
   },
+  customFields: {
+    type: 'json',
+    mask: false,
+  },
 };
 
 /**
