@@ -59,8 +59,8 @@ projects one wishes to ingest. Then delete the old integration configuration.
 ## Requirements
 
 - JupiterOne requires the hostname for your Jira organization. JupiterOne also
-  requires the username/email and an API key for a user having the correct
-  permissions granted.
+  requires the username/email and an API key for Jira Cloud or a
+  password/Personal Access Token (PAT) for Jira Data Center (On-Prem).
 - The integration supports Jira Cloud with Jira API v3 and Jira Data Center with
   Jira API v2. Other setups may work.
 - You must have permission in JupiterOne to install new integrations.
@@ -72,10 +72,15 @@ If you need help with this integration, please contact
 
 ## Integration Walkthrough
 
-Customers authorize access to JupiterOne by creating a Jira user and providing
-the username and password (or [API token][2] when passwords require MFA) to
-JupiterOne for HTTP Basic Auth as described in the [Jira Security for Other
-Integrations][1] documentation.
+For Jira Cloud, customers authorize access to JupiterOne by creating a Jira user
+and providing the username and [API token][2] to JupiterOne for HTTP Basic Auth
+as described in the [Jira Security for Other Integrations][1] documentation.
+
+For Jira On-Prem, customers authorize access by creating a Jira user and
+providing either:
+
+1. A username and passowrd or;
+2. A Personal Access Token ([PAT][6])
 
 ### In Jira
 
@@ -108,10 +113,15 @@ Before you use an existing user, you should verify a couple of things.
 - Authorize "Create Issues" permissions in projects that serve as JupiterOne
   Alert Rule action targets.
 
-#### Create an API Token
+#### Create an API Token (For Cloud)
 
 1. Log in to Jira as the JupiterOne user and follow the Jira guide to [create an
    API token][2].
+
+#### Create a PAT (For On-Prem)
+
+1. Log in to Jira as the JupiterOne user and follow the Jira guide to [create a
+   PAT][6].
 
 ### In JupiterOne
 
@@ -129,6 +139,8 @@ Before you use an existing user, you should verify a couple of things.
    - Enter the **Hostname** of your organization.
    - Enter the **User Email** used to authenticate with Jira.
    - Enter the **API Token** in the **User Password** field.
+   - (Optionally) Enter the **PAT** in the **Personal Access Token** field if
+     you are using JIRA On-Prem
    - Toggle the **Redact Issue Descriptions** option if you would like to avoid
      descriptions on your `jira_issue` entities
    - Enter the **Project Keys** that the integration will retrieve data from.
@@ -148,7 +160,21 @@ This integration supports both Jira Cloud and Jira on-prem deployments and will
 automatically detect which is being ingested. It is important to note that there
 are some minor differences in the APIs for cloud and on-prem. For this reason,
 we recommended that you recreate your integration configuration in the event of
-an on-prem -> cloud migration or vice versa.
+an on-prem -> cloud migration or vice versa. Specifically, the relevant
+differences are:
+
+### Jira On-Prem:
+
+Jira On-Prem supports (version dependant):
+
+- Basic Auth with username + password
+- Bearer token (still Basic Auth) with a PAT
+
+### Jira Cloud:
+
+Jira Cloud supports:
+
+- Basic Auth with username + API Token
 
 <!-- {J1_DOCUMENTATION_MARKER_START} -->
 <!--
@@ -202,3 +228,5 @@ END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
   https://confluence.atlassian.com/jirakb/jira-cloud-how-to-create-a-read-only-user-779160729.html
 [5]:
   https://confluence.atlassian.com/adminjiraserver/managing-global-permissions-938847142.html
+[6]:
+  https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html
