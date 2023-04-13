@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Multi-value custom fields to be array values instead of a comma-seperated string.
+
 ### 3.6.1 - 2023-03-01
 
 ### Fixed
