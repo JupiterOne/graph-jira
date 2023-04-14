@@ -9,3 +9,4 @@ docker-compose.yml
 .j1-integration/
 .eslintcache
 tsconfig.tsbuildinfo
+.npmrc

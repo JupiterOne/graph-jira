@@ -55,8 +55,26 @@
     "@types/lodash": "^4.14.178",
     "@types/node": "~8.10.0",
     "@types/node-fetch": "2",
+    "auto": "^10.37.4",
     "fs-extra": "^8.0.1",
     "jest-extended": "^0.11.5",
     "markdown-table": "^1.1.2"
+  },
+  "auto": {
+    "plugins": [
+      [
+        "npm",
+        {
+          "setRcToken": false,
+          "publishFolder": "./dist"
+        }
+      ],
+      "released"
+    ],
+    "onlyPublishWithReleaseLabel": true,
+    "shipit": {
+      "noChangelog": true,
+      "prerelease": false
+    }
   }
 }
