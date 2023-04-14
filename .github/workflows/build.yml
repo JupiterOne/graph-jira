@@ -7,7 +7,12 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [14.x]
+        os: [ubuntu-latest]
 
     steps:
       - id: setup-node
@@ -23,11 +28,6 @@ jobs:
         run: yarn
 
       - name: Run tests
-        env:
-          MANAGED_QUESTIONS_JUPITERONE_ACCOUNT_ID:
-            ${{ secrets.MANAGED_QUESTIONS_JUPITERONE_ACCOUNT_ID }}
-          MANAGED_QUESTIONS_JUPITERONE_API_KEY:
-            ${{ secrets.MANAGED_QUESTIONS_JUPITERONE_API_KEY }}
         run: yarn test:ci
 
       - name: Run build
