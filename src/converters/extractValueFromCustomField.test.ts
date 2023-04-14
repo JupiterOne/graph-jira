@@ -51,15 +51,15 @@ describe('extractValueFromCustomField', () => {
   });
   it('should extact the value of a MultiGroupPicker correctly', () => {
     const value = extractValueFromCustomField(MultiGroupPicker);
-    expect(value).toEqual('admins,jira-developers,jira-users');
+    expect(value).toEqual(['admins', 'jira-developers', 'jira-users']);
   });
   it('should extact the value of a MultiSelect correctly', () => {
     const value = extractValueFromCustomField(MultiSelect);
-    expect(value).toEqual('red,blue,green');
+    expect(value).toEqual(['red', 'blue', 'green']);
   });
   it('should extact the value of a MultiUserPicker correctly', () => {
     const value = extractValueFromCustomField(MultiUserPicker);
-    expect(value).toEqual('charlie,bjones,tdurden');
+    expect(value).toEqual(['charlie', 'bjones', 'tdurden']);
   });
   it('should extact the value of a NumberField correctly', () => {
     const value = extractValueFromCustomField(NumberField);
@@ -95,6 +95,6 @@ describe('extractValueFromCustomField', () => {
   });
   it('should extact the value of a VersionPicker correctly', () => {
     const value = extractValueFromCustomField(VersionPicker);
-    expect(value).toEqual('1.0,1.1.1,2.0');
+    expect(value).toEqual(['1.0', '1.1.1', '2.0']);
   });
 });

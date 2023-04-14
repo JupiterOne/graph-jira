@@ -64,7 +64,7 @@ export function extractValueFromCustomField(value: any): any {
        *   Multi Select
        *   Multi User Picker
        */
-      return value.map(extractValueFromCustomField).join(',');
+      return value.map(extractValueFromCustomField);
     } else {
       return UNABLE_TO_PARSE_RESPONSE;
     }
