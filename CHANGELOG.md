@@ -8,11 +8,16 @@ and this project adheres to
 
 ## [Unreleased]
 
-## 3.6.2 - 2023-04-13
-
 ### Added
 
 - Added `auto` package to help with builds, versioning and npm packaging
+
+## 3.7.0 - 2023-04-14
+
+### Changed
+
+- Multi-value custom fields to be array values instead of a comma-seperated
+  string.
 
 ## 3.6.1 - 2023-03-01
 
