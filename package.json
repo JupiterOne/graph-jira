@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-jira",
-  "version": "3.6.2",
+  "version": "3.6.1",
   "description": "A JupiterOne managed integration for https://www.atlassian.com/software/jira.",
   "main": "dist/index.js",
   "repository": "https://github.com/JupiterOne/graph-jira",
@@ -24,7 +24,7 @@
     "test": "jest",
     "test:env": "LOAD_ENV=1 yarn test",
     "test:ci": "yarn format:check && yarn lint && yarn type-check && yarn test",
-    "build": "./build.sh",
+    "build": "tsc -p tsconfig.dist.json --declaration",
     "prepush": "yarn lint && yarn type-check && jest --changedSince main",
     "prepack": "yarn build"
   },
