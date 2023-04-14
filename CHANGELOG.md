@@ -10,17 +10,17 @@ and this project adheres to
 
 ## 3.6.2 - 2023-04-13
 
-## Added
+### Added
 
 - Added `auto` package to help with builds, versioning and npm packaging
 
 ## 3.6.1 - 2023-03-01
 
-## Fixed
+### Fixed
 
 - Properly parse issue description for versions 2 and 3.
 
-## Added
+### Added
 
 - Added description in finding entity for API version 2
 
