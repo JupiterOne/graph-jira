@@ -59,13 +59,19 @@ describe(detectApiVersion, () => {
       },
     });
 
+    const protocol = 'http';
+    const host = 'example.com';
+    const port = '80';
+
     await expect(
       detectApiVersion({
-        protocol: 'http',
-        host: 'example.com',
-        port: '80',
+        protocol: `${protocol}`,
+        host: `${host}`,
+        port: `${port}`,
       }),
-    ).rejects.toThrow('Could not detect the Jira server version');
+    ).rejects.toThrow(
+      `Invalid config on Jira host url: ${protocol}://${host}:${port}`,
+    );
   });
 
   test('with custom path', async () => {

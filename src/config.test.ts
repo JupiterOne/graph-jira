@@ -1,7 +1,4 @@
-import {
-  IntegrationProviderAuthenticationError,
-  IntegrationValidationError,
-} from '@jupiterone/integration-sdk-core';
+import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
 import {
   createMockExecutionContext,
   Recording,
@@ -43,7 +40,7 @@ describe(validateInvocation, () => {
       },
     };
     await expect(validateInvocation(context as any)).rejects.toThrow(
-      IntegrationValidationError,
+      'The Host config value must be a valid Jira host string (ex: example.com, example.com:2913, example.com/base, http://subdomain.example.com)',
     );
   });
 
@@ -65,7 +62,7 @@ describe(validateInvocation, () => {
       });
 
     await expect(validateInvocation(executionContext)).rejects.toThrow(
-      IntegrationProviderAuthenticationError,
+      'There is a problem with the Jira credentials configuration',
     );
   });
 
@@ -97,7 +94,7 @@ describe(validateInvocation, () => {
     });
 
     await expect(validateInvocation(executionContext)).rejects.toThrow(
-      IntegrationProviderAuthenticationError,
+      'There is a problem with the Jira credentials configuration',
     );
   });
 
@@ -145,7 +142,7 @@ describe(validateInvocation, () => {
       });
 
     await expect(validateInvocation(executionContext)).rejects.toThrow(
-      'The following project key(s) are invalid: ["INVALID"]. Ensure the authenticated user has access to this project.',
+      'There is a problem with the Jira configuration, the project key(s) are invalid: ["INVALID"]. Ensure the authenticated user has access to this project.',
     );
   });
 });

@@ -6,13 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+### Fixed
+
+- Updated config validation for proper error codes.
+
+## 3.7.0 - 2023-04-14
 
 ### Added
 
 - Added `auto` package to help with builds, versioning and npm packaging
-
-## 3.7.0 - 2023-04-14
 
 ### Changed
 
