@@ -1,7 +1,7 @@
 import {
   IntegrationLogger,
-  IntegrationProviderAuthenticationError,
   IntegrationProviderAuthorizationError,
+  IntegrationValidationError,
 } from '@jupiterone/integration-sdk-core';
 
 import {
@@ -13,6 +13,7 @@ import {
   ServerInfo,
   User,
 } from './jira';
+import fetch from 'node-fetch';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
@@ -38,18 +39,35 @@ export class APIClient {
   }
 
   /**
+   * Verifies the jira host is valid internet or local host
+   * that can accept connections
+   */
+  public async verifyJiraHost(jiraHost: string): Promise<void> {
+    try {
+      if (!jiraHost.startsWith('http')) {
+        //default to https if no protocol is provided
+        jiraHost = 'https://' + jiraHost;
+      }
+      await fetch(jiraHost, { method: 'HEAD' });
+    } catch (err) {
+      // bad host in config
+      throw new IntegrationValidationError(
+        `There is a problem with the Jira Host configuration: ${err}`,
+      );
+    }
+  }
+
+  /**
    * Verifies authentication by making a call to `getCurrentUser()`.
    */
   public async verifyAuthentication(): Promise<void> {
     try {
       await this.jira.getCurrentUser();
     } catch (err) {
-      throw new IntegrationProviderAuthenticationError({
-        endpoint: err.options.uri,
-        status: err.statusCode,
-        statusText: err.error.message,
-        cause: err,
-      });
+      // bad credential in config
+      throw new IntegrationValidationError(
+        `There is a problem with the Jira credentials configuration: ${err}`,
+      );
     }
   }
 

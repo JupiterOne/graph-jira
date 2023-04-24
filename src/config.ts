@@ -1,5 +1,4 @@
 import {
-  IntegrationError,
   IntegrationExecutionContext,
   IntegrationInstanceConfig,
   IntegrationInstanceConfigFieldMap,
@@ -61,6 +60,10 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
   },
   bulkIngestIssues: {
     type: 'boolean',
+    mask: false,
+  },
+  customFields: {
+    type: 'json',
     mask: false,
   },
 };
@@ -143,13 +146,15 @@ export async function validateInvocation(
 
   if (!isJiraHostString(config.jiraHost)) {
     throw new IntegrationValidationError(
-      'jiraHost must be a valid Jira host string (ex: example.com, example.com:2913, example.com/base, http://subdomain.example.com)',
+      'The Host config value must be a valid Jira host string (ex: example.com, example.com:2913, example.com/base, http://subdomain.example.com)',
     );
   }
 
   const normalizedConfig = await normalizeInstanceConfig(config);
   const jiraClient = new JiraClient(context.logger, normalizedConfig);
   const apiClient = new APIClient(context.logger, jiraClient);
+
+  await apiClient.verifyJiraHost(config.jiraHost);
 
   await apiClient.verifyAuthentication();
 
@@ -162,7 +167,7 @@ export async function validateInvocation(
  * Produces an `IntegrationConfig`, detecting the server API version when one is
  * not provided.
  *
- * @throws IntegrationError when the API version cannot be determined.
+ * @throws IntegrationValidationError when the API version cannot be determined.
  */
 export async function normalizeInstanceConfig(
   config: JiraIntegrationInstanceConfig,
@@ -174,12 +179,10 @@ export async function normalizeInstanceConfig(
     try {
       jiraApiVersion = await detectApiVersion(jiraHostConfig);
     } catch (err) {
-      throw new IntegrationError({
-        code: 'UNKNOWN_JIRA_API_VERSION',
-        message: err.message,
-        cause: err,
-        fatal: true,
-      });
+      // api version is bad or cant be detected
+      throw new IntegrationValidationError(
+        `There is a problem with the Jira configuration: ${err.message}`,
+      );
     }
   }
 
@@ -225,7 +228,7 @@ export async function validateProjectKeys(
 
   if (invalidConfigProjectKeys.length) {
     throw new IntegrationValidationError(
-      `The following project key(s) are invalid: ${JSON.stringify(
+      `There is a problem with the Jira configuration, the project key(s) are invalid: ${JSON.stringify(
         invalidConfigProjectKeys,
       )}. Ensure the authenticated user has access to this project.`,
     );
