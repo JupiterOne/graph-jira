@@ -1,3 +1,4 @@
+import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
 import { JiraApiOptions } from 'jira-client';
 import fetch from 'node-fetch';
 
@@ -43,13 +44,12 @@ export async function detectApiVersion(
         }
       }
     } catch (err) {
+      // Consolidate errors to provide a more helpful message
       errors.push(err);
     }
   }
 
-  let message = `Could not detect the Jira server version (/rest/api/{${KNOWN_JIRA_API_VERSIONS.join(
-    ',',
-  )}}/serverInfo):`;
+  let message = `Invalid config on Jira host url: ${apiOptions.protocol}://${apiOptions.host}:${apiOptions.port}`;
   errors.forEach((e) => (message += `\n\t${e.message}`));
-  throw new Error(message);
+  throw new IntegrationValidationError(message);
 }

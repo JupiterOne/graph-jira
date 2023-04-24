@@ -1,7 +1,4 @@
-import {
-  IntegrationProviderAuthenticationError,
-  IntegrationValidationError,
-} from '@jupiterone/integration-sdk-core';
+import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
 import {
   createMockExecutionContext,
   Recording,
@@ -42,9 +39,17 @@ describe(validateInvocation, () => {
         },
       },
     };
-    await expect(validateInvocation(context as any)).rejects.toThrow(
-      IntegrationValidationError,
+    let error: any;
+    try {
+      await validateInvocation(context as any);
+    } catch (err) {
+      error = err;
+    }
+    expect(error).not.toBeUndefined();
+    expect(error.message).toEqual(
+      'The Host config value must be a valid Jira host string (ex: example.com, example.com:2913, example.com/base, http://subdomain.example.com)',
     );
+    expect(error).toBeInstanceOf(IntegrationValidationError);
   });
 
   test('invalid credentials (cloud server)', async () => {
@@ -64,9 +69,17 @@ describe(validateInvocation, () => {
         },
       });
 
-    await expect(validateInvocation(executionContext)).rejects.toThrow(
-      IntegrationProviderAuthenticationError,
+    let error: any;
+    try {
+      await validateInvocation(executionContext);
+    } catch (err) {
+      error = err;
+    }
+    expect(error).not.toBeUndefined();
+    expect(error.message).toMatch(
+      /^There is a problem with the Jira credentials configuration/,
     );
+    expect(error).toBeInstanceOf(IntegrationValidationError);
   });
 
   test('valid credentials (cloud server)', async () => {
@@ -96,9 +109,17 @@ describe(validateInvocation, () => {
       instanceConfig: { ...localServerInstanceConfig, jiraUsername: 'invalid' },
     });
 
-    await expect(validateInvocation(executionContext)).rejects.toThrow(
-      IntegrationProviderAuthenticationError,
+    let error: any;
+    try {
+      await validateInvocation(executionContext);
+    } catch (err) {
+      error = err;
+    }
+    expect(error).not.toBeUndefined();
+    expect(error.message).toMatch(
+      /^There is a problem with the Jira credentials configuration/,
     );
+    expect(error).toBeInstanceOf(IntegrationValidationError);
   });
 
   test('valid credentials (local server)', async () => {
@@ -144,8 +165,16 @@ describe(validateInvocation, () => {
         instanceConfig: { ...integrationInstanceConfig, projects: ['INVALID'] },
       });
 
-    await expect(validateInvocation(executionContext)).rejects.toThrow(
-      'The following project key(s) are invalid: ["INVALID"]. Ensure the authenticated user has access to this project.',
+    let error: any;
+    try {
+      await validateInvocation(executionContext);
+    } catch (err) {
+      error = err;
+    }
+    expect(error).not.toBeUndefined();
+    expect(error.message).toEqual(
+      'There is a problem with the Jira configuration, the project key(s) are invalid: ["INVALID"]. Ensure the authenticated user has access to this project.',
     );
+    expect(error).toBeInstanceOf(IntegrationValidationError);
   });
 });
