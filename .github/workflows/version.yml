@@ -1,0 +1,352 @@
+name: Release graph-aws
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  jupiter-integration-aws:
+    name: Release jupiter-integration-aws
+    runs-on: ubuntu-latest
+    outputs:
+      pull-request-url: ${{ steps.create-pull-request.outputs.pull-request-url }}
+    steps:
+      - name: Get version number
+        id: get-version-number
+        uses: actions/github-script@0.9.0
+        with:
+          script: |
+            const tagName = context.payload.release.tag_name
+            const versionNumber = tagName.replace("v", "")
+            core.setOutput('versionNumber', versionNumber)
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Clone jupiter-integration-aws repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.AUTO_GITHUB_PAT_TOKEN }}
+          repository: JupiterOne/jupiter-integration-aws
+          ref: main
+          path: './jupiter-integration-aws'
+      - name: Set git config
+        shell: bash
+        working-directory: ./jupiter-integration-aws
+        run: |
+            git config --local user.email "internal-automation.bot@jupiterone.com"
+            git config --local user.name "j1-internal-automation"
+      - name: Clean up and create branch 
+        shell: bash
+        working-directory: ./jupiter-integration-aws
+        run: |
+            git reset --hard
+            git checkout -b deploy-graph-aws-${{ steps.get-version-number.outputs.versionNumber }}
+            git push origin deploy-graph-aws-${{ steps.get-version-number.outputs.versionNumber }}
+      - name: Bump version in package.json and commit changes
+        shell: bash
+        working-directory: ./jupiter-integration-aws
+        run: |
+            echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > .npmrc
+            yarn install --ignore-scripts
+            yarn upgrade @jupiterone/graph-aws@^${{ steps.get-version-number.outputs.versionNumber }}
+            git add .
+            git commit -m "bump graph-aws to version ${{ steps.get-version-number.outputs.versionNumber }}"
+      - name: Create Pull Request
+        id: create-pull-request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.AUTO_GITHUB_PAT_TOKEN }}
+          path: ./jupiter-integration-aws
+          branch: deploy-graph-aws-${{ steps.get-version-number.outputs.versionNumber }}
+          base: main
+          title: "[Github Action] - Deploy graph-aws v${{ steps.get-version-number.outputs.versionNumber }}"
+          body: |
+            ## Summary
+            ${{ github.event.release.body }}
+      - name: Enable Automerge
+        if: steps.create-pull-request.outputs.pull-request-operation == 'created'
+        run: gh pr merge --merge --auto "${{ steps.create-pull-request.outputs.pull-request-url }}"
+        env:
+          GH_TOKEN: ${{ secrets.AUTO_GITHUB_PAT_TOKEN }}
+
+  integration-deployments:
+    name: Release integration-deployments aws-config-recorder
+    runs-on: ubuntu-latest
+    outputs:
+      pull-request-url: ${{ steps.create-pull-request.outputs.pull-request-url }}
+    steps:
+      - name: Get version number
+        id: get-version-number
+        uses: actions/github-script@0.9.0
+        with:
+          script: |
+            const tagName = context.payload.release.tag_name
+            const versionNumber = tagName.replace("v", "")
+            core.setOutput('versionNumber', versionNumber)
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Clone integration-deployments repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.AUTO_GITHUB_PAT_TOKEN }}
+          repository: JupiterOne/integration-deployments
+          ref: main
+          path: './integration-deployments'
+      - name: Set git config
+        shell: bash
+        working-directory: ./integration-deployments
+        run: |
+            git config --local user.email "internal-automation.bot@jupiterone.com"
+            git config --local user.name "j1-internal-automation"
+      - name: Clean up and create branch 
+        shell: bash
+        working-directory: ./integration-deployments
+        run: |
+            git reset --hard
+            git checkout -b deploy-graph-aws-${{ steps.get-version-number.outputs.versionNumber }}
+            git push origin deploy-graph-aws-${{ steps.get-version-number.outputs.versionNumber }}
+      - name: Bump version in package.json and commit changes
+        shell: bash
+        working-directory: ./integration-deployments
+        run: |
+            echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > .npmrc
+            cd ./src/aws-config-recorder
+            yarn
+            yarn upgrade @jupiterone/graph-aws@^${{ steps.get-version-number.outputs.versionNumber }}
+            git add .
+            git commit -m "bump graph-aws to version ${{ steps.get-version-number.outputs.versionNumber }} deploy2dev"
+      - name: Create Pull Request
+        id: create-pull-request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.AUTO_GITHUB_PAT_TOKEN }}
+          path: ./integration-deployments
+          branch: deploy-graph-aws-${{ steps.get-version-number.outputs.versionNumber }}
+          base: main
+          title: "[Github Action] - Deploy graph-aws v${{ steps.get-version-number.outputs.versionNumber }}"
+          body: |
+            ## Summary
+            ${{ github.event.release.body }}
+      - name: Enable Automerge
+        if: steps.create-pull-request.outputs.pull-request-operation == 'created'
+        run: gh pr merge --squash --auto "${{ steps.create-pull-request.outputs.pull-request-url }}"
+        env:
+          GH_TOKEN: ${{ secrets.AUTO_GITHUB_PAT_TOKEN }}
+
+  web-integrations:
+    name: Document web-integrations
+    runs-on: ubuntu-latest
+    outputs:
+      pull-request-url: ${{ steps.create-pull-request.outputs.pull-request-url }}
+    steps:
+      - name: Get version number
+        id: get-version-number
+        uses: actions/github-script@0.9.0
+        with:
+          script: |
+            const tagName = context.payload.release.tag_name
+            const versionNumber = tagName.replace("v", "")
+            core.setOutput('versionNumber', versionNumber)
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Clone web-integrations repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.AUTO_GITHUB_PAT_TOKEN }}
+          repository: JupiterOne/web-integrations
+          ref: main
+          path: './web-integrations'
+      - name: Clone graph-aws repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.AUTO_GITHUB_PAT_TOKEN }}
+          repository: JupiterOne/graph-aws
+          ref: main
+          path: './graph-aws'
+      - name: Generate web-integrations Documentation
+        shell: bash
+        working-directory: ./graph-aws
+        run: |
+            yarn
+            yarn ts-node commands/web-integrations/documentSetupInstructions.ts documentSetupInstructions -o ../web-integrations/src/components/SetupInstructions/useInstructionTemplateLogic/instructions/AWS.md   
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18.x
+      - name: Install node_modules and run Prettier
+        shell: bash
+        working-directory: ./web-integrations
+        run: |
+            echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > .npmrc
+            npm i --ignore-scripts
+            git restore .npmrc
+            npm run format
+      - name: Check Git Diff
+        id: check-git-diff
+        shell: bash
+        working-directory: ./web-integrations
+        continue-on-error: true
+        run: git diff --quiet
+      - name: Set git config
+        shell: bash
+        working-directory: ./web-integrations
+        if: steps.check-git-diff.outcome == 'failure'
+        run: |
+            git config --local user.email "internal-automation.bot@jupiterone.com"
+            git config --local user.name "j1-internal-automation"
+      - name: Clean up and create branch
+        shell: bash
+        working-directory: ./web-integrations
+        if: steps.check-git-diff.outcome == 'failure'
+        run: |
+            git checkout -b update-setup-instructions-${{ steps.get-version-number.outputs.versionNumber }}
+            git push origin update-setup-instructions-${{ steps.get-version-number.outputs.versionNumber }}
+      - name: Commit changes
+        shell: bash
+        working-directory: ./web-integrations
+        if: steps.check-git-diff.outcome == 'failure'
+        run: |
+            git add .
+            git commit -m "update AWS integration setup instructions"
+      - name: Create Pull Request
+        id: create-pull-request
+        uses: peter-evans/create-pull-request@v4
+        if: steps.check-git-diff.outcome == 'failure'
+        with:
+          token: ${{ secrets.AUTO_GITHUB_PAT_TOKEN }}
+          path: ./web-integrations
+          branch: update-setup-instructions-${{ steps.get-version-number.outputs.versionNumber }}
+          base: main
+          title: "[Github Action] - Update AWS Setup Instructions for graph-aws v${{ steps.get-version-number.outputs.versionNumber }}"
+          body: |
+            ## Summary
+            ${{ github.event.release.body }}
+
+  jupiterone-aws-cloudformation:
+    name: Document jupiterone-aws-cloudformation
+    runs-on: ubuntu-latest
+    outputs:
+      pull-request-url: ${{ steps.create-pull-request.outputs.pull-request-url }}
+    steps:
+      - name: Get version number
+        id: get-version-number
+        uses: actions/github-script@0.9.0
+        with:
+          script: |
+            const tagName = context.payload.release.tag_name
+            const versionNumber = tagName.replace("v", "")
+            core.setOutput('versionNumber', versionNumber)
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Clone jupiterone-aws-cloudformation repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.AUTO_GITHUB_PAT_TOKEN }}
+          repository: JupiterOne/jupiterone-aws-cloudformation
+          ref: main
+          path: './jupiterone-aws-cloudformation'
+      - name: Clone graph-aws repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.AUTO_GITHUB_PAT_TOKEN }}
+          repository: JupiterOne/graph-aws
+          ref: main
+          path: './graph-aws'
+      - name: Generate CloudFormation Documentation and commit changes
+        shell: bash
+        working-directory: ./graph-aws
+        run: |
+            yarn
+            yarn ts-node commands/additionalPermissions/documentAdditionalPermissions.ts documentAdditionalPermissions -o ../jupiterone-aws-cloudformation/cloudformation/iam-cloudformation/managed-policy.md
+            yarn ts-node commands/additionalPermissions/generateStack.ts generateIamCloudFormationStack -o ../jupiterone-aws-cloudformation/cloudformation/iam-cloudformation/cloudformation-template.json  
+            yarn ts-node commands/additionalPermissions/generateTerraform.ts generateTerraform -o ../jupiterone-aws-cloudformation/cloudformation/iam-cloudformation/terraform.tf  
+            yarn ts-node commands/specificPermissions/documentSpecificPermissions.ts documentSpecificPermissions -o ../jupiterone-aws-cloudformation/cloudformation/iam-cloudformation-detailed/managed-policy.md
+            yarn ts-node commands/specificPermissions/generateStack.ts generateIamCloudFormationStack -o ../jupiterone-aws-cloudformation/cloudformation/iam-cloudformation-detailed/cloudformation-template.json
+            yarn ts-node commands/specificPermissions/generateTerraform.ts generateTerraform -o ../jupiterone-aws-cloudformation/cloudformation/iam-cloudformation-detailed/terraform.tf      
+      - name: Install hooks and run Prettier
+        shell: bash
+        working-directory: ./jupiterone-aws-cloudformation
+        run: |
+            yarn
+            yarn prettier --write
+      - name: Check Git Diff
+        id: check-git-diff
+        shell: bash
+        working-directory: ./jupiterone-aws-cloudformation
+        continue-on-error: true
+        run: git diff --quiet
+      - name: Set git config
+        shell: bash
+        working-directory: ./jupiterone-aws-cloudformation
+        if: steps.check-git-diff.outcome == 'failure'
+        run: |
+            git config --local user.email "internal-automation.bot@jupiterone.com"
+            git config --local user.name "j1-internal-automation"
+      - name: Clean up and create branch
+        shell: bash
+        working-directory: ./jupiterone-aws-cloudformation
+        if: steps.check-git-diff.outcome == 'failure'
+        run: |
+            git checkout -b update-documentation-${{ steps.get-version-number.outputs.versionNumber }}
+            git push origin update-documentation-${{ steps.get-version-number.outputs.versionNumber }}
+      - name: Commit changes
+        shell: bash
+        working-directory: ./jupiterone-aws-cloudformation
+        if: steps.check-git-diff.outcome == 'failure'
+        run: |
+            git add .
+            git commit -m "update CloudFormation documentation"
+      - name: Create Pull Request
+        id: create-pull-request
+        uses: peter-evans/create-pull-request@v4
+        if: steps.check-git-diff.outcome == 'failure'
+        with:
+          token: ${{ secrets.AUTO_GITHUB_PAT_TOKEN }}
+          path: ./jupiterone-aws-cloudformation
+          branch: update-documentation-${{ steps.get-version-number.outputs.versionNumber }}
+          base: main
+          title: "[Github Action] - Update Documentation v${{ steps.get-version-number.outputs.versionNumber }}"
+          body: |
+            ## Summary
+
+  slack-webhook:
+    name: Send Slack webhook
+    runs-on: ubuntu-latest
+    needs: [jupiter-integration-aws, integration-deployments, web-integrations, jupiterone-aws-cloudformation]
+    steps:
+      - name: Get version number
+        id: get-version-number
+        uses: actions/github-script@0.9.0
+        with:
+          script: |
+            const tagName = context.payload.release.tag_name
+            const versionNumber = tagName.replace("v", "")
+            core.setOutput('versionNumber', versionNumber)
+      - name: Notify Slack
+        env:
+          JUPITER_INTEGRATION_AWS: ${{ needs.jupiter-integration-aws.outputs.pull-request-url }}
+          INTEGRATION_DEPLOYMENTS: ${{ needs.integration-deployments.outputs.pull-request-url }}
+          WEB_INTEGRATIONS: ${{ needs.web-integrations.outputs.pull-request-url }}
+          JUPITERONE_AWS_CLOUDFORMATION: ${{ needs.jupiterone-aws-cloudformation.outputs.pull-request-url }}
+        shell: bash
+        run: |
+            curl --request POST \
+              --url ${{ secrets.SLACK_WEBHOOK }} \
+              --header 'Content-Type: application/json' \
+              --data '{
+                "body": "jupiter-integration-aws: ${{ env.JUPITER_INTEGRATION_AWS }} \nintegration-deployments: ${{ env.INTEGRATION_DEPLOYMENTS }} \nweb-integrations: ${{ env.WEB_INTEGRATIONS }} \njupiterone-aws-cloudformation: ${{ env.JUPITERONE_AWS_CLOUDFORMATION }}",
+                "title": "Release graph-aws v${{ steps.get-version-number.outputs.versionNumber }}"
+              }'
