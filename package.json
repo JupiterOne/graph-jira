@@ -29,6 +29,7 @@
     "prepack": "yarn build"
   },
   "dependencies": {
+    "aws-sdk": "^2.184.0",
     "dotenv": "^10.0.0",
     "jira-client": "^7.1.0",
     "lodash": "^4.17.21",
