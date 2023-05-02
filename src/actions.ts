@@ -1,3 +1,4 @@
+import { S3 } from 'aws-sdk';
 import {
   Issue,
   IssueFields,
@@ -12,6 +13,8 @@ import { markdownToADF } from './utils/markdownToADF';
 const ISSUE_DESCRIPTION_CHARACTER_LIMIT = 32767;
 const DESCRIPTION_WHEN_TOO_LONG =
   'The description exceeded the maximum length allowed by Jira, so JupiterOne has attached the contents as a file to this issue.';
+const jupiteroneEnv = process.env.JUPITERONE_ENVIRONMENT;
+const jiraActionsBucket = 'jupiter-integration-jira-actions';
 
 /**
  * The structure of the `properties` data provided by the JupiterOne Alert Rules
@@ -19,12 +22,18 @@ const DESCRIPTION_WHEN_TOO_LONG =
  *
  * @see createJiraIssue
  */
-export interface CreateIssueActionProperties {
-  project: JiraProjectKey;
-  summary: string;
-  classification: IssueTypeName;
-  additionalFields?: IssueFields;
-}
+export type CreateIssueActionProperties =
+  | {
+      storedActionData?: false;
+      project: JiraProjectKey;
+      summary: string;
+      classification: IssueTypeName;
+      additionalFields?: IssueFields;
+    }
+  | {
+      storedActionData: true;
+      actionDataS3Key: string;
+    };
 
 /**
  * A utility function created for use by the managed runtime.
@@ -37,22 +46,27 @@ export interface CreateIssueActionProperties {
  * simple string containing only that value.
  */
 export async function createJiraIssue(
-  client: JiraClient,
+  jiraClient: JiraClient,
+  s3Client: S3,
   action: { properties: CreateIssueActionProperties; [k: string]: any },
 ): Promise<Issue> {
+  const actionProperties = action.properties.storedActionData
+    ? await getStoredActionData(s3Client, action.properties.actionDataS3Key)
+    : action.properties;
+
   const {
     summary,
     classification: issueTypeName,
     project,
     additionalFields,
-  } = action.properties;
+  } = actionProperties;
 
-  const projectId = await getProjectIdForProjectKey(client, project);
+  const projectId = await getProjectIdForProjectKey(jiraClient, project);
 
   // Check to see if description is too long, if it is, strip it out and put a placeholder
   // in
   const descriptionOverCharacterLimit = isDescriptionOverCharacterLimit(
-    client.apiVersion,
+    jiraClient.apiVersion,
     additionalFields,
   );
 
@@ -61,12 +75,12 @@ export async function createJiraIssue(
     ...additionalFieldsWithoutDescription
   } = additionalFields ?? {};
 
-  const newIssue = await client.addNewIssue({
+  const newIssue = await jiraClient.addNewIssue({
     summary,
     projectId,
     issueTypeName,
     additionalFields: normalizeIssueFields(
-      client.apiVersion,
+      jiraClient.apiVersion,
       // Create the issue without a description if the description is over the character limit
       descriptionOverCharacterLimit
         ? {
@@ -80,7 +94,7 @@ export async function createJiraIssue(
   if (descriptionOverCharacterLimit) {
     // We need to take the description that was too long for the description field, and upload it as an
     // attachment to the issue we just created
-    await client.addAttachmentOnIssue({
+    await jiraClient.addAttachmentOnIssue({
       issueId: newIssue.id,
       attachmentContent: getAttachmentContentFromDescription(
         additionalFieldsDescription,
@@ -89,7 +103,50 @@ export async function createJiraIssue(
   }
 
   // return the issue
-  return client.findIssue(newIssue.key);
+  return jiraClient.findIssue(newIssue.key);
+}
+
+type FullCreateIssueActionProperties = Omit<
+  CreateIssueActionProperties & { storedActionData: false },
+  'storedActionData'
+>;
+function isValidCreateIssueActionProperties(
+  actionProperties: any,
+): actionProperties is FullCreateIssueActionProperties {
+  if (!actionProperties) {
+    return false;
+  }
+  const { project, summary, classification } = actionProperties;
+  return !!project && !!summary && !!classification;
+}
+
+async function getStoredActionData(
+  s3Client: S3,
+  actionDataS3Key: string,
+): Promise<FullCreateIssueActionProperties> {
+  if (!jupiteroneEnv) {
+    throw new Error('Environment variable JUPITERONE_ENVIRONMENT must be set.');
+  }
+  const { Body: s3ObjectBody } = await s3Client
+    .getObject({
+      Bucket: `${jupiteroneEnv}-${jiraActionsBucket}`,
+      Key: actionDataS3Key,
+    })
+    .promise();
+
+  if (!s3ObjectBody) {
+    throw new Error('Could not fetch action data.');
+  }
+
+  const actionProperties = JSON.parse(
+    s3ObjectBody.toString('utf-8'),
+  ) as unknown;
+  if (!isValidCreateIssueActionProperties(actionProperties)) {
+    throw new Error(
+      'Fetched action data does not contain expected properties.',
+    );
+  }
+  return actionProperties;
 }
 
 async function getProjectIdForProjectKey(
