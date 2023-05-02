@@ -59,9 +59,10 @@ describe.each([[{ storedActionData: false }], [{ storedActionData: true }]])(
       mockJiraClient.addAttachmentOnIssue = jest.fn().mockResolvedValueOnce({});
 
       mockS3Client.getObject = jest.fn().mockImplementation(() => ({
-        promise: async () => ({
-          Body: JSON.stringify(actionProperties),
-        }),
+        promise: () =>
+          Promise.resolve({
+            Body: JSON.stringify(actionProperties),
+          }),
       }));
 
       actionProperties = {
