@@ -1,15 +1,18 @@
 # JupiterOne Integration
 
 Learn about the data ingested, benefits of this integration, and how to use it
-with JupiterOne in the [integration documentation](docs/jupiterone.md).
+with JupiterOne in the [integration documentation](docs/jupiterone.md). The
+askJ1 community also has documentation on Jira integrations here:
+[Jira integration with JupiterOne](https://community.askj1.com/kb/articles/1009-jira-integration-with-jupiterone)
 
-## Development
+## Prerequisites
 
-### Prerequisites
+### Steps to running the graph-jira locally
 
 1. Install [Node.js](https://nodejs.org/) using the
    [installer](https://nodejs.org/en/download/) or a version manager such as
    [nvm](https://github.com/nvm-sh/nvm) or [fnm](https://github.com/Schniz/fnm).
+   Be sure to use Node version 14.x.
 2. Install [`yarn`](https://yarnpkg.com/getting-started/install) or
    [`npm`](https://github.com/npm/cli#installation) to install dependencies.
 3. Install dependencies with `yarn install`.
@@ -22,11 +25,13 @@ with JupiterOne in the [integration documentation](docs/jupiterone.md).
    names of these parameters are defined in `src/instanceConfigFields.ts`. When
    executed in a development environment, values for these parameters are read
    from Node's `process.env`, loaded from `.env`. That file has been added to
-   `.gitignore` to avoid commiting credentials.
+   `.gitignore` to avoid committing credentials.
+
+## Development
 
 ### Running the integration
 
-1. `yarn start` to collect data
+1. `yarn start` to run integration and collect data
 2. `yarn graph` to show a visualization of the collected data
 3. `yarn j1-integration -h` for additional commands
 
@@ -71,3 +76,6 @@ publish it to NPM.
 
 The history of this integration's development can be viewed at
 [CHANGELOG.md](CHANGELOG.md).
+
+[def]:
+  https://community.askj1.com/kb/articles/1009-jira-integration-with-jupiterone

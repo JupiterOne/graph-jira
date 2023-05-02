@@ -47,11 +47,25 @@ docker run -v jiraVolume:/var/atlassian/application-data/jira --name="jira" -d -
 
 After you have successfully bootstrapped the local Jira server:
 
-1. During setup, allow the onboarding wizard to create a populated project
+1. As the server boots up, it will guide you through default settings and
+   acquire a temporary server key.
+2. During setup, allow the onboarding wizard to create a populated project
    having the name `SP`.
-2. Create a new user `jupiterone-dev`.
-3. `cp .env.example .env` and verify configuration values.
-4. `LOAD_ENV=1 yarn test` to make new recording using the configuration.
+3. Create a new user `jupiterone-dev`.
+4. `cp .env.example .env` and verify configuration values.
+
+- JIRA_HOST: the value containing the host URL.
+- JIRA_API_VERSION: use the value of `3`, unless Jira is running locally, then
+  default to `2`.
+- JIRA_USERNAME: the email id used to access Jira.
+- JIRA_PASSWORD: the API token value from Jira cloud. Or the user password for
+  local Jira.
+- PROJECTS: can be left as `[""]` or specify a key name from prerequisites.
+- REDACT_ISSUE_DESCRIPTIONS: can remain FALSE, unless data in the Jira
+  descriptions is highly sensitive or other company sensitivity rating which
+  deems it not shareable.
+
+5. `LOAD_ENV=1 yarn test` to make new recording using the configuration.
 
 ## Authentication
 
