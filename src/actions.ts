@@ -113,11 +113,11 @@ type FullCreateIssueActionProperties = Omit<
 function isValidCreateIssueActionProperties(
   actionProperties: any,
 ): actionProperties is FullCreateIssueActionProperties {
-  let valid = !!actionProperties;
-  valid &&= '' < actionProperties.project;
-  valid &&= '' < actionProperties.summary;
-  valid &&= '' < actionProperties.classification;
-  return valid;
+  if (!actionProperties) {
+    return false;
+  }
+  const { project, summary, classification } = actionProperties;
+  return !!project && !!summary && !!classification;
 }
 
 async function getStoredActionData(
