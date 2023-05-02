@@ -23,17 +23,20 @@ const jiraActionsBucket = 'jupiter-integration-jira-actions';
  * @see createJiraIssue
  */
 export type CreateIssueActionProperties =
-  | {
+  | (FullCreateIssueActionProperties & {
       storedActionData?: false;
-      project: JiraProjectKey;
-      summary: string;
-      classification: IssueTypeName;
-      additionalFields?: IssueFields;
-    }
+    })
   | {
       storedActionData: true;
       actionDataS3Key: string;
     };
+
+type FullCreateIssueActionProperties = {
+  project: JiraProjectKey;
+  summary: string;
+  classification: IssueTypeName;
+  additionalFields?: IssueFields;
+};
 
 /**
  * A utility function created for use by the managed runtime.
@@ -106,10 +109,6 @@ export async function createJiraIssue(
   return jiraClient.findIssue(newIssue.key);
 }
 
-type FullCreateIssueActionProperties = Omit<
-  CreateIssueActionProperties & { storedActionData: false },
-  'storedActionData'
->;
 function isValidCreateIssueActionProperties(
   actionProperties: any,
 ): actionProperties is FullCreateIssueActionProperties {
