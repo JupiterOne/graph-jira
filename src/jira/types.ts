@@ -258,6 +258,34 @@ export interface Issue extends Resource {
   };
 }
 
+export interface IssueTransition {
+  id: string;
+  name: string;
+  to: {
+    id: string;
+    name: string;
+    self: string;
+    iconUrl: string;
+    description: string;
+    statusCategory: {
+      id: number;
+      key: string;
+      colorName: string;
+      name: string;
+      self: string;
+    };
+  };
+  hasScreen: boolean;
+  isGlobal: boolean;
+  isInitial: boolean;
+  isAvailable: boolean;
+  isConditional: boolean;
+  isLooped: boolean;
+  fields?: {
+    [k: string]: any;
+  };
+}
+
 interface IssueType {
   name: string;
   self: string;
