@@ -1,8 +1,13 @@
-import { Issue } from './jira';
+import { Issue, IssueTransition, JiraClient } from './jira';
 import largeAdf from '../test/fixtures/large-adf.json';
 
 process.env.JUPITERONE_ENVIRONMENT = 'jupiterone-test';
-import { CreateIssueActionProperties, createJiraIssue } from './actions';
+import {
+  CreateIssueActionProperties,
+  TransitionIssueActionProperties,
+  createJiraIssue,
+  transitionJiraIssue,
+} from './actions';
 
 const issueDescriptionText = 'Test description';
 
@@ -193,3 +198,143 @@ describe.each([[{ storedActionData: false }], [{ storedActionData: true }]])(
     });
   },
 );
+
+describe(transitionJiraIssue, () => {
+  const mockJiraClient = {} as JiraClient;
+
+  test('should find transition by transition name and send', async () => {
+    const issueKey = 'PROJ-42';
+    const transitionId = '42';
+
+    const transition: IssueTransition = {
+      id: transitionId,
+      name: 'Answer',
+    } as any;
+
+    const mockIssue = { transitions: [transition] };
+
+    mockJiraClient.findIssue = jest.fn().mockResolvedValueOnce(mockIssue);
+    mockJiraClient.transitionIssue = jest
+      .fn()
+      .mockResolvedValueOnce(Promise.resolve());
+
+    const actionProperties: TransitionIssueActionProperties = {
+      issueKey,
+      transitionName: transition.name,
+    };
+
+    const issue = await transitionJiraIssue(mockJiraClient, {
+      properties: actionProperties,
+    });
+
+    expect(mockJiraClient.findIssue).toHaveBeenCalledWith(issueKey);
+    expect(mockJiraClient.transitionIssue).toHaveBeenCalledWith({
+      issueId: issueKey,
+      transitionName: transition.name,
+      statusName: undefined,
+    });
+
+    expect(issue).toBe(mockIssue);
+  });
+
+  test('should find transition by target status name and send', async () => {
+    const issueKey = 'PROJ-42';
+    const transitionId = '42';
+
+    const transition = {
+      id: transitionId,
+      name: 'Answer',
+      to: {
+        name: 'Answered',
+      },
+    } as IssueTransition;
+
+    const mockIssue = { transitions: [transition] };
+
+    mockJiraClient.findIssue = jest.fn().mockResolvedValueOnce(mockIssue);
+    mockJiraClient.transitionIssue = jest
+      .fn()
+      .mockResolvedValueOnce(Promise.resolve());
+
+    const actionProperties: TransitionIssueActionProperties = {
+      issueKey,
+      statusName: transition.to.name,
+    };
+
+    const issue = await transitionJiraIssue(mockJiraClient, {
+      properties: actionProperties,
+    });
+
+    expect(mockJiraClient.findIssue).toHaveBeenCalledWith(issueKey);
+    expect(mockJiraClient.transitionIssue).toHaveBeenCalledWith({
+      issueId: issueKey,
+      transitionName: undefined,
+      statusName: transition.to.name,
+    });
+
+    expect(issue).toBe(mockIssue);
+  });
+
+  test('should throw if transition target status not found', async () => {
+    const issueKey = 'PROJ-42';
+    const transitionId = '42';
+
+    const transition = {
+      id: transitionId,
+      name: 'Answer',
+      to: {
+        name: 'Answered',
+      },
+    } as IssueTransition;
+
+    const mockIssue = { transitions: [transition] };
+
+    mockJiraClient.transitionIssue = JiraClient.prototype.transitionIssue;
+    mockJiraClient['client'] = {
+      findIssue: jest.fn().mockResolvedValueOnce(mockIssue),
+    } as any;
+
+    const actionProperties: TransitionIssueActionProperties = {
+      issueKey,
+      statusName: 'Not Answered',
+    };
+
+    await expect(
+      transitionJiraIssue(mockJiraClient, {
+        properties: actionProperties,
+      }),
+    ).rejects.toThrow(
+      `Unable to find transition for issue ${issueKey} to status "${actionProperties.statusName}"`,
+    );
+  });
+
+  test('should throw if transition name not found', async () => {
+    const issueKey = 'PROJ-42';
+    const transitionId = '42';
+
+    const transition = {
+      id: transitionId,
+      name: 'Answer',
+    } as IssueTransition;
+
+    const mockIssue = { transitions: [transition] };
+
+    mockJiraClient.transitionIssue = JiraClient.prototype.transitionIssue;
+    mockJiraClient['client'] = {
+      findIssue: jest.fn().mockResolvedValueOnce(mockIssue),
+    } as any;
+
+    const actionProperties: TransitionIssueActionProperties = {
+      issueKey,
+      transitionName: 'Not Answer',
+    };
+
+    await expect(
+      transitionJiraIssue(mockJiraClient, {
+        properties: actionProperties,
+      }),
+    ).rejects.toThrow(
+      `Unable to find transition for issue ${issueKey} named "${actionProperties.transitionName}"`,
+    );
+  });
+});

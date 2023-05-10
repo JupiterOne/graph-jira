@@ -31,6 +31,12 @@ export type CreateIssueActionProperties =
       actionDataS3Key: string;
     };
 
+export type TransitionIssueActionProperties = {
+  issueKey: string;
+  statusName?: string;
+  transitionName?: string;
+};
+
 type FullCreateIssueActionProperties = {
   project: JiraProjectKey;
   summary: string;
@@ -107,6 +113,17 @@ export async function createJiraIssue(
 
   // return the issue
   return jiraClient.findIssue(newIssue.key);
+}
+
+export async function transitionJiraIssue(
+  jiraClient: JiraClient,
+  action: { properties: TransitionIssueActionProperties; [k: string]: any },
+): Promise<Issue> {
+  const { issueKey: issueId, statusName, transitionName } = action.properties;
+
+  await jiraClient.transitionIssue({ issueId, statusName, transitionName });
+
+  return jiraClient.findIssue(issueId);
 }
 
 function isValidCreateIssueActionProperties(

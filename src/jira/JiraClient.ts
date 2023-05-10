@@ -135,7 +135,7 @@ export class JiraClient {
   }): Promise<void> {
     // either statusName or transitionName is needed, but not both
     if ((!statusName && !transitionName) || (statusName && transitionName)) {
-      throw new Error(`One of statusName or transitionName is required`);
+      throw new Error(`Only one of statusName or transitionName is required`);
     }
     const issue = (await this.client.findIssue(
       issueId,
@@ -147,15 +147,22 @@ export class JiraClient {
         : transition.name === transitionName,
     );
     if (!transition) {
-      throw new Error(
-        `Unable to find transition for issue ${issueId} to status "${statusName}"`,
-      );
+      if (statusName) {
+        throw new Error(
+          `Unable to find transition for issue ${issueId} to status "${statusName}"`,
+        );
+      }
+      if (transitionName) {
+        throw new Error(
+          `Unable to find transition for issue ${issueId} named "${transitionName}"`,
+        );
+      }
     }
     try {
       await this.client.transitionIssue(issueId, { transition });
     } catch (error) {
       this.logger.error(
-        { issueId, error, statusName },
+        { issueId, error, transition },
         'Error transitioning issue',
       );
     }

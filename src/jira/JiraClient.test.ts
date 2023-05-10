@@ -174,10 +174,26 @@ describe('JiraClient V' + normalizedInstanceConfig.apiVersion, () => {
       name: 'transitionIssue',
     });
 
+    const issueId = 'JJJ-9';
+    const validationError =
+      'Only one of statusName or transitionName is required';
+
     await client.transitionIssue({
-      issueId: 'JJJ-9',
+      issueId,
       statusName: 'Done',
     });
+
+    await expect(client.transitionIssue({ issueId })).rejects.toThrow(
+      validationError,
+    );
+
+    await expect(
+      client.transitionIssue({
+        issueId,
+        statusName: 'Done',
+        transitionName: 'Complete',
+      }),
+    ).rejects.toThrow(validationError);
   });
 
   test('#projectKeyToProjectId should return project id number if successful', async () => {
