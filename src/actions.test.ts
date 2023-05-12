@@ -202,10 +202,10 @@ describe.each([[{ storedActionData: false }], [{ storedActionData: true }]])(
 describe(transitionJiraIssue, () => {
   const mockJiraClient = {} as JiraClient;
 
-  test('should find transition by transition name and send', async () => {
-    const issueKey = 'PROJ-42';
-    const transitionId = '42';
+  const issueKey = 'PROJ-42';
+  const transitionId = '42';
 
+  test('should find transition by transition name and send', async () => {
     const transition: IssueTransition = {
       id: transitionId,
       name: 'Answer',
@@ -238,9 +238,6 @@ describe(transitionJiraIssue, () => {
   });
 
   test('should find transition by target status name and send', async () => {
-    const issueKey = 'PROJ-42';
-    const transitionId = '42';
-
     const transition = {
       id: transitionId,
       name: 'Answer',
@@ -276,9 +273,6 @@ describe(transitionJiraIssue, () => {
   });
 
   test('should throw if transition target status not found', async () => {
-    const issueKey = 'PROJ-42';
-    const transitionId = '42';
-
     const transition = {
       id: transitionId,
       name: 'Answer',
@@ -309,9 +303,6 @@ describe(transitionJiraIssue, () => {
   });
 
   test('should throw if transition name not found', async () => {
-    const issueKey = 'PROJ-42';
-    const transitionId = '42';
-
     const transition = {
       id: transitionId,
       name: 'Answer',
