@@ -124,6 +124,14 @@ export class JiraClient {
     // Consider returning  better type, but the docs are bad and dont help
   }
 
+  /**
+   * Transition an issue to a new status.
+   *
+   * Given an issue ID and a status name, find the transition that will move the
+   * issue to that status and execute it.
+   *
+   * Given an issue ID and a transition name, find the transition and execute it.
+   */
   public async transitionIssue({
     issueId,
     statusName,
@@ -141,10 +149,9 @@ export class JiraClient {
       issueId,
       'transitions', // includes possible transitions for current issue status
     )) as Issue & { transitions: IssueTransition[] };
-    const transition = issue.transitions.find((transition) =>
-      statusName
-        ? transition.to.name === statusName
-        : transition.name === transitionName,
+    const transition = issue.transitions.find(
+      (transition) =>
+        transition.to.name === statusName || transition.name === transitionName,
     );
     if (!transition) {
       if (statusName) {

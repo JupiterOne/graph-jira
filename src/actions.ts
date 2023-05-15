@@ -115,6 +115,13 @@ export async function createJiraIssue(
   return jiraClient.findIssue(newIssue.key);
 }
 
+/**
+ * A utility function created for use by the managed runtime.
+ *
+ * The JupiterOne Alert Rules Jira action output sync will submit
+ * `TransitionIssueActionProperties`. Only one of the `statusName` or `transitionName`
+ * properties should be specified.
+ */
 export async function transitionJiraIssue(
   jiraClient: JiraClient,
   action: { properties: TransitionIssueActionProperties; [k: string]: any },

@@ -306,6 +306,9 @@ describe(transitionJiraIssue, () => {
     const transition = {
       id: transitionId,
       name: 'Answer',
+      to: {
+        name: 'Answered',
+      },
     } as IssueTransition;
 
     const mockIssue = { transitions: [transition] };
