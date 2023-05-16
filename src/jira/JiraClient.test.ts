@@ -168,6 +168,34 @@ describe('JiraClient V' + normalizedInstanceConfig.apiVersion, () => {
     expect(foundIssue.fields.description).toEqual(issueDescriptionADF);
   });
 
+  test('transitionIssue', async () => {
+    recording = setupJiraRecording({
+      directory: __dirname,
+      name: 'transitionIssue',
+    });
+
+    const issueId = 'JJJ-9';
+    const validationError =
+      'Only one of statusName or transitionName is required';
+
+    await client.transitionIssue({
+      issueId,
+      statusName: 'Done',
+    });
+
+    await expect(client.transitionIssue({ issueId })).rejects.toThrow(
+      validationError,
+    );
+
+    await expect(
+      client.transitionIssue({
+        issueId,
+        statusName: 'Done',
+        transitionName: 'Complete',
+      }),
+    ).rejects.toThrow(validationError);
+  });
+
   test('#projectKeyToProjectId should return project id number if successful', async () => {
     recording = setupJiraRecording({
       directory: __dirname,
@@ -291,6 +319,15 @@ describe(
 
       const foundIssue = await client.findIssue(createdIssue.id);
       expect(foundIssue).toContainKeys(['id', 'key', 'self', 'fields']);
+    });
+
+    test('transitionIssue', async () => {
+      setupApiRecording('transitionIssue');
+
+      await client.transitionIssue({
+        issueId: 'JJJ-9',
+        statusName: 'Done',
+      });
     });
 
     test('addNewIssue description', async () => {

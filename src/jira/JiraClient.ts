@@ -15,6 +15,7 @@ import {
   Issue,
   IssueFields,
   IssuesOptions,
+  IssueTransition,
   IssueTypeName,
   JiraApiVersion,
   JiraProjectId,
@@ -121,6 +122,57 @@ export class JiraClient {
       );
     }
     // Consider returning  better type, but the docs are bad and dont help
+  }
+
+  /**
+   * Transition an issue to a new status.
+   *
+   * Given an issue ID and a status name, find the transition that will move the
+   * issue to that status and execute it.
+   *
+   * Given an issue ID and a transition name, find the transition and execute it.
+   */
+  public async transitionIssue({
+    issueId,
+    statusName,
+    transitionName,
+  }: {
+    issueId: string;
+    statusName?: string; // name of status to transition to
+    transitionName?: string;
+  }): Promise<void> {
+    // either statusName or transitionName is needed, but not both
+    if ((!statusName && !transitionName) || (statusName && transitionName)) {
+      throw new Error(`Only one of statusName or transitionName is required`);
+    }
+    const issue = (await this.client.findIssue(
+      issueId,
+      'transitions', // includes possible transitions for current issue status
+    )) as Issue & { transitions: IssueTransition[] };
+    const transition = issue.transitions.find(
+      (transition) =>
+        transition.to.name === statusName || transition.name === transitionName,
+    );
+    if (!transition) {
+      if (statusName) {
+        throw new Error(
+          `Unable to find transition for issue ${issueId} to status "${statusName}"`,
+        );
+      }
+      if (transitionName) {
+        throw new Error(
+          `Unable to find transition for issue ${issueId} named "${transitionName}"`,
+        );
+      }
+    }
+    try {
+      await this.client.transitionIssue(issueId, { transition });
+    } catch (error) {
+      this.logger.error(
+        { issueId, error, transition },
+        'Error transitioning issue',
+      );
+    }
   }
 
   public async getCurrentUser(): Promise<any> {
