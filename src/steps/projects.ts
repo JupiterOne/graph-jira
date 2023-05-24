@@ -7,7 +7,11 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationConfig } from '../config';
-import { DATA_CONFIG_PROJECT_ENTITY_ARRAY } from '../constants';
+import {
+  DATA_CONFIG_PROJECT_ENTITY_ARRAY,
+  IngestionSources,
+  Steps,
+} from '../constants';
 import { createProjectEntity } from '../converters/ProjectEntityConverter';
 import {
   ACCOUNT_ENTITY_TYPE,
@@ -61,8 +65,9 @@ export async function fetchProjects({
 
 export const projectSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-projects',
+    id: Steps.PROJECTS,
     name: 'Fetch Projects',
+    ingestionSourceId: IngestionSources.PROJECTS,
     entities: [
       {
         resourceName: 'Jira Project',
@@ -78,7 +83,7 @@ export const projectSteps: IntegrationStep<IntegrationConfig>[] = [
         targetType: PROJECT_ENTITY_TYPE,
       },
     ],
-    dependsOn: ['fetch-account'],
+    dependsOn: [Steps.ACCOUNT],
     executionHandler: fetchProjects,
   },
 ];
