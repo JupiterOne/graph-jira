@@ -1,5 +1,6 @@
 import {
   IntegrationExecutionContext,
+  IntegrationIngestionConfigFieldMap,
   IntegrationInstanceConfig,
   IntegrationInstanceConfigFieldMap,
   IntegrationProviderAPIError,
@@ -17,6 +18,7 @@ import {
   JiraHostConfig,
 } from './jira';
 import { normalizeCustomFieldIdentifiers, normalizeProjectKeys } from './utils';
+import { IngestionSources } from './constants';
 
 /**
  * A type describing the configuration fields required to execute the
@@ -234,3 +236,18 @@ export async function validateProjectKeys(
     );
   }
 }
+
+export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
+  [IngestionSources.ISSUES]: {
+    title: 'Jira Issues',
+    description: 'Tracked tasks, bugs or user stories within Jira',
+  },
+  [IngestionSources.PROJECTS]: {
+    title: 'Jira Projects',
+    description: 'Containers to help manage Jira issues',
+  },
+  [IngestionSources.USERS]: {
+    title: 'Jira Users',
+    description: 'Individuals with access to Jira',
+  },
+};

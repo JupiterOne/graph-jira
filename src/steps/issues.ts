@@ -12,7 +12,11 @@ import {
 
 import { APIClient } from '../client';
 import { IntegrationConfig } from '../config';
-import { DATA_CONFIG_PROJECT_ENTITY_ARRAY } from '../constants';
+import {
+  DATA_CONFIG_PROJECT_ENTITY_ARRAY,
+  IngestionSources,
+  Steps,
+} from '../constants';
 import { createIssueEntity } from '../converters/IssueEntityConverter';
 import {
   ISSUE_ENTITY_CLASS,
@@ -237,8 +241,9 @@ async function processIssue(
 
 export const issueSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-issues',
+    id: Steps.ISSUES,
     name: 'Fetch Issues',
+    ingestionSourceId: IngestionSources.ISSUES,
     entities: [
       {
         resourceName: 'Jira Issue',
@@ -273,7 +278,7 @@ export const issueSteps: IntegrationStep<IntegrationConfig>[] = [
         partial: true,
       },
     ],
-    dependsOn: ['fetch-projects', 'fetch-users'],
+    dependsOn: [Steps.PROJECTS, Steps.USERS],
     executionHandler: fetchIssues,
   },
 ];

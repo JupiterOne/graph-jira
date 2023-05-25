@@ -1,6 +1,7 @@
 import { IntegrationInvocationConfig } from '@jupiterone/integration-sdk-core';
 
 import {
+  ingestionConfig,
   instanceConfigFields,
   IntegrationConfig,
   validateInvocation,
@@ -12,6 +13,7 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> =
     instanceConfigFields,
     validateInvocation,
     integrationSteps,
+    ingestionConfig,
   };
 
 //

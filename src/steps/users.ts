@@ -18,6 +18,7 @@ import {
 } from '../entities';
 import { createApiClient } from '../utils';
 import { DATA_ACCOUNT_ENTITY } from './account';
+import { IngestionSources, Steps } from '../constants';
 
 export async function fetchUsers({
   instance,
@@ -53,8 +54,9 @@ export async function fetchUsers({
 
 export const userSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-users',
+    id: Steps.USERS,
     name: 'Fetch Users',
+    ingestionSourceId: IngestionSources.USERS,
     entities: [
       {
         resourceName: 'Jira User',
@@ -70,7 +72,7 @@ export const userSteps: IntegrationStep<IntegrationConfig>[] = [
         targetType: USER_ENTITY_TYPE,
       },
     ],
-    dependsOn: ['fetch-account'],
+    dependsOn: [Steps.ACCOUNT],
     executionHandler: fetchUsers,
   },
 ];
