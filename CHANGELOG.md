@@ -1,3 +1,20 @@
+# v4.2.0 (Thu May 25 2023)
+
+#### 🚀 Enhancement
+
+- Add Ingestion sources config [#196](https://github.com/JupiterOne/graph-jira/pull/196) ([@VDubber](https://github.com/VDubber))
+
+#### 🐛 Bug Fix
+
+- Update integration-deployment.yml [#195](https://github.com/JupiterOne/graph-jira/pull/195) ([@Nick-NCSU](https://github.com/Nick-NCSU))
+
+#### Authors: 2
+
+- Nick Thompson ([@Nick-NCSU](https://github.com/Nick-NCSU))
+- Samuel Poulton ([@VDubber](https://github.com/VDubber))
+
+---
+
 ### Fixed
 
 - Updated config validation for proper error codes.
