@@ -240,7 +240,7 @@ export async function validateProjectKeys(
 export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
   [IngestionSources.ISSUES]: {
     title: 'Jira Issues',
-    description: 'Tracked tasks, bugs or user stories tracked within Jira',
+    description: 'Tracked tasks, bugs or user stories within Jira',
   },
   [IngestionSources.PROJECTS]: {
     title: 'Jira Projects',
@@ -248,6 +248,6 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
   },
   [IngestionSources.USERS]: {
     title: 'Jira Users',
-    description: 'Individual with access to the Jira platform',
+    description: 'Individuals with access to the Jira platform',
   },
 };
