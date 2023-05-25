@@ -248,6 +248,6 @@ export const ingestionConfig: IntegrationIngestionConfigFieldMap = {
   },
   [IngestionSources.USERS]: {
     title: 'Jira Users',
-    description: 'Individuals with access to the Jira platform',
+    description: 'Individuals with access to Jira',
   },
 };
