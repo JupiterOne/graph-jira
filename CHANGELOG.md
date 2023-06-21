@@ -1,3 +1,16 @@
+# v5.0.0 (Wed Jun 21 2023)
+
+#### 💥 Breaking Change
+
+- [NO-TICKET] - upgrade to node 18 [#198](https://github.com/JupiterOne/graph-jira/pull/198) ([@dobregon-truepill](https://github.com/dobregon-truepill) [@dobregons](https://github.com/dobregons))
+
+#### Authors: 2
+
+- [@dobregon-truepill](https://github.com/dobregon-truepill)
+- David Obregón Sánchez ([@dobregons](https://github.com/dobregons))
+
+---
+
 # v4.2.0 (Thu May 25 2023)
 
 #### 🚀 Enhancement
