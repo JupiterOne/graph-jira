@@ -5,6 +5,9 @@
   "main": "dist/index.js",
   "repository": "https://github.com/JupiterOne/graph-jira",
   "license": "SEE LICENSE IN LICENSE",
+  "engines": {
+    "node": ">=18.0.0 <19.x"
+  },
   "files": [
     "LICENSE",
     "dist"
@@ -26,7 +29,8 @@
     "test:ci": "yarn format:check && yarn lint && yarn type-check && yarn test",
     "build": "tsc -p tsconfig.dist.json --declaration",
     "prepush": "yarn lint && yarn type-check && jest --changedSince main",
-    "prepack": "yarn build"
+    "prepack": "yarn build",
+    "postversion": "cp package.json ./dist/package.json"
   },
   "dependencies": {
     "aws-sdk": "^2.184.0",
@@ -37,7 +41,7 @@
     "node-fetch": "2"
   },
   "peerDependencies": {
-    "@jupiterone/integration-sdk-core": "^8.41.0"
+    "@jupiterone/integration-sdk-core": "^9.5.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -46,15 +50,15 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.1.0",
-    "@jupiterone/integration-sdk-core": "^8.41.0",
-    "@jupiterone/integration-sdk-dev-tools": "^8.41.0",
-    "@jupiterone/integration-sdk-testing": "^8.41.0",
+    "@jupiterone/integration-sdk-core": "^9.5.0",
+    "@jupiterone/integration-sdk-dev-tools": "^9.5.0",
+    "@jupiterone/integration-sdk-testing": "^9.5.0",
     "@types/bunyan": "^1.8.5",
     "@types/fs-extra": "^7.0.0",
     "@types/jest": "^27.4.1",
     "@types/jira-client": "^7.1.0",
     "@types/lodash": "^4.14.178",
-    "@types/node": "~8.10.0",
+    "@types/node": "^18",
     "@types/node-fetch": "2",
     "auto": "^10.37.4",
     "fs-extra": "^8.0.1",

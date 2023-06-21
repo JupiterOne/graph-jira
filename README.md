@@ -12,7 +12,7 @@ askJ1 community also has documentation on Jira integrations here:
 1. Install [Node.js](https://nodejs.org/) using the
    [installer](https://nodejs.org/en/download/) or a version manager such as
    [nvm](https://github.com/nvm-sh/nvm) or [fnm](https://github.com/Schniz/fnm).
-   Be sure to use Node version 14.x.
+   Be sure to use Node version 18.x.
 2. Install [`yarn`](https://yarnpkg.com/getting-started/install) or
    [`npm`](https://github.com/npm/cli#installation) to install dependencies.
 3. Install dependencies with `yarn install`.
