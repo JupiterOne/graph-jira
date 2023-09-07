@@ -127,6 +127,9 @@ describe('JiraClient V' + normalizedInstanceConfig.apiVersion, () => {
     recording = setupJiraRecording({
       directory: __dirname,
       name: 'addNewIssue',
+      options: {
+        recordFailedRequests: true,
+      },
     });
 
     const createdIssue = await client.addNewIssue({
@@ -146,6 +149,14 @@ describe('JiraClient V' + normalizedInstanceConfig.apiVersion, () => {
 
     const foundIssue = await client.findIssue(createdIssue.id);
     expect(foundIssue).toContainKeys(['id', 'key', 'self', 'fields']);
+
+    await expect(
+      client.addNewIssue({
+        summary: 'failing issue',
+        projectId: -100,
+        issueTypeName: 'Task',
+      }),
+    ).rejects.toThrow(/Specify a valid project/);
   });
 
   test('addNewIssue description', async () => {
