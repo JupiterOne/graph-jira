@@ -76,19 +76,27 @@ export class JiraClient {
     issueTypeName,
     additionalFields = {},
   }: AddNewIssueParams): Promise<Issue> {
-    const issue: Issue = (await this.client.addNewIssue({
-      fields: {
-        summary,
-        project: {
-          id: projectId,
+    try {
+      return (await this.client.addNewIssue({
+        fields: {
+          summary,
+          project: {
+            id: projectId,
+          },
+          issuetype: {
+            name: issueTypeName,
+          },
+          ...additionalFields,
         },
-        issuetype: {
-          name: issueTypeName,
-        },
-        ...additionalFields,
-      },
-    })) as Issue;
-    return issue;
+      })) as Issue;
+    } catch (error) {
+      const { message: errorMessage, name: errorName } = error;
+      this.logger.error(
+        { errorName, errorMessage, projectId },
+        'Error creating Jira issue',
+      );
+      throw error;
+    }
   }
 
   public async addAttachmentOnIssue({
