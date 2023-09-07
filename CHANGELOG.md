@@ -1,3 +1,17 @@
+# v5.0.1 (Thu Sep 07 2023)
+
+#### 🐛 Bug Fix
+
+- [APP-13581] log issue creation error [#200](https://github.com/JupiterOne/graph-jira/pull/200) ([@ryan-willis](https://github.com/ryan-willis))
+- Update integration-deployment.yml to run in Node18 [#199](https://github.com/JupiterOne/graph-jira/pull/199) ([@Nick-NCSU](https://github.com/Nick-NCSU))
+
+#### Authors: 2
+
+- Nick Thompson ([@Nick-NCSU](https://github.com/Nick-NCSU))
+- Ryan Willis ([@ryan-willis](https://github.com/ryan-willis))
+
+---
+
 # v5.0.0 (Wed Jun 21 2023)
 
 #### 💥 Breaking Change
