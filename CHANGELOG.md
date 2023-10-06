@@ -1,3 +1,15 @@
+# v5.0.2 (Fri Oct 06 2023)
+
+#### 🐛 Bug Fix
+
+- INT-9642 Bump sdk versions [#201](https://github.com/JupiterOne/graph-jira/pull/201) ([@JakeFerrero](https://github.com/JakeFerrero))
+
+#### Authors: 1
+
+- Jake Ferrero ([@JakeFerrero](https://github.com/JakeFerrero))
+
+---
+
 # v5.0.1 (Thu Sep 07 2023)
 
 #### 🐛 Bug Fix
