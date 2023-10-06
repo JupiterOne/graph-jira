@@ -32,9 +32,8 @@ export async function fetchProjects({
   const config = instance.config;
   const apiClient = createApiClient(logger, config);
 
-  const accountEntity = await jobState.getData<AccountEntity>(
-    DATA_ACCOUNT_ENTITY,
-  );
+  const accountEntity =
+    await jobState.getData<AccountEntity>(DATA_ACCOUNT_ENTITY);
   if (!accountEntity) {
     throw new IntegrationMissingKeyError(
       `Expected to find Account entity in jobState`,
