@@ -58,7 +58,10 @@ export class JiraClient {
 
   private client: JiraApi;
 
-  constructor(private logger: IntegrationLogger, config: JiraClientConfig) {
+  constructor(
+    private logger: IntegrationLogger,
+    config: JiraClientConfig,
+  ) {
     this.apiVersion = config.apiVersion;
     this.client = new JiraApi(config);
   }

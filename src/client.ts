@@ -28,7 +28,10 @@ const USERS_PAGE_SIZE = 100;
 const ISSUES_PAGE_SIZE = 100;
 
 export class APIClient {
-  constructor(readonly logger: IntegrationLogger, readonly jira: JiraClient) {}
+  constructor(
+    readonly logger: IntegrationLogger,
+    readonly jira: JiraClient,
+  ) {}
 
   public async fetchServerInfo(): Promise<ServerInfo> {
     return this.jira.fetchServerInfo();
