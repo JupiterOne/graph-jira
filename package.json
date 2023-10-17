@@ -2,9 +2,12 @@
   "name": "@jupiterone/graph-jira",
   "version": "5.0.2",
   "description": "A JupiterOne managed integration for https://www.atlassian.com/software/jira.",
-  "main": "dist/index.js",
-  "repository": "https://github.com/JupiterOne/graph-jira",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JupiterOne/graph-jira"
+  },
   "license": "SEE LICENSE IN LICENSE",
+  "main": "dist/index.js",
   "engines": {
     "node": ">=18.0.0 <19.x"
   },

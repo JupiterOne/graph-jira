@@ -1,0 +1,14 @@
+openapi: 3.0.1
+info:
+  title: '@jupiterone/graph-jira'
+  description: >-
+    A JupiterOne managed integration for
+    https://www.atlassian.com/software/jira.
+  x-cortex-git:
+    github:
+      repository: JupiterOne/graph-jira
+  x-cortex-owners:
+    - type: group
+      name: JupiterOne/integrations
+  x-cortex-service-groups: tier-4
+  x-cortex-tag: '@jupiterone/graph-jira'
