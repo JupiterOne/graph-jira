@@ -43,6 +43,7 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
   jiraApiVersion: {
     type: 'string',
     mask: false,
+    optional: true,
   },
   jiraUsername: {
     type: 'string',
