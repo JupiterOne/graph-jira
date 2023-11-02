@@ -32,6 +32,11 @@ export function normalizeProjectKeys(
       const parsedProjects = JSON.parse(projects);
       return normalizeProjectKeys(parsedProjects);
     } catch (err) {
+      // Some configs such as the collector recieves the projects field as [PROJECT]
+      if (projects.includes('[') && projects.includes(']')) {
+        projects = projects.replace('[', '').replace(']', '').split(' ');
+        return normalizeProjectKeys(projects);
+      }
       return normalizeProjectKeys([projects]);
     }
   } else {
