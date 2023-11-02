@@ -56,6 +56,7 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
   redactIssueDescriptions: {
     type: 'boolean',
     mask: false,
+    optional: true,
   },
   projects: {
     type: 'string',
@@ -99,7 +100,7 @@ export interface JiraIntegrationInstanceConfig
   /**
    * Defaults to false. Set to true if you would like issue descriptions to be redacted in jira_issue entities.
    */
-  redactIssueDescriptions: boolean;
+  redactIssueDescriptions?: boolean;
 
   /**
    * An optional array of Jira Custom Field identifiers, indicating which custom
@@ -140,6 +141,10 @@ export async function validateInvocation(
   context: IntegrationExecutionContext<JiraIntegrationInstanceConfig>,
 ) {
   const { config } = context.instance;
+
+  if (config.redactIssueDescriptions === undefined) {
+    config.redactIssueDescriptions = false;
+  }
 
   if (!config.jiraHost || !config.jiraPassword || !config.jiraUsername) {
     throw new IntegrationValidationError(
