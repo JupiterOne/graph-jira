@@ -77,7 +77,7 @@ export async function fetchIssues({
         fieldsById,
         customFieldsToInclude: config.customFields,
         projectEntities,
-        redactIssueDescriptions,
+        redactIssueDescriptions: redactIssueDescriptions ?? false,
         apiVersion,
       },
       projectKey,

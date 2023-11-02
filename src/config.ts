@@ -142,6 +142,10 @@ export async function validateInvocation(
 ) {
   const { config } = context.instance;
 
+  if (config.redactIssueDescriptions === undefined) {
+    config.redactIssueDescriptions = false;
+  }
+
   if (!config.jiraHost || !config.jiraPassword || !config.jiraUsername) {
     throw new IntegrationValidationError(
       'Config requires all of {jiraHost, jiraUsername, jiraPassword}',
