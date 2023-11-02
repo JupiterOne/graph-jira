@@ -100,7 +100,7 @@ export interface JiraIntegrationInstanceConfig
   /**
    * Defaults to false. Set to true if you would like issue descriptions to be redacted in jira_issue entities.
    */
-  redactIssueDescriptions: boolean;
+  redactIssueDescriptions?: boolean;
 
   /**
    * An optional array of Jira Custom Field identifiers, indicating which custom
