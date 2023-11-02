@@ -56,6 +56,7 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
   redactIssueDescriptions: {
     type: 'boolean',
     mask: false,
+    optional: true,
   },
   projects: {
     type: 'string',
