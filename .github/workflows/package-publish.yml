@@ -13,7 +13,7 @@ jobs:
       contents: read
       packages: write
       id-token: write
-    uses: jupiterone/.github/.github/workflows/halo_publish_integration_collector_image.yaml@main
+    uses: JupiterOne/.github/blob/main/.github/workflows/halo_publish_integration_collector_image.yaml
     secrets:
       GHCR_USERNAME: ${{ github.actor }}
       GHCR_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
