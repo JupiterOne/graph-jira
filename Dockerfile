@@ -1,18 +1,11 @@
-FROM node:10.15.0-alpine
+FROM node:18-alpine
 
-RUN apk update && apk upgrade
-RUN apk add bash vim
+ENV JUPITERONE_INTEGRATION_DIR=/opt/jupiterone/integration
 
-RUN mkdir /app
-WORKDIR /app
+COPY package.json yarn.lock tsconfig.json LICENSE ${JUPITERONE_INTEGRATION_DIR}/
+COPY src/ ${JUPITERONE_INTEGRATION_DIR}/src
 
-COPY package.json package.json
-COPY yarn.lock yarn.lock
+WORKDIR ${JUPITERONE_INTEGRATION_DIR}
+RUN yarn install
 
-RUN yarn
-
-ADD . /app
-
-EXPOSE 3000
-
-CMD bash -c "yarn start"
+ENTRYPOINT /usr/local/bin/yarn j1-integration run -i ${INTEGRATION_INSTANCE_ID} --disable-schema-validation --api-base-url ${JUPITERONE_API_BASE_URL:-https://api.us.jupiterone.io} --account ${JUPITERONE_ACCOUNT} --api-key ${JUPITERONE_API_KEY}
