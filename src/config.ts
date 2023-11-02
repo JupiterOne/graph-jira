@@ -65,10 +65,12 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
   bulkIngestIssues: {
     type: 'boolean',
     mask: false,
+    optional: true,
   },
   customFields: {
     type: 'json',
     mask: false,
+    optional: true,
   },
 };
 
