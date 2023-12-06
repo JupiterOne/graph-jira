@@ -68,7 +68,10 @@ export async function fetchIssues({
 
   const apiClient = createApiClient(logger, config);
   const fieldsById = await fetchJiraFields(apiClient);
-
+  logger.info(
+    { customFields: config.customFields },
+    'Custom fields to ingest.',
+  );
   const issueProcessor = async (projectKey: JiraProjectKey, issue: Issue) =>
     processIssue(
       {
