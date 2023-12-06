@@ -1,3 +1,16 @@
+# v5.0.9 (Wed Dec 06 2023)
+
+#### 🐛 Bug Fix
+
+- Fixed package.json version [#212](https://github.com/JupiterOne/graph-jira/pull/212) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+- Added logs to understand behaviour [#211](https://github.com/JupiterOne/graph-jira/pull/211) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.0.2 (Fri Oct 06 2023)
 
 #### 🐛 Bug Fix
