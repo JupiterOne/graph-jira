@@ -1,3 +1,15 @@
+# v5.0.11 (Wed Dec 06 2023)
+
+#### 🐛 Bug Fix
+
+- Add logs for the specific ticket [#214](https://github.com/JupiterOne/graph-jira/pull/214) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.0.10 (Wed Dec 06 2023)
 
 #### 🐛 Bug Fix
