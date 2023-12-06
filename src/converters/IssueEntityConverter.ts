@@ -138,6 +138,13 @@ export function createIssueEntity({
   } else {
     entityDescription = getIssueDescription(issue, apiVersion);
   }
+  //TEMP INT-10020
+  if (Object.keys(customFields).length > 0) {
+    logger.info(
+      { customFieldsToAdd: Object.keys(customFields) },
+      'Adding custom fields to issue',
+    );
+  }
 
   const entity = {
     _key: generateEntityKey(ISSUE_ENTITY_TYPE, issue.id),
