@@ -73,27 +73,6 @@ export function createIssueEntity({
   const customFields: { [key: string]: any } = {};
 
   for (const [key, value] of Object.entries(issue.fields)) {
-    //TEMP INT-10020
-    if (key.includes('customfield_12253')) {
-      if (value !== undefined && value !== null) {
-        logger.info({}, 'Value not null');
-      }
-      logger.info({ startsWith: key.startsWith('customfield_') }, 'StartsWith');
-      logger.info({ hasKey: fieldsById[key] !== undefined }, 'HasKey');
-      const fieldName = camelCase(fieldsById[key].name);
-      logger.info(
-        {
-          includes:
-            customFieldsToInclude.includes(key) ||
-            customFieldsToInclude.includes(fieldName),
-        },
-        'Includes',
-      );
-      logger.info(
-        { extractedValue: extractValueFromCustomField(value) },
-        'Extracted value',
-      );
-    }
     if (
       key.startsWith('customfield_') &&
       value !== undefined &&
