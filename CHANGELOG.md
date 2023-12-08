@@ -1,3 +1,15 @@
+# v5.0.12 (Fri Dec 08 2023)
+
+#### 🐛 Bug Fix
+
+- Removed temp logs from integration [#215](https://github.com/JupiterOne/graph-jira/pull/215) (gonzaloavalosribas@Gonzalos-MacBook-Pro.local)
+
+#### Authors: 1
+
+- Gonzalo Avalos Ribas ([@Gonzalo-Avalos-Ribas](https://github.com/Gonzalo-Avalos-Ribas))
+
+---
+
 # v5.0.11 (Wed Dec 06 2023)
 
 #### 🐛 Bug Fix
