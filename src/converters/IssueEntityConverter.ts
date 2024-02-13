@@ -70,6 +70,7 @@ export function createIssueEntity({
 
   const status = issue.fields.status && issue.fields.status.name;
   const issueType = issue.fields.issuetype && issue.fields.issuetype.name;
+  const requestType = issue.fields.requestType && issue.fields.requestType.name;
   const customFields: { [key: string]: any } = {};
 
   for (const [key, value] of Object.entries(issue.fields)) {
