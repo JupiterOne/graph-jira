@@ -1,3 +1,17 @@
+# v5.0.13 (Thu Feb 22 2024)
+
+#### 🐛 Bug Fix
+
+- INT-10388: update max issues ingestion limit [#218](https://github.com/JupiterOne/graph-jira/pull/218) ([@gastonyelmini](https://github.com/gastonyelmini))
+- Fix collector release workflow [#216](https://github.com/JupiterOne/graph-jira/pull/216) ([@maxheckel](https://github.com/maxheckel))
+
+#### Authors: 2
+
+- [@maxheckel](https://github.com/maxheckel)
+- Gaston Yelmini ([@gastonyelmini](https://github.com/gastonyelmini))
+
+---
+
 # v5.0.12 (Fri Dec 08 2023)
 
 #### 🐛 Bug Fix
