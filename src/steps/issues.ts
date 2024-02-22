@@ -40,7 +40,7 @@ import { createApiClient, generateEntityKey } from '../utils';
  * Important: A change to the value of this constant must be reflected in
  * `docs/jupiterone.md`.
  */
-const INGESTION_MAX_ISSUES_PER_PROJECT = 2000;
+const INGESTION_MAX_ISSUES_PER_PROJECT = 10000;
 
 export async function fetchIssues({
   instance,
