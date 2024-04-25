@@ -1,3 +1,15 @@
+# v5.0.14 (Thu Apr 25 2024)
+
+#### 🐛 Bug Fix
+
+- Update Dockerfile [#219](https://github.com/JupiterOne/graph-jira/pull/219) ([@zemberdotnet](https://github.com/zemberdotnet))
+
+#### Authors: 1
+
+- Matthew Zember ([@zemberdotnet](https://github.com/zemberdotnet))
+
+---
+
 # v5.0.13 (Thu Feb 22 2024)
 
 #### 🐛 Bug Fix
