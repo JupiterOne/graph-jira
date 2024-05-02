@@ -1,3 +1,15 @@
+# v5.0.14 (Thu May 02 2024)
+
+#### 🐛 Bug Fix
+
+- INT-10948 Add better logging around custom fields [#221](https://github.com/JupiterOne/graph-jira/pull/221) ([@JakeFerrero](https://github.com/JakeFerrero))
+
+#### Authors: 1
+
+- Jake Ferrero ([@JakeFerrero](https://github.com/JakeFerrero))
+
+---
+
 # v5.0.14 (Thu Apr 25 2024)
 
 #### 🐛 Bug Fix
