@@ -70,7 +70,12 @@ export async function fetchIssues({
   const fieldsById = await fetchJiraFields(apiClient);
 
   logger.info(
-    { customFields: config.customFields, allfields: Object.keys(fieldsById) },
+    {
+      customFields: config.customFields,
+      allFieldIdsAndNames: Object.values(fieldsById).map(
+        (field) => `${field.id}: ${field.name ?? 'undefined field name'}`,
+      ),
+    },
     'Custom fields to ingest.',
   );
 
