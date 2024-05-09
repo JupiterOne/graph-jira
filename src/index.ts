@@ -16,13 +16,6 @@ export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> =
     ingestionConfig,
   };
 
-//
-// Changes to the types and functions below must be tested with
-// `@jupiterone/jupiter-integration-jira`! This is a transitional design, not a
-// recommended pattern for other integrations.
-//
-export { CreateIssueActionProperties, createJiraIssue } from './actions';
-
 export { JiraClient } from './jira';
 
 export {
