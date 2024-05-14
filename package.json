@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-jira",
-  "version": "5.0.15",
+  "version": "5.1.0",
   "description": "A JupiterOne managed integration for https://www.atlassian.com/software/jira.",
   "repository": {
     "type": "git",
