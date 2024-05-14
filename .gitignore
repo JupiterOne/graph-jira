@@ -11,3 +11,4 @@ docker-compose.yml
 tsconfig.tsbuildinfo
 .npmrc
 .idea/
+.DS_Store

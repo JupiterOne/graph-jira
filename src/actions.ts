@@ -1,4 +1,4 @@
-import { S3 } from 'aws-sdk';
+import { S3 } from '@aws-sdk/client-s3';
 import {
   Issue,
   IssueFields,
@@ -150,19 +150,17 @@ async function getStoredActionData(
   if (!jupiteroneEnv) {
     throw new Error('Environment variable JUPITERONE_ENVIRONMENT must be set.');
   }
-  const { Body: s3ObjectBody } = await s3Client
-    .getObject({
-      Bucket: `${jupiteroneEnv}-${jiraActionsBucket}`,
-      Key: actionDataS3Key,
-    })
-    .promise();
+  const { Body: s3ObjectBody } = await s3Client.getObject({
+    Bucket: `${jupiteroneEnv}-${jiraActionsBucket}`,
+    Key: actionDataS3Key,
+  });
 
   if (!s3ObjectBody) {
     throw new Error('Could not fetch action data.');
   }
 
   const actionProperties = JSON.parse(
-    s3ObjectBody.toString('utf-8'),
+    await s3ObjectBody.transformToString('utf-8'),
   ) as unknown;
   if (!isValidCreateIssueActionProperties(actionProperties)) {
     throw new Error(
