@@ -1,3 +1,15 @@
+# v5.1.0 (Tue May 14 2024)
+
+#### 🚀 Enhancement
+
+- Update aws-sdk v2 to v3 [#223](https://github.com/JupiterOne/graph-jira/pull/223) ([@Nick-NCSU](https://github.com/Nick-NCSU))
+
+#### Authors: 1
+
+- Nick Thompson ([@Nick-NCSU](https://github.com/Nick-NCSU))
+
+---
+
 # v5.0.14 (Thu May 02 2024)
 
 #### 🐛 Bug Fix
