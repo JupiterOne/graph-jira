@@ -48,11 +48,22 @@ function getIssueDescription(issue: Issue, apiVersion: string): string {
     : parseContent((description as TextContent).content);
 }
 
+function getNestedValue(obj: any, path: string): any {
+  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+}
+
+function setFlatNestedValue(obj: any, path: string, value: any): void {
+  const keys = path.split('.');
+  const formattedPath = keys.map(camelCase).join('.');
+  obj[formattedPath] = value;
+}
+
 export function createIssueEntity({
   issue,
   logger,
   fieldsById,
   customFieldsToInclude,
+  complexCustomFieldsToInclude,
   requestedClass,
   redactIssueDescriptions,
   apiVersion,
@@ -61,12 +72,14 @@ export function createIssueEntity({
   logger: IntegrationLogger;
   fieldsById?: { [id: string]: Field };
   customFieldsToInclude?: string[];
+  complexCustomFieldsToInclude?: string[];
   requestedClass?: unknown;
   redactIssueDescriptions: boolean;
   apiVersion: string;
 }): IssueEntity {
   fieldsById = fieldsById || {};
   customFieldsToInclude = customFieldsToInclude || [];
+  complexCustomFieldsToInclude = complexCustomFieldsToInclude || [];
 
   const status = issue.fields.status && issue.fields.status.name;
   const issueType = issue.fields.issuetype && issue.fields.issuetype.name;
@@ -93,6 +106,20 @@ export function createIssueEntity({
       }
     }
   }
+
+  // Handle complex custom fields
+  complexCustomFieldsToInclude.forEach(path => {
+    const [baseFieldId, ...nestedPathParts] = path.split('.');
+    if (issue.fields[baseFieldId] !== undefined) {
+      const nestedPath = nestedPathParts.join('.');
+      const fieldValue = getNestedValue(issue.fields[baseFieldId], nestedPath);
+      if (fieldValue !== undefined) {
+        const baseFieldName = camelCase(fieldsById[baseFieldId].name);
+        const formattedPath = [baseFieldName, ...nestedPathParts].map(camelCase).join('.');
+        setFlatNestedValue(customFields, formattedPath, fieldValue);
+      }
+    }
+  });
 
   if (!['string', 'undefined'].includes(typeof requestedClass)) {
     logger.warn(
