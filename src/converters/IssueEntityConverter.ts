@@ -49,13 +49,29 @@ function getIssueDescription(issue: Issue, apiVersion: string): string {
 }
 
 function getNestedValue(obj: any, path: string): any {
-  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+  return path.split('.').reduce((acc, part, index) => {
+    if (!acc) {
+      return undefined;
+    }
+
+    const match = part.match(/^(\w+|\[\d+\])(?:\.(.+))?$/); // Updated regex pattern
+    if (match) {
+      const [, key, rest] = match;
+      if (key.startsWith('[') && key.endsWith(']')) {
+        // Accessing array element
+        const arrayIndex = Number(key.slice(1, -1));
+        return acc[arrayIndex];
+      } else {
+        // Accessing object property
+        return acc[key];
+      }
+    }
+    return acc[part];
+  }, obj);
 }
 
 function setFlatNestedValue(obj: any, path: string, value: any): void {
-  const keys = path.split('.');
-  const formattedPath = keys.map(camelCase).join('.');
-  obj[formattedPath] = value;
+  obj[path] = value;
 }
 
 export function createIssueEntity({
@@ -85,6 +101,7 @@ export function createIssueEntity({
   const issueType = issue.fields.issuetype && issue.fields.issuetype.name;
   const customFields: { [key: string]: any } = {};
 
+  // Extract simple custom fields
   for (const [key, value] of Object.entries(issue.fields)) {
     if (
       key.startsWith('customfield_') &&
@@ -116,9 +133,18 @@ export function createIssueEntity({
       if (fieldValue !== undefined) {
         if (fieldsById && fieldsById[baseFieldId]) {
           const baseFieldName = camelCase(fieldsById[baseFieldId].name);
-          const formattedPath = [baseFieldName, ...nestedPathParts]
-            .map(camelCase)
-            .join('.');
+          const formattedPathParts = nestedPathParts.map((part) => {
+            const match = part.match(/^(\w+)(?:\[(\d+)\])?$/);
+            if (match) {
+              const [, key, index] = match;
+              if (index !== undefined) {
+                return `${camelCase(key)}${index}`;
+              }
+              return camelCase(key);
+            }
+            return camelCase(part);
+          });
+          const formattedPath = [baseFieldName, ...formattedPathParts].join('');
           setFlatNestedValue(customFields, formattedPath, fieldValue);
         }
       }
@@ -132,7 +158,7 @@ export function createIssueEntity({
     );
     requestedClass = undefined;
   }
-
+  // Set issue class based on issue type or requested class
   let issueClass: string | string[];
 
   if (requestedClass) {
@@ -162,6 +188,7 @@ export function createIssueEntity({
     }
   }
 
+  // Redact issue descriptions if necessary
   let entityDescription: string;
   if (redactIssueDescriptions) {
     if (issue.fields.description) {
@@ -169,29 +196,18 @@ export function createIssueEntity({
         type: 'text',
         text: 'REDACTED',
       };
-    } // don't let description leak in rawData
+    }
     entityDescription = 'REDACTED';
   } else {
     entityDescription = getIssueDescription(issue, apiVersion);
   }
-  //TEMP INT-10020
-  if (Object.keys(customFields).length > 0) {
-    logger.info(
-      { customFieldsToAdd: Object.keys(customFields) },
-      'Adding custom fields to issue',
-    );
-  }
 
-  const entity = {
+  // Construct issue entity object
+  const entity: IssueEntity = {
     _key: generateEntityKey(ISSUE_ENTITY_TYPE, issue.id),
     _type: ISSUE_ENTITY_TYPE,
     _class: issueClass,
-    _rawData: [
-      {
-        name: 'default',
-        rawData: issue as any,
-      },
-    ],
+    _rawData: [{ name: 'default', rawData: issue as any }],
     ...customFields,
     id: issue.id,
     key: issue.key,
@@ -225,11 +241,11 @@ export function createIssueEntity({
       issue.fields.components && issue.fields.components.map((c) => c.name),
     priority: issue.fields.priority && issue.fields.priority.name,
   };
+
+  // Add event data if requested class is provided
   if (requestedClass) {
-    entity._rawData.push({
-      name: 'event',
-      rawData: { requestedClass },
-    });
+    entity._rawData?.push({ name: 'event', rawData: { requestedClass } });
   }
   return entity;
 }
+
