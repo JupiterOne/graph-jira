@@ -72,6 +72,11 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     mask: false,
     optional: true,
   },
+  complexCustomFields: {
+    type: 'json',
+    mask: false,
+    optional: true,
+  },
 };
 
 /**
@@ -117,6 +122,13 @@ export interface JiraIntegrationInstanceConfig
   customFields?: string[];
 
   /**
+   * An optional array of complex custom field paths to transfer to `Issue` entity properties.
+   * The entity property names will be `camelCase(field.path)`.
+   *
+   * - `"complexField1.path.to.value"` - a fully qualified identifier
+   */
+  complexCustomFields?: string[];
+  /**
    * Enable bulk ingestion of all Jira issues in the specified projects.
    */
   bulkIngestIssues?: boolean;
@@ -130,6 +142,7 @@ export type IntegrationConfig = JiraIntegrationInstanceConfig &
   JiraClientConfig & {
     projects: string[];
     customFields: string[];
+    complexCustomFields: string[];
   };
 
 /**
@@ -212,6 +225,9 @@ export function buildNormalizedInstanceConfig(
     apiVersion: jiraApiVersion,
     projects: normalizeProjectKeys(config.projects),
     customFields: normalizeCustomFieldIdentifiers(config.customFields),
+    complexCustomFields: normalizeCustomFieldIdentifiers(
+      config.complexCustomFields,
+    ),
   };
 }
 
