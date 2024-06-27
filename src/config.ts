@@ -76,7 +76,7 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     type: 'json',
     mask: false,
     optional: true,
-  }
+  },
 };
 
 /**
@@ -225,7 +225,9 @@ export function buildNormalizedInstanceConfig(
     apiVersion: jiraApiVersion,
     projects: normalizeProjectKeys(config.projects),
     customFields: normalizeCustomFieldIdentifiers(config.customFields),
-    complexCustomFields: normalizeCustomFieldIdentifiers(config.complexCustomFields)
+    complexCustomFields: normalizeCustomFieldIdentifiers(
+      config.complexCustomFields,
+    ),
   };
 }
 

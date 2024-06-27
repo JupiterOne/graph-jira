@@ -108,15 +108,19 @@ export function createIssueEntity({
   }
 
   // Handle complex custom fields
-  complexCustomFieldsToInclude.forEach(path => {
+  complexCustomFieldsToInclude.forEach((path) => {
     const [baseFieldId, ...nestedPathParts] = path.split('.');
     if (issue.fields[baseFieldId] !== undefined) {
       const nestedPath = nestedPathParts.join('.');
       const fieldValue = getNestedValue(issue.fields[baseFieldId], nestedPath);
       if (fieldValue !== undefined) {
-        const baseFieldName = camelCase(fieldsById[baseFieldId].name);
-        const formattedPath = [baseFieldName, ...nestedPathParts].map(camelCase).join('.');
-        setFlatNestedValue(customFields, formattedPath, fieldValue);
+        if (fieldsById && fieldsById[baseFieldId]) {
+          const baseFieldName = camelCase(fieldsById[baseFieldId].name);
+          const formattedPath = [baseFieldName, ...nestedPathParts]
+            .map(camelCase)
+            .join('.');
+          setFlatNestedValue(customFields, formattedPath, fieldValue);
+        }
       }
     }
   });
