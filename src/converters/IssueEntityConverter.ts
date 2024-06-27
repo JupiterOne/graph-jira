@@ -54,7 +54,7 @@ function getNestedValue(obj: any, path: string): any {
       return undefined;
     }
 
-    const match = part.match(/^(\w+|\[\d+\])(?:\.(.+))?$/); 
+    const match = part.match(/^(\w+|\[\d+\])(?:\.(.+))?$/);
     if (match) {
       const [, key] = match;
       if (key.startsWith('[') && key.endsWith(']')) {
