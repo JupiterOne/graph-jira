@@ -259,10 +259,10 @@ export const issueSteps: IntegrationStep<IntegrationConfig>[] = [
         resourceName: 'Jira Issue',
         _type: ISSUE_ENTITY_TYPE,
         _class: ISSUE_ENTITY_CLASS,
-        // partial: true,
-        // indexMetadata: {
-        //   enabled: false,
-        // },
+        partial: true,
+        indexMetadata: {
+          enabled: false,
+        },
       },
     ],
     relationships: [
