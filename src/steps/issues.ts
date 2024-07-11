@@ -74,10 +74,10 @@ export async function fetchIssues({
       customFields: config.customFields,
       complexCustomFields: config.complexCustomFields,
       allFieldIdsAndNames: Object.values(fieldsById).map(
-        (field) => `${field.id}: ${field.name ?? 'undefined field name'}`
+        (field) => `${field.id}: ${field.name ?? 'undefined field name'}`,
       ),
     },
-    'Custom and complex custom fields to ingest.'
+    'Custom and complex custom fields to ingest.',
   );
 
   const issueProcessor = async (projectKey: JiraProjectKey, issue: Issue) =>
@@ -264,10 +264,10 @@ export const issueSteps: IntegrationStep<IntegrationConfig>[] = [
         resourceName: 'Jira Issue',
         _type: ISSUE_ENTITY_TYPE,
         _class: ISSUE_ENTITY_CLASS,
-        partial: true,
-        indexMetadata: {
-          enabled: false,
-        },
+        // partial: true,
+        // indexMetadata: {
+        //   enabled: false,
+        // },
       },
     ],
     relationships: [

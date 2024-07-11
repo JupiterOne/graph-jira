@@ -48,32 +48,6 @@ function getIssueDescription(issue: Issue, apiVersion: string): string {
     : parseContent((description as TextContent).content);
 }
 
-function getNestedValue(obj: any, path: string): any {
-  return path.split('.').reduce((acc, part, index) => {
-    if (!acc) {
-      return undefined;
-    }
-
-    const match = part.match(/^(\w+|\[\d+\])(?:\.(.+))?$/);
-    if (match) {
-      const [, key] = match;
-      if (key.startsWith('[') && key.endsWith(']')) {
-        // Accessing array element
-        const arrayIndex = Number(key.slice(1, -1));
-        return acc[arrayIndex];
-      } else {
-        // Accessing object property
-        return acc[key];
-      }
-    }
-    return acc[part];
-  }, obj);
-}
-
-function setFlatNestedValue(obj: any, path: string, value: any): void {
-  obj[path] = value;
-}
-
 export function createIssueEntity({
   issue,
   logger,
@@ -133,7 +107,10 @@ export function createIssueEntity({
           continue;
         }
         const baseFieldName = camelCase(fieldsById[baseFieldId].name);
-        const fieldName = nestedPath.split(/[\.\[\]]+/).map(camelCase).join('');
+        const fieldName = nestedPath
+          .split(/[.[\]]+/)
+          .map(camelCase)
+          .join('');
         customFields[`${baseFieldName}${fieldName}`] = extractedValue;
       }
     }
