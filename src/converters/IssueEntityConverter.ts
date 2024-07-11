@@ -1,5 +1,6 @@
 import camelCase from 'lodash/camelCase';
 import get from 'lodash/get';
+import partition from 'lodash/partition';
 import {
   IntegrationLogger,
   parseTimePropertyValue,
@@ -66,7 +67,18 @@ export function createIssueEntity({
   apiVersion: string;
 }): IssueEntity {
   fieldsById = fieldsById || {};
-  customFieldsToInclude = customFieldsToInclude || [];
+  const [nestedCustomFields, simpleCustomFields] = partition(
+    customFieldsToInclude,
+    (field) => field.includes('.'),
+  );
+  const nestedPathsByFieldId = nestedCustomFields.reduce(
+    (acc, field) => {
+      const [baseFieldId, ...rest] = field.split('.');
+      acc[baseFieldId] = rest.join('.');
+      return acc;
+    },
+    {} as { [id: string]: string },
+  );
 
   const status = issue.fields.status && issue.fields.status.name;
   const issueType = issue.fields.issuetype && issue.fields.issuetype.name;
@@ -75,42 +87,35 @@ export function createIssueEntity({
   // Extract custom fields (simple and complex)
   for (const [key, value] of Object.entries(issue.fields)) {
     if (
-      key.startsWith('customfield_') &&
-      value !== undefined &&
-      value !== null &&
-      fieldsById[key]
+      !key.startsWith('customfield_') ||
+      value === undefined ||
+      value === null ||
+      !fieldsById[key]
     ) {
-      const fieldName = camelCase(fieldsById[key].name);
-      if (
-        customFieldsToInclude.includes(key) ||
-        customFieldsToInclude.includes(fieldName)
-      ) {
-        const extractedValue = extractValueFromCustomField(value);
-        if (extractedValue === UNABLE_TO_PARSE_RESPONSE) {
-          logger.warn({ fieldName }, 'Unable to parse custom field');
-        } else {
-          customFields[fieldName] = extractedValue;
-        }
+      continue;
+    }
+
+    const fieldName = camelCase(fieldsById[key].name);
+    if (key in nestedPathsByFieldId) {
+      const nestedPath = nestedPathsByFieldId[key];
+      const extractedValue = get(value, nestedPath);
+      if (!extractedValue) {
+        continue;
       }
-      // Check for complex custom fields within the same array
-      for (const path of customFieldsToInclude) {
-        if (path.includes('.')) {
-          const [baseFieldId, ...rest] = path.split('.');
-          const nestedPath = rest.join('.');
-          if (!issue.fields[baseFieldId]) {
-            continue;
-          }
-          const extractedValue = get(issue.fields[baseFieldId], nestedPath);
-          if (!extractedValue) {
-            continue;
-          }
-          const baseFieldName = camelCase(fieldsById[baseFieldId].name);
-          const fieldName = nestedPath
-            .split(/[.[\]]+/)
-            .map(camelCase)
-            .join('');
-          customFields[`${baseFieldName}${fieldName}`] = extractedValue;
-        }
+      const nestedFieldName = nestedPath
+        .split(/[.[\]]+/)
+        .map(camelCase)
+        .join('');
+      customFields[`${fieldName}${nestedFieldName}`] = extractedValue;
+    } else if (
+      simpleCustomFields.includes(key) ||
+      simpleCustomFields.includes(fieldName)
+    ) {
+      const extractedValue = extractValueFromCustomField(value);
+      if (extractedValue === UNABLE_TO_PARSE_RESPONSE) {
+        logger.warn({ fieldName }, 'Unable to parse custom field');
+      } else {
+        customFields[fieldName] = extractedValue;
       }
     }
   }
