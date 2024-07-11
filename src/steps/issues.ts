@@ -72,12 +72,11 @@ export async function fetchIssues({
   logger.info(
     {
       customFields: config.customFields,
-      complexCustomFields: config.complexCustomFields,
       allFieldIdsAndNames: Object.values(fieldsById).map(
         (field) => `${field.id}: ${field.name ?? 'undefined field name'}`,
       ),
     },
-    'Custom and complex custom fields to ingest.',
+    'Simple and Complex Custom fields to ingest.',
   );
 
   const issueProcessor = async (projectKey: JiraProjectKey, issue: Issue) =>
@@ -87,7 +86,6 @@ export async function fetchIssues({
         jobState,
         fieldsById,
         customFieldsToInclude: config.customFields,
-        complexCustomFieldsToInclude: config.complexCustomFields,
         projectEntities,
         redactIssueDescriptions: redactIssueDescriptions ?? false,
         apiVersion,
@@ -136,7 +134,6 @@ type ProcessIssueContext = {
   logger: IntegrationLogger;
   fieldsById: IdFieldMap;
   customFieldsToInclude: string[];
-  complexCustomFieldsToInclude: string[];
   projectEntities: ProjectEntity[];
   redactIssueDescriptions: boolean;
   apiVersion: string;
@@ -156,7 +153,6 @@ async function processIssue(
     logger,
     jobState,
     customFieldsToInclude,
-    complexCustomFieldsToInclude,
     fieldsById,
     projectEntities,
     redactIssueDescriptions,
@@ -172,7 +168,6 @@ async function processIssue(
         logger,
         fieldsById,
         customFieldsToInclude,
-        complexCustomFieldsToInclude,
         redactIssueDescriptions,
         apiVersion,
       }),

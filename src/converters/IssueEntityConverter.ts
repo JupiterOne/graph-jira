@@ -53,7 +53,6 @@ export function createIssueEntity({
   logger,
   fieldsById,
   customFieldsToInclude,
-  complexCustomFieldsToInclude,
   requestedClass,
   redactIssueDescriptions,
   apiVersion,
@@ -62,14 +61,12 @@ export function createIssueEntity({
   logger: IntegrationLogger;
   fieldsById?: { [id: string]: Field };
   customFieldsToInclude?: string[];
-  complexCustomFieldsToInclude?: string[];
   requestedClass?: unknown;
   redactIssueDescriptions: boolean;
   apiVersion: string;
 }): IssueEntity {
   fieldsById = fieldsById || {};
   customFieldsToInclude = customFieldsToInclude || [];
-  complexCustomFieldsToInclude = complexCustomFieldsToInclude || [];
 
   const status = issue.fields.status && issue.fields.status.name;
   const issueType = issue.fields.issuetype && issue.fields.issuetype.name;
@@ -95,23 +92,25 @@ export function createIssueEntity({
           customFields[fieldName] = extractedValue;
         }
       }
-      // Check for complex custom fields
-      for (const path of complexCustomFieldsToInclude) {
-        const [baseFieldId, ...rest] = path.split('.');
-        const nestedPath = rest.join('.');
-        if (!issue.fields[baseFieldId]) {
-          continue;
+      // Check for complex custom fields within the same array
+      for (const path of customFieldsToInclude) {
+        if (path.includes('.')) {
+          const [baseFieldId, ...rest] = path.split('.');
+          const nestedPath = rest.join('.');
+          if (!issue.fields[baseFieldId]) {
+            continue;
+          }
+          const extractedValue = get(issue.fields[baseFieldId], nestedPath);
+          if (!extractedValue) {
+            continue;
+          }
+          const baseFieldName = camelCase(fieldsById[baseFieldId].name);
+          const fieldName = nestedPath
+            .split(/[.[\]]+/)
+            .map(camelCase)
+            .join('');
+          customFields[`${baseFieldName}${fieldName}`] = extractedValue;
         }
-        const extractedValue = get(issue.fields[baseFieldId], nestedPath);
-        if (!extractedValue) {
-          continue;
-        }
-        const baseFieldName = camelCase(fieldsById[baseFieldId].name);
-        const fieldName = nestedPath
-          .split(/[.[\]]+/)
-          .map(camelCase)
-          .join('');
-        customFields[`${baseFieldName}${fieldName}`] = extractedValue;
       }
     }
   }
