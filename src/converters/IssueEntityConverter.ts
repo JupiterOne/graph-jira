@@ -1,5 +1,5 @@
 import camelCase from 'lodash/camelCase';
-
+import get from 'lodash/get';
 import {
   IntegrationLogger,
   parseTimePropertyValue,
@@ -101,7 +101,7 @@ export function createIssueEntity({
   const issueType = issue.fields.issuetype && issue.fields.issuetype.name;
   const customFields: { [key: string]: any } = {};
 
-  // Extract simple custom fields
+  // Extract custom fields (simple and complex)
   for (const [key, value] of Object.entries(issue.fields)) {
     if (
       key.startsWith('customfield_') &&
@@ -121,35 +121,23 @@ export function createIssueEntity({
           customFields[fieldName] = extractedValue;
         }
       }
-    }
-  }
-
-  // Handle complex custom fields
-  complexCustomFieldsToInclude.forEach((path) => {
-    const [baseFieldId, ...nestedPathParts] = path.split('.');
-    if (issue.fields[baseFieldId] !== undefined) {
-      const nestedPath = nestedPathParts.join('.');
-      const fieldValue = getNestedValue(issue.fields[baseFieldId], nestedPath);
-      if (fieldValue !== undefined) {
-        if (fieldsById && fieldsById[baseFieldId]) {
-          const baseFieldName = camelCase(fieldsById[baseFieldId].name);
-          const formattedPathParts = nestedPathParts.map((part) => {
-            const match = part.match(/^(\w+)(?:\[(\d+)\])?$/);
-            if (match) {
-              const [, key, index] = match;
-              if (index !== undefined) {
-                return `${camelCase(key)}${index}`;
-              }
-              return camelCase(key);
-            }
-            return camelCase(part);
-          });
-          const formattedPath = [baseFieldName, ...formattedPathParts].join('');
-          setFlatNestedValue(customFields, formattedPath, fieldValue);
+      // Check for complex custom fields
+      for (const path of complexCustomFieldsToInclude) {
+        const [baseFieldId, ...rest] = path.split('.');
+        const nestedPath = rest.join('.');
+        if (!issue.fields[baseFieldId]) {
+          continue;
         }
+        const extractedValue = get(issue.fields[baseFieldId], nestedPath);
+        if (!extractedValue) {
+          continue;
+        }
+        const baseFieldName = camelCase(fieldsById[baseFieldId].name);
+        const fieldName = nestedPath.split(/[\.\[\]]+/).map(camelCase).join('');
+        customFields[`${baseFieldName}${fieldName}`] = extractedValue;
       }
     }
-  });
+  }
 
   if (!['string', 'undefined'].includes(typeof requestedClass)) {
     logger.warn(

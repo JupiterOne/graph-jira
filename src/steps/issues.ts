@@ -72,21 +72,12 @@ export async function fetchIssues({
   logger.info(
     {
       customFields: config.customFields,
-      allFieldIdsAndNames: Object.values(fieldsById).map(
-        (field) => `${field.id}: ${field.name ?? 'undefined field name'}`,
-      ),
-    },
-    'Custom fields to ingest.',
-  );
-
-  logger.info(
-    {
       complexCustomFields: config.complexCustomFields,
       allFieldIdsAndNames: Object.values(fieldsById).map(
-        (field) => `${field.id}: ${field.name ?? 'undefined field name'}`,
+        (field) => `${field.id}: ${field.name ?? 'undefined field name'}`
       ),
     },
-    'Complex custom fields to ingest.',
+    'Custom and complex custom fields to ingest.'
   );
 
   const issueProcessor = async (projectKey: JiraProjectKey, issue: Issue) =>
