@@ -1,3 +1,16 @@
+# v5.2.0 (Mon Jul 22 2024)
+
+#### 🚀 Enhancement
+
+- Jira Enhancement 5.1.1 [#225](https://github.com/JupiterOne/graph-jira/pull/225) ([@poornima-metron](https://github.com/poornima-metron) [@RonaldEAM](https://github.com/RonaldEAM))
+
+#### Authors: 2
+
+- poornima-metron ([@poornima-metron](https://github.com/poornima-metron))
+- Ronald Arias ([@RonaldEAM](https://github.com/RonaldEAM))
+
+---
+
 # v5.1.0 (Tue May 14 2024)
 
 #### 🚀 Enhancement
