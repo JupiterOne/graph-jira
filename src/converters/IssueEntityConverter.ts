@@ -1,5 +1,6 @@
 import camelCase from 'lodash/camelCase';
-
+import get from 'lodash/get';
+import partition from 'lodash/partition';
 import {
   IntegrationLogger,
   parseTimePropertyValue,
@@ -66,30 +67,55 @@ export function createIssueEntity({
   apiVersion: string;
 }): IssueEntity {
   fieldsById = fieldsById || {};
-  customFieldsToInclude = customFieldsToInclude || [];
+  const [nestedCustomFields, simpleCustomFields] = partition(
+    customFieldsToInclude,
+    (field) => field.includes('.'),
+  );
+  const nestedPathsByFieldId = nestedCustomFields.reduce(
+    (acc, field) => {
+      const [baseFieldId, ...rest] = field.split('.');
+      acc[baseFieldId] = rest.join('.');
+      return acc;
+    },
+    {} as { [id: string]: string },
+  );
 
   const status = issue.fields.status && issue.fields.status.name;
   const issueType = issue.fields.issuetype && issue.fields.issuetype.name;
   const customFields: { [key: string]: any } = {};
 
+  // Extract custom fields (simple and complex)
   for (const [key, value] of Object.entries(issue.fields)) {
     if (
-      key.startsWith('customfield_') &&
-      value !== undefined &&
-      value !== null &&
-      fieldsById[key]
+      !key.startsWith('customfield_') ||
+      value === undefined ||
+      value === null ||
+      !fieldsById[key]
     ) {
-      const fieldName = camelCase(fieldsById[key].name);
-      if (
-        customFieldsToInclude.includes(key) ||
-        customFieldsToInclude.includes(fieldName)
-      ) {
-        const extractedValue = extractValueFromCustomField(value);
-        if (extractedValue === UNABLE_TO_PARSE_RESPONSE) {
-          logger.warn({ fieldName }, 'Unable to parse custom field');
-        } else {
-          customFields[fieldName] = extractedValue;
-        }
+      continue;
+    }
+
+    const fieldName = camelCase(fieldsById[key].name);
+    if (key in nestedPathsByFieldId) {
+      const nestedPath = nestedPathsByFieldId[key];
+      const extractedValue = get(value, nestedPath);
+      if (!extractedValue) {
+        continue;
+      }
+      const nestedFieldName = nestedPath
+        .split(/[.[\]]+/)
+        .map(camelCase)
+        .join('');
+      customFields[`${fieldName}${nestedFieldName}`] = extractedValue;
+    } else if (
+      simpleCustomFields.includes(key) ||
+      simpleCustomFields.includes(fieldName)
+    ) {
+      const extractedValue = extractValueFromCustomField(value);
+      if (extractedValue === UNABLE_TO_PARSE_RESPONSE) {
+        logger.warn({ fieldName }, 'Unable to parse custom field');
+      } else {
+        customFields[fieldName] = extractedValue;
       }
     }
   }
@@ -101,7 +127,7 @@ export function createIssueEntity({
     );
     requestedClass = undefined;
   }
-
+  // Set issue class based on issue type or requested class
   let issueClass: string | string[];
 
   if (requestedClass) {
@@ -131,6 +157,7 @@ export function createIssueEntity({
     }
   }
 
+  // Redact issue descriptions if necessary
   let entityDescription: string;
   if (redactIssueDescriptions) {
     if (issue.fields.description) {
@@ -138,29 +165,18 @@ export function createIssueEntity({
         type: 'text',
         text: 'REDACTED',
       };
-    } // don't let description leak in rawData
+    }
     entityDescription = 'REDACTED';
   } else {
     entityDescription = getIssueDescription(issue, apiVersion);
   }
-  //TEMP INT-10020
-  if (Object.keys(customFields).length > 0) {
-    logger.info(
-      { customFieldsToAdd: Object.keys(customFields) },
-      'Adding custom fields to issue',
-    );
-  }
 
-  const entity = {
+  // Construct issue entity object
+  const entity: IssueEntity = {
     _key: generateEntityKey(ISSUE_ENTITY_TYPE, issue.id),
     _type: ISSUE_ENTITY_TYPE,
     _class: issueClass,
-    _rawData: [
-      {
-        name: 'default',
-        rawData: issue as any,
-      },
-    ],
+    _rawData: [{ name: 'default', rawData: issue as any }],
     ...customFields,
     id: issue.id,
     key: issue.key,
@@ -194,11 +210,10 @@ export function createIssueEntity({
       issue.fields.components && issue.fields.components.map((c) => c.name),
     priority: issue.fields.priority && issue.fields.priority.name,
   };
+
+  // Add event data if requested class is provided
   if (requestedClass) {
-    entity._rawData.push({
-      name: 'event',
-      rawData: { requestedClass },
-    });
+    entity._rawData?.push({ name: 'event', rawData: { requestedClass } });
   }
   return entity;
 }

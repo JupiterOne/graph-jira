@@ -76,7 +76,7 @@ export async function fetchIssues({
         (field) => `${field.id}: ${field.name ?? 'undefined field name'}`,
       ),
     },
-    'Custom fields to ingest.',
+    'Simple and Complex Custom fields to ingest.',
   );
 
   const issueProcessor = async (projectKey: JiraProjectKey, issue: Issue) =>
